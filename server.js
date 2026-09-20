@@ -11,6 +11,10 @@ const handle = nextApp.getRequestHandler();
 nextApp.prepare().then(() => {
   const app = express();
   app.use(cors());
+
+  const path = require('path');
+  app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
+
   const server = http.createServer(app);
   
   const io = new Server(server, {
