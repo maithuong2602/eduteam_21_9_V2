@@ -2,16 +2,23 @@ const express = require('express');
 const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
+const next = require('next');
 
-const app = express();
-app.use(cors());
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});
+const dev = process.env.NODE_ENV !== 'production';
+const nextApp = next({ dev });
+const handle = nextApp.getRequestHandler();
+
+nextApp.prepare().then(() => {
+  const app = express();
+  app.use(cors());
+  const server = http.createServer(app);
+  
+  const io = new Server(server, {
+    cors: {
+      origin: "*",
+      methods: ["GET", "POST"]
+    }
+  });
 
 // In-memory state
 // sessions = { [sessionCode]: { teacherId, presentationId, currentSlide, activity, students: [{ id, name, status, answer }] } }
@@ -701,7 +708,16 @@ io.on('connection', (socket) => {
   });
 });
 
-const PORT = 3001;
-server.listen(PORT, () => {
-  console.log(`EduTeam Realtime Server running on port ${PORT}`);
+  app.use((req, res) => {
+    return handle(req, res);
+  });
+
+  const PORT = process.env.PORT || 3000;
+  server.listen(PORT, (err) => {
+    if (err) throw err;
+    console.log(`> Ready on http://localhost:${PORT} (Next.js + Socket.io Unified)`);
+  });
+}).catch((ex) => {
+  console.error(ex.stack);
+  process.exit(1);
 });
