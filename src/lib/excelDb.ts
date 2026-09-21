@@ -7,6 +7,7 @@ export function getExcelData() {
 
   const filePath = require('path').join(process.cwd(), 'src', 'data', '02_DANH_SACH_HOC_SINH.xlsx');
   const fs = require('fs');
+  if (!fs.existsSync(filePath)) { console.error('Excel file missing:', filePath); return { classes: [], students: [] }; }
   const buffer = fs.readFileSync(filePath);
   const workbook = xlsx.read(buffer, { type: 'buffer' });
   const sheetName = workbook.SheetNames[0];

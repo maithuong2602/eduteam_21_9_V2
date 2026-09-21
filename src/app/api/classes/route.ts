@@ -7,6 +7,6 @@ export async function GET() {
     return NextResponse.json({ classes: data.classes });
   } catch (error) {
     console.error('Error reading excel DB:', error);
-    return NextResponse.json({ error: 'Failed to load classes' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to load classes', details: error.message, stack: error.stack, cwd: process.cwd(), dir: __dirname }, { status: 500 });
   }
 }
