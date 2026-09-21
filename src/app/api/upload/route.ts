@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
+import { jsonDb } from '@/lib/jsonDb';
 
 // Configure Cloudinary with the user's credentials
 cloudinary.config({
@@ -37,15 +38,23 @@ export async function POST(request: Request) {
     const downloadURL = (uploadResult as any).secure_url;
     const publicId = (uploadResult as any).public_id || `pres_${Date.now()}`;
 
+    const presentationData = {
+        id: publicId,
+        teacherId: 'teacher_1', // Using default
+        title: file.name.replace('.pdf', '').replace('.pptx', ''),
+        originalFileName: file.name,
+        totalSlides: (uploadResult as any).pages || 1,
+        fileUrl: downloadURL,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+    };
+    
+    jsonDb.savePresentation(presentationData);
+
     // Must return the exact format expected by frontend
     return NextResponse.json({
       success: true,
-      presentation: {
-        id: publicId,
-        title: file.name.replace('.pdf', ''),
-        totalSlides: (uploadResult as any).pages || 1,
-        fileUrl: downloadURL
-      }
+      presentation: presentationData
     });
 
   } catch (error: any) {

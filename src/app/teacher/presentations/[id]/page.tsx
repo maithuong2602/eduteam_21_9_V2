@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
@@ -11,6 +11,7 @@ const PdfViewer = dynamic(() => import("@/components/PdfViewer"), { ssr: false }
 
 export default function PresentationDetail() {
   const params = useParams();
+  const isInitialMount = useRef(true);
   const id = params.id as string;
   const [classList, setClassList] = useState<any[]>([]);
   const [selectedClass, setSelectedClass] = useState<string>("");
@@ -21,6 +22,30 @@ export default function PresentationDetail() {
   const [activities, setActivities] = useState<Record<string, any>>({});
   const [slideActivities, setSlideActivities] = useState<Record<number, string[]>>({});
   const [currentActivityId, setCurrentActivityId] = useState<string | null>(null);
+
+  
+  useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+    // Autosave
+    if (id && id !== "1" && Object.keys(activities).length > 0) {
+      const timeoutId = setTimeout(() => {
+        fetch('/api/activities/sync', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            presentationId: id,
+            activities,
+            slideActivities
+          })
+        }).catch(console.error);
+      }, 1000); // debounce 1s
+      return () => clearTimeout(timeoutId);
+    }
+  }, [activities, slideActivities, id]);
+
   
   
   
@@ -386,6 +411,7 @@ export default function PresentationDetail() {
     }
     if (socket && presentation) {
       socket.emit("create_session", { 
+        classId: selectedClass,
         presentationId: presentation.id, 
         title: presentation.title,
         validStudents: classStudents,

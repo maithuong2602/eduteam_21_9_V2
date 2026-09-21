@@ -9,21 +9,19 @@ export default function PresentationsPage() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
-  const [presentations, setPresentations] = useState([
-    { id: "1", title: "Bài 1 - Thiết bị số.pptx", slides: 24, activities: 5, updatedAt: "Hôm qua" }
+  const [presentations, setPresentations] = useState<any[]>([
+    { id: "1", title: "Bài 1 - Thiết bị số.pptx", totalSlides: 24, activities: 5, updatedAt: "Hôm qua" }
   ]);
 
   useEffect(() => {
-    // Load dynamically uploaded presentations from sessionStorage
-    const stored = sessionStorage.getItem("eduteam_presentations");
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          setPresentations([...parsed, ...presentations]); // put new ones first
+    fetch('/api/presentations')
+      .then(res => res.json())
+      .then(data => {
+        if (data.presentations) {
+          setPresentations(data.presentations);
         }
-      } catch (e) {}
-    }
+      })
+      .catch(console.error);
   }, []);
 
   const handleUploadClick = () => {
@@ -52,23 +50,6 @@ export default function PresentationsPage() {
       const data = await res.json();
       
       if (data.success && data.presentation) {
-        // Save to session storage
-        const stored = sessionStorage.getItem("eduteam_presentations");
-        let presList = [];
-        if (stored) {
-          try { presList = JSON.parse(stored); } catch(e){}
-        }
-        
-        presList.unshift({
-          id: data.presentation.id,
-          title: data.presentation.title,
-          slides: data.presentation.totalSlides,
-          activities: 0,
-          updatedAt: "Vừa xong"
-        });
-        sessionStorage.setItem("eduteam_presentations", JSON.stringify(presList));
-        sessionStorage.setItem(`eduteam_pres_${data.presentation.id}`, JSON.stringify(data.presentation));
-
         // Redirect to detail page
         router.push(`/teacher/presentations/${data.presentation.id}`);
       } else {
@@ -114,7 +95,7 @@ export default function PresentationsPage() {
             <div className="h-40 bg-gray-100 border-b border-gray-200 flex items-center justify-center relative">
               <FileText className="h-16 w-16 text-gray-300" />
               <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
-                {p.slides} slides
+                {p.totalSlides || 0} slides
               </div>
             </div>
             <div className="p-5">
