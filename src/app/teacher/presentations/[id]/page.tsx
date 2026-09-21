@@ -638,14 +638,13 @@ export default function PresentationDetail() {
             </div>
           ) : (
             <>
-              <select 
-                className="border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 py-2 pl-3 pr-8 border outline-none text-black font-bold"
+              <select style={{ color: "#000", fontWeight: "bold", backgroundColor: "#fff" }} className="border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 py-2 pl-3 pr-8 border outline-none text-black font-bold"
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
               >
-                <option value="" className="text-black bg-white font-bold">-- Chọn lớp học --</option>
+                <option value="" style={{ color: "#000", fontWeight: "bold" }} className="text-black bg-white font-bold">-- Chọn lớp học --</option>
                 {classList.map((c) => (
-                  <option key={c.id} value={c.id} className="text-black bg-white font-bold">{c.name} ({c.studentCount} HS)</option>
+                  <option key={c.id} value={c.id} style={{ color: "#000", fontWeight: "bold" }} className="text-black bg-white font-bold">{c.name} ({c.studentCount} HS)</option>
                 ))}
               </select>
               <button onClick={startSession} className="flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700">
