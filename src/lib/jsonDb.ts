@@ -62,11 +62,8 @@ export interface DbSchema {
   bonusLedgers: BonusLedger[];
 }
 
-let memoryDb: DbSchema | null = null;
 
 function getDb(): DbSchema {
-  if (memoryDb) return memoryDb;
-  
   if (!fs.existsSync(DB_FILE)) {
     const initial: DbSchema = {
       presentations: [],
@@ -75,24 +72,20 @@ function getDb(): DbSchema {
       bonusLedgers: []
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf8');
-    memoryDb = initial;
     return initial;
   }
   try {
     const data = fs.readFileSync(DB_FILE, 'utf8');
-    memoryDb = JSON.parse(data);
-    return memoryDb as DbSchema;
+    return JSON.parse(data) as DbSchema;
   } catch (e) {
     console.error('Error parsing db.json', e);
-    memoryDb = { presentations: [], activities: [], classCodes: [], bonusLedgers: [] };
-    return memoryDb;
+    return { presentations: [], activities: [], classCodes: [], bonusLedgers: [] };
   }
 }
 
 function saveDb(data: DbSchema) {
-  memoryDb = data;
   fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-};
+}
 
 
 export const jsonDb = {
