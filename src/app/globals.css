@@ -24,3 +24,12 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+/* Vô hiệu hóa mọi làm mờ của trình duyệt */
+select, option, input {
+  color: #000 !important;
+  opacity: 1 !important;
+  font-weight: 800 !important;
+  -webkit-text-fill-color: #000 !important;
+}
