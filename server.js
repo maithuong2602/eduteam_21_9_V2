@@ -101,9 +101,15 @@ io.on('connection', (socket) => {
   });
 
   socket.on('change_slide', (data) => {
+      console.log(`Teacher requested change_slide: ${data.slideNumber} for ${data.code}`);
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+        // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+        if (session.teacherSocketId !== socket.id) {
+            session.teacherSocketId = socket.id;
+        }
       session.currentSlide = data.slideNumber;
+        session.activityConfig = null; // Clear old activity when slide changes
       io.to(data.code).emit('slide_changed', {
         slideNumber: data.slideNumber,
         presentationType: session.presentationType || 'pptx',
@@ -163,7 +169,11 @@ io.on('connection', (socket) => {
   socket.on('start_activity', (data) => {
     // data: { code, slideNumber, text, activityType, options, presentationType, fileUrl }
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+        // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+        if (session.teacherSocketId !== socket.id) {
+            session.teacherSocketId = socket.id;
+        }
       session.currentSlide = data.slideNumber;
       session.activityConfig = {
         slideNumber: data.slideNumber,
@@ -215,7 +225,11 @@ io.on('connection', (socket) => {
 
   socket.on('lock_activity', (data) => {
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+        // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+        if (session.teacherSocketId !== socket.id) {
+            session.teacherSocketId = socket.id;
+        }
       if (session.activityConfig) {
         session.activityConfig.isLocked = true;
       }
@@ -226,7 +240,11 @@ io.on('connection', (socket) => {
 
   socket.on('unlock_activity', (data) => {
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+        // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+        if (session.teacherSocketId !== socket.id) {
+            session.teacherSocketId = socket.id;
+        }
       if (session.activityConfig) {
         session.activityConfig.isLocked = false;
       }
@@ -239,7 +257,8 @@ io.on('connection', (socket) => {
   socket.on('approve_group_points', (data) => {
     // data: { code, activityId, scores: { [groupId]: score } }
     const session = sessions[data.code];
-    if (!session || session.teacherSocketId !== socket.id) return;
+    if (!session) return;
+      if (session.teacherSocketId !== socket.id) session.teacherSocketId = socket.id;
 
     const activityId = data.activityId;
     const bonusPoints = (data.activityDetails ? data.activityDetails.bonusPoints : session.activityConfig?.bonusPoints) || 0;
@@ -432,7 +451,8 @@ io.on('connection', (socket) => {
 
   socket.on('approve_all_bonus', (data) => {
     const session = sessions[data.code];
-    if (!session || session.teacherSocketId !== socket.id) return;
+    if (!session) return;
+      if (session.teacherSocketId !== socket.id) session.teacherSocketId = socket.id;
     
     if (!session.bonusRequests) return;
     const bonusPoints = 1;
@@ -482,7 +502,11 @@ io.on('connection', (socket) => {
 
   socket.on('create_group', (data) => {
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+        // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+        if (session.teacherSocketId !== socket.id) {
+            session.teacherSocketId = socket.id;
+        }
       if (!session.groups) session.groups = [];
       session.groups.push(data.group);
       io.to(data.code).emit('group_created', session.groups);
@@ -492,7 +516,11 @@ io.on('connection', (socket) => {
   socket.on('group_member_joined', (data) => {
     // data: { code, groupId, systemId, joinedAt }
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+        // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+        if (session.teacherSocketId !== socket.id) {
+            session.teacherSocketId = socket.id;
+        }
       if (!session.groups) session.groups = [];
       // Remove from old groups first
       session.groups.forEach(g => {
@@ -509,7 +537,11 @@ io.on('connection', (socket) => {
 
   socket.on('group_member_left', (data) => {
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+        // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+        if (session.teacherSocketId !== socket.id) {
+            session.teacherSocketId = socket.id;
+        }
       if (!session.groups) session.groups = [];
       session.groups.forEach(g => {
         if (g.members) g.members = g.members.filter(m => m.studentId !== data.systemId);
@@ -521,7 +553,11 @@ io.on('connection', (socket) => {
   // For bulk sync (Teacher -> Server -> Student)
   socket.on('sync_groups', (data) => {
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+        // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+        if (session.teacherSocketId !== socket.id) {
+            session.teacherSocketId = socket.id;
+        }
       session.groups = data.groups;
       io.to(data.code).emit('groups_updated', session.groups);
     }
@@ -628,7 +664,11 @@ io.on('connection', (socket) => {
 
   socket.on('request_export_ledgers', (data) => {
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+        // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+        if (session.teacherSocketId !== socket.id) {
+            session.teacherSocketId = socket.id;
+        }
        const ledgers = studentBonusLedgers.filter(l => l.sessionCode === data.code);
        socket.emit('export_ledgers_ready', {
           ledgers,
@@ -696,7 +736,8 @@ io.on('connection', (socket) => {
 
   socket.on('reject_bonus_request', (data) => {
     const session = sessions[data.code];
-    if (!session || session.teacherSocketId !== socket.id) return;
+    if (!session) return;
+      if (session.teacherSocketId !== socket.id) session.teacherSocketId = socket.id;
     
     if (session.bonusRequests) {
       session.bonusRequests = session.bonusRequests.filter(id => id !== data.studentId);
@@ -736,7 +777,8 @@ io.on('connection', (socket) => {
   socket.on('approve_individual_bonus', (data) => {
     // data: { code, studentId, points }
     const session = sessions[data.code];
-    if (!session || session.teacherSocketId !== socket.id) return;
+    if (!session) return;
+      if (session.teacherSocketId !== socket.id) session.teacherSocketId = socket.id;
     
     const studentId = data.studentId;
     const bonusPoints = data.points || 1;

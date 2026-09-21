@@ -114,18 +114,18 @@ export default function ClassificationBuilder({ activity, onSave, onClose }: any
 
           {activeTab === 'PREVIEW' && (
             <div className="bg-white rounded-xl shadow p-8 h-full flex flex-col">
-               <h3 className="text-xl font-bold text-center mb-8">BẢN XEM TRƯỚC HỌC SINH</h3>
+               <h3 className="text-xl font-bold text-center mb-8 text-black">BẢN XEM TRƯỚC HỌC SINH</h3>
                <div className="flex flex-wrap gap-3 justify-center mb-12 p-6 bg-gray-50 rounded-xl min-h-[150px] border-2 border-dashed border-gray-200">
                   {items.map(item => (
-                    <div key={item.id} className="bg-white border-2 border-gray-300 px-4 py-2 rounded-lg shadow-sm font-medium cursor-grab hover:border-blue-400 hover:shadow-md transition-all">
+                    <div key={item.id} className="bg-white border-2 border-gray-400 px-4 py-2 rounded-lg shadow-sm font-bold text-black cursor-grab hover:border-blue-500 hover:shadow-md transition-all">
                       {item.text}
                     </div>
                   ))}
                </div>
                <div className="flex gap-4 justify-center">
                  {groups.map(g => (
-                   <div key={g.id} className="w-64 bg-gray-50 border-2 border-gray-300 rounded-xl min-h-[250px] flex flex-col shadow-sm">
-                     <div className="bg-gray-200 py-3 font-bold text-center border-b-2 border-gray-300 rounded-t-lg">{g.name}</div>
+                   <div key={g.id} className="w-64 bg-gray-100 border-2 border-gray-400 rounded-xl min-h-[250px] flex flex-col shadow-sm text-black">
+                     <div className="bg-gray-200 py-3 font-extrabold text-center border-b-2 border-gray-400 rounded-t-lg text-black">{g.name}</div>
                      <div className="flex-1 p-3 flex flex-col gap-2"></div>
                    </div>
                  ))}

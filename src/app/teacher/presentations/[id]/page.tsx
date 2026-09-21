@@ -204,11 +204,12 @@ export default function PresentationDetail() {
   useEffect(() => {
     if (socket && sessionCode && isPresenting) {
       const currentSlideData = presentation?.slides?.find((s: any) => s.slideNumber === selectedSlide);
-      socket.emit('change_slide', {
-        code: sessionCode,
-        slideNumber: selectedSlide,
-        text: currentSlideData?.text || ''
-      });
+      console.log("Emitting change_slide", selectedSlide);
+        socket.emit('change_slide', {
+          code: sessionCode,
+          slideNumber: selectedSlide,
+          text: currentSlideData?.text || ''
+        });
     }
   }, [selectedSlide, socket, sessionCode, isPresenting, presentation]);
 
@@ -641,8 +642,10 @@ export default function PresentationDetail() {
         bonusPoints: currentActivity.bonusPoints || 0,
         endTime: Date.now() + timerDuration * 1000,
         items: currentActivity.items,
-        categories: currentActivity.categories,
-        options: currentActivity.options || [
+          categories: currentActivity.categories,
+          groups: currentActivity.groups,
+          settings: currentActivity.settings,
+          options: currentActivity.options || [
            { id: 1, text: "Đáp án A", isCorrect: true },
            { id: 2, text: "Đáp án B", isCorrect: false },
            { id: 3, text: "Đáp án C", isCorrect: false },

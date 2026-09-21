@@ -251,7 +251,7 @@ export default function StudentSessionPage() {
         <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-md mb-6 animate-pulse">
           <span className="text-2xl font-bold text-blue-600">{studentName.charAt(0)}</span>
         </div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">Xin chào, {realStudentName || studentName}!</h2>
+        <h2 className="text-2xl font-bold text-black font-extrabold mb-2">Xin chào, {realStudentName || studentName}!</h2>
         <p className="text-gray-600">Bạn đã vào lớp thành công. Hãy đợi giáo viên bắt đầu hoạt động nhé.</p>
       </div>
     );
@@ -395,7 +395,7 @@ export default function StudentSessionPage() {
         {/* Slide Text Display */}
         <div className="bg-white p-2 md:p-6 rounded-2xl shadow-sm border border-gray-200 mb-6 flex-1 min-h-[200px] overflow-hidden">
           {activity.fileUrl ? (
-            <PdfViewer url={activity.fileUrl} pageNumber={activity.slideNumber} />
+            <PdfViewer key={activity.slideNumber} url={activity.fileUrl} pageNumber={activity.slideNumber} />
           ) : (
             <div className="text-xl md:text-2xl font-medium text-black whitespace-pre-wrap font-bold leading-relaxed">
               {activity.text || "Nội dung slide..."}
@@ -447,7 +447,7 @@ export default function StudentSessionPage() {
                         onDragStart={(e) => {
                           e.dataTransfer.setData('itemId', item.id);
                         }}
-                        className={`bg-white border-2 border-blue-400 px-4 py-2 rounded-lg shadow-sm font-bold text-gray-800 ${!isLocked && !submitted ? 'cursor-grab hover:shadow-md hover:-translate-y-1' : 'opacity-50 cursor-not-allowed'} transition-all`}
+                        className={`bg-white border-2 border-blue-400 px-4 py-2 rounded-lg shadow-sm font-bold text-black font-extrabold ${!isLocked && !submitted ? 'cursor-grab hover:shadow-md hover:-translate-y-1' : 'opacity-50 cursor-not-allowed'} transition-all`}
                       >
                         {item.text}
                       </div>
@@ -462,7 +462,7 @@ export default function StudentSessionPage() {
                     return (
                       <div 
                         key={group.id}
-                        className="bg-gray-50 border-2 border-gray-300 rounded-xl overflow-hidden flex flex-col shadow-sm"
+                        className="bg-gray-100 border-2 border-gray-500 text-black rounded-xl overflow-hidden flex flex-col shadow-sm"
                         onDragOver={e => e.preventDefault()}
                         onDrop={e => {
                           e.preventDefault();
@@ -473,7 +473,7 @@ export default function StudentSessionPage() {
                           }
                         }}
                       >
-                        <div className="bg-gray-200 py-3 font-bold text-center border-b-2 border-gray-300 text-gray-800">
+                        <div className="bg-gray-200 py-3 font-extrabold text-black text-center border-b-2 border-gray-500 text-lg text-black font-extrabold">
                           {group.name}
                         </div>
                         <div className="flex-1 p-4 flex flex-col gap-2 min-h-[150px]">
@@ -484,7 +484,7 @@ export default function StudentSessionPage() {
                               onDragStart={(e) => {
                                 e.dataTransfer.setData('itemId', item.id);
                               }}
-                              className={`bg-white border-2 border-gray-300 px-3 py-2 rounded text-gray-800 shadow-sm font-medium ${(!isLocked && !submitted && activity.settings?.allowMoveBack !== false) ? 'cursor-grab hover:border-blue-400' : ''}`}
+                              className={`bg-white border-2 border-gray-500 px-3 py-2 rounded text-black font-extrabold shadow-sm font-medium ${(!isLocked && !submitted && activity.settings?.allowMoveBack !== false) ? 'cursor-grab hover:border-blue-400' : ''}`}
                             >
                               {item.text}
                             </div>
@@ -524,7 +524,7 @@ export default function StudentSessionPage() {
                     className={`p-4 rounded-xl border-2 text-left text-lg transition-all ${
                       isSelected 
                         ? "border-blue-500 bg-blue-50 text-blue-800 font-medium" 
-                        : "border-gray-300 bg-white text-black hover:border-blue-400 font-medium shadow-sm"
+                        : "border-gray-500 bg-white text-black hover:border-blue-400 font-medium shadow-sm"
                     } ${(submitted || isLocked) && !isSelected ? "opacity-50" : ""}`}
                   >
                     {opt.text}
@@ -572,7 +572,7 @@ export default function StudentSessionPage() {
                 value={selectedAnswers[0] || ''}
                 onChange={(e) => setSelectedAnswers([e.target.value])}
                 rows={4}
-                className="w-full p-4 rounded-xl border-2 text-lg font-medium text-black bg-white transition-all border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none disabled:opacity-50 disabled:bg-gray-100"
+                className="w-full p-4 rounded-xl border-2 text-lg font-medium text-black bg-white transition-all border-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none disabled:opacity-50 disabled:bg-gray-100"
               />
               {activity?.mode !== "GROUP" && (
                 <button
@@ -597,7 +597,7 @@ export default function StudentSessionPage() {
                 disabled={submitted || isLocked}
                 value={selectedAnswers[0] || ''}
                 onChange={(e) => setSelectedAnswers([e.target.value])}
-                className="w-full p-4 rounded-xl border-2 text-lg transition-all border-gray-300 focus:border-blue-500 outline-none disabled:opacity-50"
+                className="w-full p-4 rounded-xl border-2 text-lg transition-all border-gray-500 focus:border-blue-500 outline-none disabled:opacity-50"
               />
               {activity?.mode !== "GROUP" && (
               <button
