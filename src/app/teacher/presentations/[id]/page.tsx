@@ -643,9 +643,9 @@ export default function PresentationDetail() {
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
               >
-                <option value="">-- Chọn lớp học --</option>
+                <option value="" className="text-black bg-white font-bold">-- Chọn lớp học --</option>
                 {classList.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name} ({c.studentCount} HS)</option>
+                  <option key={c.id} value={c.id} className="text-black bg-white font-bold">{c.name} ({c.studentCount} HS)</option>
                 ))}
               </select>
               <button onClick={startSession} className="flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-700">
@@ -808,8 +808,8 @@ export default function PresentationDetail() {
                           [currentActivityId as string]: { ...prev[currentActivityId as string], mode: e.target.value }
                         }))}
                       >
-                        <option value="INDIVIDUAL">Cá nhân</option>
-                        <option value="GROUP">Theo nhóm</option>
+                        <option className="text-black bg-white font-bold" value="INDIVIDUAL">Cá nhân</option>
+                        <option className="text-black bg-white font-bold" value="GROUP">Theo nhóm</option>
                       </select>
                     </div>
                     <div className="flex-1">
@@ -837,9 +837,9 @@ export default function PresentationDetail() {
                           [currentActivityId as string]: { ...prev[currentActivityId as string], bonusType: e.target.value }
                         }))}
                       >
-                        <option value="NONE">Không có</option>
-                        <option value="INDIVIDUAL">Cá nhân</option>
-                        <option value="GROUP">Nhóm</option>
+                        <option className="text-black bg-white font-bold" value="NONE">Không có</option>
+                        <option className="text-black bg-white font-bold" value="INDIVIDUAL">Cá nhân</option>
+                        <option className="text-black bg-white font-bold" value="GROUP">Nhóm</option>
                       </select>
                     </div>
                     <div className="flex-1">

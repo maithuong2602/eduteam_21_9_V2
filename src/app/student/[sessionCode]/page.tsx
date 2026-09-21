@@ -408,9 +408,9 @@ export default function StudentSessionPage() {
                     disabled={isLocked || workspaceStatus === "SUBMITTED"}
                     className="border-2 border-blue-200 p-2 rounded-lg outline-none focus:border-blue-500 min-w-[150px]"
                   >
-                    <option value="">-- Chọn --</option>
+                    <option className="text-black bg-white font-bold" value="">-- Chọn --</option>
                     {activity.categories?.map((cat: string) => (
-                      <option key={cat} value={cat}>{cat}</option>
+                      <option className="text-black bg-white font-bold" key={cat} value={cat}>{cat}</option>
                     ))}
                   </select>
                 </div>
@@ -512,9 +512,9 @@ export default function StudentSessionPage() {
               }}
               value={selectedViewGroup?.id || ""}
             >
-              <option value="" disabled>-- Bấm để chọn nhóm --</option>
+              <option className="text-black bg-white font-bold" value="" disabled>-- Bấm để chọn nhóm --</option>
               {availableGroups.map(g => (
-                <option key={g.id} value={g.id}>{g.name}</option>
+                <option className="text-black bg-white font-bold" key={g.id} value={g.id}>{g.name}</option>
               ))}
             </select>
             
