@@ -232,16 +232,15 @@ export default function PresentationDetail() {
   }, [selectedClass]);
 
   useEffect(() => {
-    // Basic mock data for id "1"
     if (id === "1") {
       setPresentation({
         id: "1",
-        title: "Bài 1: Giới thiệu chung",
+        title: "BÃ i 1: Giá»›i thiá»‡u chung",
         totalSlides: 12,
         type: 'pptx',
         slides: Array.from({ length: 12 }).map((_, i) => ({
           slideNumber: i + 1,
-          text: `Nội dung demo của slide ${i + 1}\n\nĐây là trích xuất văn bản từ PowerPoint. Giáo viên có thể xem trước nội dung ở đây.`
+          text: `Ná»™i dung demo cá»§a slide ${i + 1}\n\nÄ Ã¢y lÃ  trÃ­ch xuáº¥t vÄƒn báº£n tá»« PowerPoint. GiÃ¡o viÃªn cÃ³ thá»ƒ xem trÆ°á»›c ná»™i dung á»Ÿ Ä‘Ã¢y.`
         }))
       });
       setActivities({
@@ -250,15 +249,26 @@ export default function PresentationDetail() {
       });
       setSelectedSlide(3);
     } else {
-      // Try to load dynamically uploaded presentation
-      const stored = sessionStorage.getItem(`eduteam_pres_${id}`);
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored);
-          setPresentation(parsed);
-          setSelectedSlide(parsed.slides?.[0]?.slideNumber || 1);
-        } catch (e) {}
-      }
+      fetch(`/api/presentations/${id}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.presentation) {
+            setPresentation(data.presentation);
+            setSelectedSlide(1);
+            if (data.activities && data.activities.length > 0) {
+               const actsObj: any = {};
+               const slideActsObj: any = {};
+               data.activities.forEach((act: any) => {
+                 actsObj[act.id] = act;
+                 if (!slideActsObj[act.slideId]) slideActsObj[act.slideId] = [];
+                 slideActsObj[act.slideId].push(act.id);
+               });
+               setActivities(actsObj);
+               setSlideActivities(slideActsObj);
+            }
+          }
+        })
+        .catch(console.error);
     }
     
     // Setup socket
