@@ -377,16 +377,20 @@ export default function PresentationDetail() {
            };
         });
         
-        const activityRows = Object.values(activities).map((act: any) => ({
-          "Activity_ID": act.id,
-          "Tên hoạt động": act.name || `Slide ${act.slideNumber}`,
-          "Loại hoạt động": act.type,
-          "Thời gian": act.duration || 0,
-          "Điểm": act.points || 1,
-          "Chế độ làm bài": act.mode === 'GROUP' ? 'Theo nhóm' : 'Cá nhân',
-          "Bonus Type": act.bonusType || 'NONE',
-          "Bonus Points": act.bonusPoints || 0
-        }));
+        const activityRows = (data.validStudents || presentation?.validStudents || classStudents)?.map((st: any) => {
+           const row: any = {
+             "Mã HS": st.systemId || st.id,
+             "Tên HS": st.name,
+             "Lớp": data.className || "N/A",
+             "Nhóm": (data.groups || groups).find((g: any) => g.members && g.members.some((m: any) => m.studentId === st.id))?.name || "Chưa có nhóm"
+           };
+           data.history.forEach((h: any) => {
+             const actName = h.name || `Slide ${h.slideNumber}`;
+             const studentAns = (h.responses && (h.responses[st.systemId] || h.responses[st.id])) || '';
+             row[`Đáp án ${actName}`] = studentAns;
+           });
+           return row;
+        });
 
         const wb = xlsx.utils.book_new();
         const wsTongHop = xlsx.utils.json_to_sheet(rows || []);
@@ -494,15 +498,35 @@ export default function PresentationDetail() {
       pointsMap: newApproved,
       typesMap,
       activityDetails: {
-        slideNumber: selectedSlide,
-        type: currentActivity.type,
-        name: currentActivity.name || `HD${selectedSlide}`,
-        mode: currentActivity.mode || 'INDIVIDUAL',
-        bonusType: currentActivity.bonusType || 'NONE',
-        bonusPoints: currentActivity.bonusPoints || 0,
-        date: new Date().toLocaleString('vi-VN'),
-        responses: responses
-      }
+          slideNumber: selectedSlide,
+          type: currentActivity.type,
+          name: currentActivity.name || `HD${selectedSlide}`,
+          mode: currentActivity.mode || 'INDIVIDUAL',
+          bonusType: currentActivity.bonusType || 'NONE',
+          bonusPoints: currentActivity.bonusPoints || 0,
+          date: new Date().toLocaleString('vi-VN'),
+          responses: (() => {
+             const formatted: Record<string, any> = {};
+             Object.entries(responses).forEach(([socketId, ans]) => {
+                const student = students.find(s => s.id === socketId);
+                const sysId = student ? student.systemId : socketId;
+                
+                let ansText = typeof ans === 'object' ? JSON.stringify(ans) : String(ans);
+                if (currentActivity?.type === 'MULTIPLE_CHOICE') {
+                  const ansIds = Array.isArray(ans) ? ans : [ans];
+                  ansText = ansIds.map((optId: any) => {
+                    const idx = (currentActivity.options || []).findIndex((o:any) => o.id === optId);
+                    return idx >= 0 ? String.fromCharCode(65 + idx) : '';
+                  }).join(', ');
+                } else if (currentActivity?.type === 'WORD_CLOUD' || currentActivity?.type === 'SHORT_ANSWER') {
+                  ansText = Array.isArray(ans) ? ans.join(', ') : String(ans);
+                }
+                
+                formatted[sysId] = ansText;
+             });
+             return formatted;
+          })()
+        }
     });
     alert("Đã duyệt điểm thành công! Học sinh đã nhận được cúp!");
   };
