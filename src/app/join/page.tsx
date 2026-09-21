@@ -16,7 +16,7 @@ export default function StudentJoin() {
       sessionStorage.setItem("eduteam_session", code);
       sessionStorage.setItem("eduteam_student_name", name); // This is the ID
       
-      const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || undefined);
+      const socket = io(undefined);
       socket.emit('join_session', { code, name });
 
       socket.on('join_error', (data: any) => {

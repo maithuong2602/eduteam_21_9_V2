@@ -237,7 +237,7 @@ export default function PresentationDetail() {
     }
     
     // Setup socket
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || undefined);
+    const newSocket = io(undefined);
     setSocket(newSocket);
     
     newSocket.on("session_created", (data) => {
@@ -639,7 +639,7 @@ export default function PresentationDetail() {
           ) : (
             <>
               <select 
-                className="border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 py-2 pl-3 pr-8 border outline-none"
+                className="border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 py-2 pl-3 pr-8 border outline-none text-black font-bold"
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
               >
@@ -1081,7 +1081,7 @@ export default function PresentationDetail() {
                               <div className="grid grid-cols-2 gap-2">
                                 {haiSon.map((cName: any) => (
                                   <div key={cName} className="flex items-center justify-between p-2 border border-gray-200 rounded-lg hover:bg-indigo-50 hover:border-indigo-200 cursor-pointer transition-colors text-sm shadow-sm" onClick={() => setSelectedClassForModal(cName)}>
-                                    <span className="font-bold text-gray-700">Lớp {cName}</span>
+                                    <span className="font-bold text-black">Lớp {cName}</span>
                                     <ChevronRight className="w-4 h-4 text-gray-400" />
                                   </div>
                                 ))}
@@ -1124,7 +1124,7 @@ export default function PresentationDetail() {
                       return (
                         <div key={s.id} className="flex items-center justify-between p-2 border rounded hover:bg-gray-50">
                           <div className="flex items-center">
-                            <span className="font-medium text-sm">{s.name}</span>
+                            <span className="font-bold text-black text-sm">{s.name}</span>
                           </div>
                           <button
                             onClick={() => {
@@ -1167,14 +1167,14 @@ export default function PresentationDetail() {
                         value={g.name} 
                         onChange={(e) => updateGroupName(g.id, e.target.value)}
                         onClick={(e) => e.stopPropagation()}
-                        className="font-bold text-lg mb-2 border-b border-dashed border-gray-300 bg-transparent focus:outline-none focus:border-indigo-500 w-full"
+                        className="font-bold text-lg mb-2 border-b border-dashed border-gray-300 bg-transparent focus:outline-none focus:border-indigo-500 w-full text-black placeholder-gray-500"
                       />
                       <div className="text-sm text-gray-500 mb-2 font-medium">Thành viên ({g.members.length}):</div>
                       <div className="flex flex-wrap gap-2">
                         {g.members.map((m: any) => {
                           const sInfo = allStudentsFromExcel.find(vs => vs.id === m.studentId) || presentation?.validStudents?.find((vs: any) => vs.systemId === m.studentId);
                           return (
-                            <span key={m.studentId} className="bg-white border border-gray-300 px-2 py-1 rounded-md text-xs shadow-sm flex items-center">
+                            <span key={m.studentId} className="bg-white border border-gray-300 px-2 py-1 rounded-md text-xs font-semibold text-black shadow-sm flex items-center">
                               {sInfo ? sInfo.name : (m.name || m.studentId)}
                               <button 
                                 onClick={(e) => { e.stopPropagation(); assignStudentToGroup(m.studentId, 'NONE'); }}

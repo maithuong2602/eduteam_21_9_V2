@@ -96,7 +96,7 @@ export default function StudentSessionPage() {
     }
     setStudentName(name);
 
-    const newSocket = io(process.env.NEXT_PUBLIC_SOCKET_URL || undefined);
+    const newSocket = io(undefined);
     setSocket(newSocket);
 
     newSocket.on("connect", () => {
@@ -388,7 +388,7 @@ export default function StudentSessionPage() {
           {activity.fileUrl ? (
             <PdfViewer url={activity.fileUrl} pageNumber={activity.slideNumber} />
           ) : (
-            <div className="text-xl md:text-2xl font-medium text-gray-800 whitespace-pre-wrap leading-relaxed">
+            <div className="text-xl md:text-2xl font-medium text-black whitespace-pre-wrap font-bold leading-relaxed">
               {activity.text || "Nội dung slide..."}
             </div>
           )}
@@ -397,11 +397,11 @@ export default function StudentSessionPage() {
         {/* Interaction Area */}
         {activity.type === "CLASSIFICATION" && (
           <div className="space-y-4">
-            <h3 className="font-semibold text-gray-700 text-lg mb-2">Phân loại các mục sau:</h3>
+            <h3 className="font-semibold text-black text-lg mb-2">Phân loại các mục sau:</h3>
             <div className="grid grid-cols-1 gap-3">
               {activity.items?.map((item: string) => (
                 <div key={item} className="flex justify-between items-center p-3 border border-gray-200 rounded-xl bg-white shadow-sm">
-                  <span className="font-medium text-gray-700">{item}</span>
+                  <span className="font-bold text-black">{item}</span>
                   <select
                     value={workspaceState[item] || ""}
                     onChange={(e) => handleWorkspaceChange(item, e.target.value)}
@@ -421,7 +421,7 @@ export default function StudentSessionPage() {
 
         {activity.type === "MULTIPLE_CHOICE" && (
           <div className="space-y-4">
-            <h3 className="font-semibold text-gray-700 text-lg mb-2">Chọn đáp án của bạn:</h3>
+            <h3 className="font-semibold text-black text-lg mb-2">Chọn đáp án của bạn:</h3>
             <div className="grid grid-cols-1 gap-3">
               {activity.options?.map((opt: any) => {
                 const isSelected = selectedAnswers.includes(opt.id);
@@ -433,7 +433,7 @@ export default function StudentSessionPage() {
                     className={`p-4 rounded-xl border-2 text-left text-lg transition-all ${
                       isSelected 
                         ? "border-blue-500 bg-blue-50 text-blue-800 font-medium" 
-                        : "border-gray-200 bg-white text-gray-700 hover:border-blue-300"
+                        : "border-gray-300 bg-white text-black hover:border-blue-400 font-medium shadow-sm"
                     } ${(submitted || isLocked) && !isSelected ? "opacity-50" : ""}`}
                   >
                     {opt.text}
@@ -474,7 +474,7 @@ export default function StudentSessionPage() {
 
         {activity.type === "WORD_CLOUD" && (
             <div className="space-y-4">
-              <h3 className="font-semibold text-gray-700 text-lg mb-2">Nhập từ khóa của bạn:</h3>
+              <h3 className="font-semibold text-black text-lg mb-2">Nhập từ khóa của bạn:</h3>
               <input
                 type="text"
                 placeholder="Ví dụ: công nghệ, AI..."
