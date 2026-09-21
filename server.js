@@ -287,6 +287,18 @@ io.on('connection', (socket) => {
            historyRecord.pointsRecord[primaryId] = scoreObj;
            if (!session.studentPoints) session.studentPoints = {};
            session.studentPoints[primaryId] = (session.studentPoints[primaryId] || 0) + scoreObj;
+             
+             saveLedger({
+               ledgerId: 'LED_' + Date.now() + '_' + (validSt ? validSt.id : studentId),
+               studentId: (validSt ? validSt.id : studentId),
+               sessionCode: data.code,
+               classId: session.classId,
+               activityId: activityId,
+               points: scoreObj,
+               reason: 'ACTIVITY_SCORE',
+               groupId: groupId,
+               createdAt: Date.now()
+             });
 
            const onlineStudent = session.students.find(s => s.systemId === primaryId || s.id === studentId);
            if (onlineStudent) {
@@ -366,6 +378,18 @@ io.on('connection', (socket) => {
         const systemId = student.systemId;
         session.studentPoints[systemId] = (session.studentPoints[systemId] || 0) + points;
         activityPointsRecord[systemId] = points;
+        
+        saveLedger({
+          ledgerId: 'LED_' + Date.now() + '_' + student.id,
+          studentId: student.id,
+          sessionCode: data.code,
+          classId: session.classId,
+          activityId: 'ACTIVITY_SCORE',
+          points: points,
+          reason: 'ACTIVITY_SCORE',
+          groupId: null,
+          createdAt: Date.now()
+        });
       }
     }
 

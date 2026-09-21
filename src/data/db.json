@@ -1,6 +1,171 @@
 {
   "presentations": [],
   "activities": [],
-  "classCodes": [],
+  "classCodes": [
+    {
+      "classId": "CLS001",
+      "code": "DUP1MH"
+    },
+    {
+      "classId": "CLS002",
+      "code": "WT6ZY4"
+    },
+    {
+      "classId": "CLS003",
+      "code": "623IQ4"
+    },
+    {
+      "classId": "CLS004",
+      "code": "I0LPQE"
+    },
+    {
+      "classId": "CLS005",
+      "code": "YWI3XI"
+    },
+    {
+      "classId": "CLS006",
+      "code": "F66F6H"
+    },
+    {
+      "classId": "CLS021",
+      "code": "MQLR0L"
+    },
+    {
+      "classId": "CLS022",
+      "code": "29CZAP"
+    },
+    {
+      "classId": "CLS023",
+      "code": "WLHKDZ"
+    },
+    {
+      "classId": "CLS024",
+      "code": "S9PG25"
+    },
+    {
+      "classId": "CLS025",
+      "code": "H7L4QF"
+    },
+    {
+      "classId": "CLS026",
+      "code": "NGBV73"
+    },
+    {
+      "classId": "CLS041",
+      "code": "0C85N9"
+    },
+    {
+      "classId": "CLS042",
+      "code": "0BNM62"
+    },
+    {
+      "classId": "CLS043",
+      "code": "AII3XD"
+    },
+    {
+      "classId": "CLS044",
+      "code": "LH75DA"
+    },
+    {
+      "classId": "CLS045",
+      "code": "2XENTY"
+    },
+    {
+      "classId": "CLS046",
+      "code": "AND9XQ"
+    },
+    {
+      "classId": "CLS061",
+      "code": "FGDKB7"
+    },
+    {
+      "classId": "CLS062",
+      "code": "FWQYGZ"
+    },
+    {
+      "classId": "CLS063",
+      "code": "EG2G3D"
+    },
+    {
+      "classId": "CLS064",
+      "code": "TO35EO"
+    },
+    {
+      "classId": "CLS065",
+      "code": "EXEQPX"
+    },
+    {
+      "classId": "CLS066",
+      "code": "1MJ7P7"
+    },
+    {
+      "classId": "CLS007",
+      "code": "VB39NE"
+    },
+    {
+      "classId": "CLS008",
+      "code": "A33DUX"
+    },
+    {
+      "classId": "CLS009",
+      "code": "0YGWIC"
+    },
+    {
+      "classId": "CLS010",
+      "code": "WYQC0G"
+    },
+    {
+      "classId": "CLS027",
+      "code": "I46N79"
+    },
+    {
+      "classId": "CLS028",
+      "code": "EHQGUG"
+    },
+    {
+      "classId": "CLS029",
+      "code": "0C6QZS"
+    },
+    {
+      "classId": "CLS030",
+      "code": "14A4CU"
+    },
+    {
+      "classId": "CLS047",
+      "code": "LL7GSD"
+    },
+    {
+      "classId": "CLS048",
+      "code": "SRDDHV"
+    },
+    {
+      "classId": "CLS049",
+      "code": "CHMA8C"
+    },
+    {
+      "classId": "CLS050",
+      "code": "JN23YA"
+    },
+    {
+      "classId": "CLS067",
+      "code": "86W58H"
+    },
+    {
+      "classId": "CLS068",
+      "code": "AUKWBI"
+    },
+    {
+      "classId": "CLS069",
+      "code": "U13QEN"
+    },
+    {
+      "classId": "CLS070",
+      "code": "QB3KTV"
+    },
+    {
+      "classId": "CLS071",
+      "code": "0NW3I9"
+    }
+  ],
   "bonusLedgers": []
 }
