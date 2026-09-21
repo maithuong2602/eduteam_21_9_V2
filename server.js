@@ -189,6 +189,8 @@ io.on('connection', (socket) => {
         options: data.options,
         items: data.items,
         categories: data.categories,
+        groups: data.groups,
+        settings: data.settings,
         presentationType: data.presentationType,
         fileUrl: data.fileUrl
       };
