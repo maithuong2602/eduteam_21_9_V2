@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import ClassificationBuilder from "@/components/ClassificationBuilder";
 import { useParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 import { ArrowLeft, Play, Settings, Type, Plus, X, AlignLeft, CheckSquare, List, GripHorizontal, Users, ChevronLeft, ChevronRight, Lock, Unlock, Clock, Cloud, Trophy } from "lucide-react";
@@ -76,6 +77,7 @@ export default function PresentationDetail() {
   const [groupApprovalModal, setGroupApprovalModal] = useState<{ groupId: string, name: string, members: any[], selectedMembers: string[] } | null>(null);
   const [showGroupModal, setShowGroupModal] = useState(false);
   const [selectedClassForModal, setSelectedClassForModal] = useState<string | null>(null);
+  const [showClassificationBuilder, setShowClassificationBuilder] = useState(false);
   const [groups, setGroups] = useState<any[]>([]);
 
   const [allStudentsFromExcel, setAllStudentsFromExcel] = useState<any[]>([]);
@@ -471,25 +473,54 @@ export default function PresentationDetail() {
     const points = currentActivity.points || 1;
     
     const newApproved: Record<string, number> = {};
-    const typesMap: Record<string, 'FULL' | 'PARTIAL'> = {};
+    const typesMap: Record<string, 'FULL' | 'PARTIAL' | 'INCORRECT'> = {};
     
     Object.entries(responses).forEach(([socketId, ans]) => {
       let isCorrect = false;
       if (currentActivity.type === "MULTIPLE_CHOICE") {
-        const correctIds = (currentActivity.options || []).filter((o:any) => o.isCorrect).map((o:any) => o.id);
-        const studentAnsIds = Array.isArray(ans) ? ans : [ans];
-        isCorrect = correctIds.length > 0 && correctIds.length === studentAnsIds.length && correctIds.every((id:any) => studentAnsIds.includes(id));
-      } else if (currentActivity.type === "WORD_CLOUD" || currentActivity.type === "SHORT_ANSWER") {
-        isCorrect = Array.isArray(ans) ? ans.length > 0 && ans[0] !== "" : ans !== "";
-      }
+          const correctIds = (currentActivity.options || []).filter((o:any) => o.isCorrect).map((o:any) => o.id);
+          const studentAnsIds = Array.isArray(ans) ? ans : [ans];
+          isCorrect = correctIds.length > 0 && correctIds.length === studentAnsIds.length && correctIds.every((id:any) => studentAnsIds.includes(id));
+        } else if (currentActivity.type === "WORD_CLOUD" || currentActivity.type === "SHORT_ANSWER") {
+          isCorrect = Array.isArray(ans) ? ans.length > 0 && ans[0] !== "" : ans !== "";
+        } else if (currentActivity.type === "CLASSIFICATION") {
+          // CLASSIFICATION scoring: 
+          // ans is a workspaceState object mapping itemId -> groupId.
+          // Calculate partial correctness: what % of items are in the correct group?
+          const items = currentActivity.items || [];
+          let correctCount = 0;
+          let totalItems = items.length;
+          if (totalItems > 0 && typeof ans === 'object') {
+             items.forEach((item: any) => {
+               if (ans[item.id] === item.correctGroupId) correctCount++;
+             });
+             isCorrect = correctCount === totalItems;
+          }
+        }
       
       if (type === 'all') {
         newApproved[socketId] = points;
         typesMap[socketId] = 'FULL';
       } else if (type === 'correct_only') {
-        newApproved[socketId] = isCorrect ? points : (points * 0.5);
-        typesMap[socketId] = isCorrect ? 'FULL' : 'PARTIAL';
-      }
+          if (currentActivity.type === "CLASSIFICATION") {
+             const items = currentActivity.items || [];
+             let correctCount = 0;
+             if (items.length > 0 && typeof ans === 'object') {
+                items.forEach((item: any) => {
+                   if (ans[item.id] === item.correctGroupId) correctCount++;
+                });
+                const proportionalPoints = Math.round((correctCount / items.length) * points);
+                newApproved[socketId] = proportionalPoints;
+                typesMap[socketId] = correctCount === items.length ? 'FULL' : (correctCount > 0 ? 'PARTIAL' : 'INCORRECT');
+             } else {
+                newApproved[socketId] = 0;
+                typesMap[socketId] = 'INCORRECT';
+             }
+          } else {
+             newApproved[socketId] = isCorrect ? points : (points * 0.5);
+             typesMap[socketId] = isCorrect ? 'FULL' : 'PARTIAL';
+          }
+        }
     });
 
     setApprovedPoints(newApproved);
@@ -520,7 +551,39 @@ export default function PresentationDetail() {
                   }).join(', ');
                 } else if (currentActivity?.type === 'WORD_CLOUD' || currentActivity?.type === 'SHORT_ANSWER') {
                   ansText = Array.isArray(ans) ? ans.join(', ') : String(ans);
-                }
+                } else if (currentActivity?.type === 'CLASSIFICATION') {
+                  if (typeof ans === 'object' && ans !== null && !Array.isArray(ans)) {
+                     const items = currentActivity.items || [];
+                     const groups = currentActivity.groups || [];
+                     const lines: string[] = [];
+                     items.forEach((it: any) => {
+                        const placedGroupId = ans[it.id];
+                        if (placedGroupId) {
+                           const gName = groups.find((g:any) => g.id === placedGroupId)?.name || placedGroupId;
+                           lines.push(`${it.text} → ${gName}`);
+                        } else {
+                           lines.push(`${it.text} → (Chưa phân loại)`);
+                        }
+                     });
+                     ansText = lines.join('\n');
+                  }
+                } else if (currentActivity?.type === 'CLASSIFICATION') {
+                            if (typeof ans === 'object' && ans !== null && !Array.isArray(ans)) {
+                               const items = currentActivity.items || [];
+                               const groups = currentActivity.groups || [];
+                               const lines: string[] = [];
+                               items.forEach((it: any) => {
+                                  const placedGroupId = ans[it.id];
+                                  if (placedGroupId) {
+                                     const gName = groups.find((g:any) => g.id === placedGroupId)?.name || placedGroupId;
+                                     lines.push(`${it.text} → ${gName}`);
+                                  } else {
+                                     lines.push(`${it.text} → (Chưa phân loại)`);
+                                  }
+                               });
+                               ansText = lines.join('\n');
+                            }
+                          }
                 
                 formatted[sysId] = ansText;
              });
@@ -545,8 +608,23 @@ export default function PresentationDetail() {
   };
 
   const startActivityForCurrentSlide = () => {
-    if (socket && sessionCode && currentActivityId && activities[currentActivityId]) {
-      const currentActivity = activities[currentActivityId];
+      if (socket && sessionCode && currentActivityId && activities[currentActivityId]) {
+        const currentActivity = activities[currentActivityId];
+        
+        // Validation for CLASSIFICATION
+        if (currentActivity.type === 'CLASSIFICATION') {
+          if (!currentActivity.groups || currentActivity.groups.length < 2) return alert('Hoạt động Phân loại phải có ít nhất 2 nhóm.');
+          if (!currentActivity.items || currentActivity.items.length === 0) return alert('Hoạt động Phân loại phải có ít nhất 1 mục.');
+          for (const g of currentActivity.groups) {
+             if (!g.name || g.name.trim() === '') return alert('Tên nhóm không được để trống.');
+          }
+          for (const i of currentActivity.items) {
+             if (!i.text || i.text.trim() === '') return alert('Nội dung mục không được để trống.');
+             if (!i.correctGroupId) return alert(`Đối tượng '${i.text}' chưa được xác định nhóm đúng.`);
+             if (!currentActivity.groups.some((g: any) => g.id === i.correctGroupId)) return alert(`Đối tượng '${i.text}' đang thuộc một nhóm không tồn tại.`);
+          }
+        }
+
       const currentSlideData = presentation.slides?.find((s: any) => s.slideNumber === selectedSlide);
       socket.emit("start_activity", {
         code: sessionCode,
@@ -624,8 +702,12 @@ export default function PresentationDetail() {
           { id: 3, text: 'Đáp án C', isCorrect: false },
           { id: 4, text: 'Đáp án D', isCorrect: false }
         ] : undefined,
-        items: type === 'CLASSIFICATION' ? ['Bàn phím', 'Chuột', 'Micro', 'Màn hình', 'Máy in', 'USB'] : undefined,
-        categories: type === 'CLASSIFICATION' ? ['INPUT', 'OUTPUT', 'STORAGE'] : undefined
+        groups: type === 'CLASSIFICATION' ? [{ id: 'G1', name: 'THIẾT BỊ NHẬP' }, { id: 'G2', name: 'THIẾT BỊ XUẤT' }] : undefined,
+          items: type === 'CLASSIFICATION' ? [
+            { id: 'I1', text: 'Bàn phím', correctGroupId: 'G1' }, 
+            { id: 'I2', text: 'Chuột', correctGroupId: 'G1' }, 
+            { id: 'I3', text: 'Màn hình', correctGroupId: 'G2' }
+          ] : undefined
       }
     }));
     setSlideActivities(prev => ({
@@ -918,7 +1000,21 @@ export default function PresentationDetail() {
                   </div>
                 </div>
 
-                {currentActivity.type === "MULTIPLE_CHOICE" && (
+                {currentActivity.type === "CLASSIFICATION" && (
+                    <div className="space-y-4">
+                      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 flex flex-col items-center text-center">
+                        <h4 className="font-bold text-blue-800 mb-2">Trình tạo Phân loại</h4>
+                        <p className="text-sm text-blue-600 mb-4">Thiết kế các nhóm và mục kéo thả trực quan cho học sinh</p>
+                        <button 
+                          onClick={() => setShowClassificationBuilder(true)}
+                          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow-sm transition-colors w-full"
+                        >
+                          Mở bộ thiết lập
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  {currentActivity.type === "MULTIPLE_CHOICE" && (
                   <div className="space-y-4">
 
                     
@@ -1101,7 +1197,21 @@ export default function PresentationDetail() {
         </div>
       
       {/* Group Modal */}
-      {showGroupModal && (
+      
+        {showClassificationBuilder && currentActivity && currentActivity.type === 'CLASSIFICATION' && (
+          <ClassificationBuilder 
+            activity={currentActivity} 
+            onSave={(updatedActivity: any) => {
+              setActivities(prev => ({
+                ...prev,
+                [currentActivity.id]: updatedActivity
+              }));
+              setShowClassificationBuilder(false);
+            }}
+            onClose={() => setShowClassificationBuilder(false)} 
+          />
+        )}
+     {showGroupModal && (
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden">
             <div className="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
@@ -1446,7 +1556,39 @@ export default function PresentationDetail() {
                               return idx >= 0 ? String.fromCharCode(65 + idx) : '';
                             }).join(', ');
                           } else if (currentActivity?.type === 'WORD_CLOUD' || currentActivity?.type === 'SHORT_ANSWER') {
-                            ansText = Array.isArray(ans) ? ans.join(', ') : String(ans);
+                  ansText = Array.isArray(ans) ? ans.join(', ') : String(ans);
+                } else if (currentActivity?.type === 'CLASSIFICATION') {
+                  if (typeof ans === 'object' && ans !== null && !Array.isArray(ans)) {
+                     const items = currentActivity.items || [];
+                     const groups = currentActivity.groups || [];
+                     const lines: string[] = [];
+                     items.forEach((it: any) => {
+                        const placedGroupId = ans[it.id];
+                        if (placedGroupId) {
+                           const gName = groups.find((g:any) => g.id === placedGroupId)?.name || placedGroupId;
+                           lines.push(`${it.text} → ${gName}`);
+                        } else {
+                           lines.push(`${it.text} → (Chưa phân loại)`);
+                        }
+                     });
+                     ansText = lines.join('\n');
+                  }
+                } else if (currentActivity?.type === 'CLASSIFICATION') {
+                            if (typeof ans === 'object' && ans !== null && !Array.isArray(ans)) {
+                               const items = currentActivity.items || [];
+                               const groups = currentActivity.groups || [];
+                               const lines: string[] = [];
+                               items.forEach((it: any) => {
+                                  const placedGroupId = ans[it.id];
+                                  if (placedGroupId) {
+                                     const gName = groups.find((g:any) => g.id === placedGroupId)?.name || placedGroupId;
+                                     lines.push(`${it.text} → ${gName}`);
+                                  } else {
+                                     lines.push(`${it.text} → (Chưa phân loại)`);
+                                  }
+                               });
+                               ansText = lines.join('\n');
+                            }
                           }
                           
                           return (
