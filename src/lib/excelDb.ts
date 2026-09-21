@@ -5,7 +5,7 @@ let cachedData: any = null;
 export function getExcelData() {
   if (cachedData) return cachedData;
 
-  const filePath = 'C:\\DuAn\\EDUTEAM_BO_DU_LIEU_DAU_VAO\\02_DANH_SACH_HOC_SINH.xlsx';
+  const filePath = require('path').join(process.cwd(), 'src', 'data', '02_DANH_SACH_HOC_SINH.xlsx');
   const fs = require('fs');
   const buffer = fs.readFileSync(filePath);
   const workbook = xlsx.read(buffer, { type: 'buffer' });
@@ -54,7 +54,7 @@ let cachedActivityData: any = null;
 export function getActivityData() {
   if (cachedActivityData) return cachedActivityData;
 
-  const filePath = 'C:\\DuAn\\EDUTEAM_BO_DU_LIEU_DAU_VAO\\04_HOAT_DONG.xlsx';
+  const filePath = require('path').join(process.cwd(), 'src', 'data', '04_HOAT_DONG.xlsx');
   const fs = require('fs');
   if (!fs.existsSync(filePath)) {
     return [];

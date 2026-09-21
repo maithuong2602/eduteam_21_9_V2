@@ -1,9 +1,10 @@
 ﻿import { NextResponse } from 'next/server';
 import * as xlsx from 'xlsx';
 import fs from 'fs';
+import path from 'path';
 
 export async function GET() {
-  const filePath = 'C:\\DuAn\\EDUTEAM_BO_DU_LIEU_DAU_VAO\\03_NHOM_HOC_SINH.xlsx';
+  const filePath = path.join(process.cwd(), 'src', 'data', '03_NHOM_HOC_SINH.xlsx');
   if (!fs.existsSync(filePath)) {
     return NextResponse.json({ groups: [] });
   }
