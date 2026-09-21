@@ -1,3 +1,6 @@
+﻿const fs = require('fs');
+
+const uploadCode = `
 import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -35,7 +38,7 @@ export async function POST(request: Request) {
     });
 
     const downloadURL = (uploadResult as any).secure_url;
-    const publicId = (uploadResult as any).public_id || `pres_${Date.now()}`;
+    const publicId = (uploadResult as any).public_id || \`pres_\${Date.now()}\`;
 
     // Must return the exact format expected by frontend
     return NextResponse.json({
@@ -56,3 +59,6 @@ export async function POST(request: Request) {
     );
   }
 }
+`;
+fs.writeFileSync('src/app/api/upload/route.ts', uploadCode.trim());
+console.log('Fixed response format');
