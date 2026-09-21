@@ -28,9 +28,9 @@ export async function GET(request: Request) {
     // Convert node stream to web stream for Next.js response
     const stream = new ReadableStream({
       start(controller) {
-        response.data.on('data', (chunk) => controller.enqueue(chunk));
-        response.data.on('end', () => controller.close());
-        response.data.on('error', (err) => controller.error(err));
+        (response.data as any).on('data', (chunk: any) => controller.enqueue(chunk));
+        (response.data as any).on('end', () => controller.close());
+        (response.data as any).on('error', (err: any) => controller.error(err));
       }
     });
 

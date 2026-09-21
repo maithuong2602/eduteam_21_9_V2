@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       fields: 'id, name, webViewLink'
     });
 
-    const fileId = driveRes.data.id;
+    const fileId = driveRes.data.id as string;
 
     // Make the file readable by anyone
     await drive.permissions.create({
