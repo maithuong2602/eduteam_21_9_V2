@@ -1,3 +1,6 @@
+﻿const fs = require('fs');
+
+const uploadCode = `
 import { NextResponse } from 'next/server';
 import { initializeApp } from 'firebase/app';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -24,8 +27,8 @@ export async function POST(request: Request) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const fileName = `${Date.now()}_${file.name}`;
-    const storageRef = ref(storage, `presentations/${fileName}`);
+    const fileName = \`\${Date.now()}_\${file.name}\`;
+    const storageRef = ref(storage, \`presentations/\${fileName}\`);
 
     // Upload the file
     const snapshot = await uploadBytes(storageRef, new Uint8Array(buffer), {
@@ -38,7 +41,7 @@ export async function POST(request: Request) {
     // Return the proxy URL so frontend bypasses CORS issues
     return NextResponse.json({
       success: true,
-      fileUrl: `/api/proxy?url=${encodeURIComponent(downloadURL)}`,
+      fileUrl: \`/api/proxy?url=\${encodeURIComponent(downloadURL)}\`,
       id: fileName
     });
 
@@ -50,3 +53,6 @@ export async function POST(request: Request) {
     );
   }
 }
+`;
+fs.writeFileSync('src/app/api/upload/route.ts', uploadCode.trim());
+console.log('Updated upload/route.ts');
