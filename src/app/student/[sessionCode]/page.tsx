@@ -481,7 +481,7 @@ export default function StudentSessionPage() {
                 value={selectedAnswers[0] || ''}
                 onChange={(e) => setSelectedAnswers([e.target.value])}
                 rows={4}
-                className="w-full p-4 rounded-xl border-2 text-lg transition-all border-gray-300 focus:border-blue-500 outline-none disabled:opacity-50"
+                className="w-full p-4 rounded-xl border-2 text-lg font-medium text-black bg-white transition-all border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none disabled:opacity-50 disabled:bg-gray-100"
               />
               {activity?.mode !== "GROUP" && (
                 <button
