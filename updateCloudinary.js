@@ -1,3 +1,6 @@
+﻿const fs = require('fs');
+
+const uploadCode = `
 import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 
@@ -40,7 +43,7 @@ export async function POST(request: Request) {
     // Return proxy URL to ensure absolutely zero CORS issues with PDF.js
     return NextResponse.json({
       success: true,
-      fileUrl: `/api/proxy?url=${encodeURIComponent(downloadURL)}`,
+      fileUrl: \`/api/proxy?url=\${encodeURIComponent(downloadURL)}\`,
       id: (uploadResult as any).public_id
     });
 
@@ -52,3 +55,6 @@ export async function POST(request: Request) {
     );
   }
 }
+`;
+fs.writeFileSync('src/app/api/upload/route.ts', uploadCode.trim());
+console.log('Updated upload/route.ts for Cloudinary');
