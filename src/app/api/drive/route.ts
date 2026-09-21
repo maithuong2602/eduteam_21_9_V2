@@ -12,7 +12,8 @@ export async function GET(request: Request) {
 
   try {
     const b64 = require('fs').readFileSync(require('path').join(process.cwd(), 'drive_credentials.b64'), 'utf8');
-    const creds = JSON.parse(Buffer.from(b64, 'base64').toString('utf8'));
+    const decoded = Buffer.from(b64, 'base64').toString('utf8');
+    const creds = JSON.parse(decoded.charCodeAt(0) === 0xFEFF ? decoded.slice(1) : decoded);
     const auth = new google.auth.GoogleAuth({
       credentials: creds,
       scopes: ['https://www.googleapis.com/auth/drive.readonly'],
