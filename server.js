@@ -376,12 +376,15 @@ io.on('connection', (socket) => {
       const student = session.students.find(s => s.id === socketId);
       if (student) {
         const systemId = student.systemId;
+        const validSt = session.validStudents?.find(vs => String(vs.systemId) === String(systemId));
+        const actualStudentId = validSt ? validSt.id : systemId;
+        
         session.studentPoints[systemId] = (session.studentPoints[systemId] || 0) + points;
         activityPointsRecord[systemId] = points;
         
         saveLedger({
-          ledgerId: 'LED_' + Date.now() + '_' + student.id,
-          studentId: student.id,
+          ledgerId: 'LED_' + Date.now() + '_' + actualStudentId,
+          studentId: actualStudentId,
           sessionCode: data.code,
           classId: session.classId,
           activityId: 'ACTIVITY_SCORE',
