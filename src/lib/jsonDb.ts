@@ -10,6 +10,7 @@ export interface Presentation {
   originalFileName: string;
   fileUrl: string;
   totalSlides: number;
+  slides?: { id: string, fileUrl: string, pageNumber: number }[];
   createdAt: number;
   updatedAt: number;
 }
@@ -94,7 +95,19 @@ export const jsonDb = {
   
   // Presentations
   getPresentations: () => getDb().presentations || [],
-  getPresentation: (id: string) => (getDb().presentations || []).find(p => p.id === id),
+  getPresentation: (id: string) => {
+    const db = getDb();
+    const p = (db.presentations || []).find(p => p.id === id);
+    if (p && !p.slides) {
+      p.slides = Array.from({ length: p.totalSlides || 0 }).map((_, i) => ({
+        id: "slide_" + Date.now() + "_" + i,
+        fileUrl: p.fileUrl,
+        pageNumber: i + 1
+      }));
+      jsonDb.savePresentation(p);
+    }
+    return p;
+  },
   savePresentation: (p: Presentation) => {
     const db = getDb();
     if (!db.presentations) db.presentations = [];

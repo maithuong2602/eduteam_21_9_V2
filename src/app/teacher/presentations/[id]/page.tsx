@@ -810,7 +810,8 @@ export default function PresentationDetail() {
               Danh sách Slides ({presentation.totalSlides})
             </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-3">
-              {presentation.slides?.map((slide: any) => {
+              {Array.from({ length: presentation?.totalSlides || 0 }).map((_, idx) => {
+                  const slide = { slideNumber: idx + 1 };
                 const slideActs = slideActivities[slide.slideNumber] || [];
                 const hasActivity = slideActs.length > 0;
                 const actType = hasActivity ? activities[slideActs[0]]?.type : null;
@@ -1375,7 +1376,7 @@ export default function PresentationDetail() {
           <div className="bg-white w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden relative">
             <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gray-50">
                 <h2 className="text-2xl font-bold text-gray-800">Chi tiết Kết quả (Slide {selectedSlide})</h2>
-                {currentActivity?.type === 'SHORT_ANSWER' && (
+                {['SHORT_ANSWER', 'CLASSIFICATION'].includes(currentActivity?.type || '') && (
                   <div className="flex items-center space-x-2 ml-4 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
                     <span className="text-sm text-gray-600 font-medium">Thu phóng:</span>
                     <button onClick={() => setZoomLevel(z => Math.max(0.4, z - 0.1))} className="w-7 h-7 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold transition-colors">-</button>
@@ -1498,7 +1499,7 @@ export default function PresentationDetail() {
 
                 <div className="w-full">
                   <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Danh sách chi tiết ({currentActivity?.mode === 'GROUP' ? Object.keys(workspaces).length : Object.keys(responses).length} phản hồi)</h3>
-                                      {currentActivity?.type === 'SHORT_ANSWER' ? (
+                                      {['SHORT_ANSWER', 'CLASSIFICATION'].includes(currentActivity?.type || '') ? (
                       <div style={{ zoom: zoomLevel }} className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 transition-all duration-300 origin-top">
                         {(currentActivity?.mode === 'GROUP' ? Object.values(workspaces).map(ws => [ws.groupId, ws.state]) : Object.entries(responses)).map(([id, ans], index) => {
                           const displayName = currentActivity?.mode === 'GROUP' 
@@ -1506,7 +1507,25 @@ export default function PresentationDetail() {
                             : (students.find(s => s.id === id)?.name || 'Học sinh ẩn danh');
                             
                           let ansText = typeof ans === 'object' ? JSON.stringify(ans) : String(ans);
-                          ansText = Array.isArray(ans) ? ans.join(', ') : String(ans);
+                            if (currentActivity?.type === 'CLASSIFICATION') {
+                              if (typeof ans === 'object' && ans !== null && !Array.isArray(ans)) {
+                                 const items = currentActivity.items || [];
+                                 const groups = currentActivity.groups || [];
+                                 const lines: string[] = [];
+                                 items.forEach((it: any) => {
+                                    const placedGroupId = ans[it.id];
+                                    if (placedGroupId) {
+                                       const gName = groups.find((g:any) => g.id === placedGroupId)?.name || placedGroupId;
+                                       lines.push(it.text + ' → ' + gName);
+                                    } else {
+                                       lines.push(it.text + ' → (ChÆ°a phân loại)');
+                                    }
+                                 });
+                                 ansText = lines.join('\n');
+                              }
+                            } else {
+                               ansText = Array.isArray(ans) ? ans.join(', ') : String(ans);
+                            }
                           
                           const padletColors = [
                             { bg: 'bg-[#fff9c4]', border: 'border-[#fbc02d]', text: 'text-[#f57f17]', avatar: 'bg-[#f57f17]' },

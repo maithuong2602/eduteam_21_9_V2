@@ -1,45 +1,25 @@
 ﻿const fs = require('fs');
 let code = fs.readFileSync('src/lib/jsonDb.ts', 'utf8');
 
-const cacheLogic = `
-let memoryDb: DbSchema | null = null;
+const interfaceRegex = /export interface Presentation \{([\s\S]*?)createdAt: number;/;
+const interfaceReplacement = `export interface Presentation {$1slides?: { id: string, fileUrl: string, pageNumber: number }[];\n  createdAt: number;`;
+code = code.replace(interfaceRegex, interfaceReplacement);
 
-function getDb(): DbSchema {
-  if (memoryDb) return memoryDb;
-  
-  if (!fs.existsSync(DB_FILE)) {
-    const initial: DbSchema = {
-      presentations: [],
-      activities: [],
-      classCodes: [],
-      bonusLedgers: []
-    };
-    fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf8');
-    memoryDb = initial;
-    return initial;
-  }
-  try {
-    const data = fs.readFileSync(DB_FILE, 'utf8');
-    memoryDb = JSON.parse(data);
-    return memoryDb as DbSchema;
-  } catch (e) {
-    console.error('Error parsing db.json', e);
-    memoryDb = { presentations: [], activities: [], classCodes: [], bonusLedgers: [] };
-    return memoryDb;
-  }
-}
-
-function saveDb(data: DbSchema) {
-  memoryDb = data;
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
-}
-`;
-
-// Replace the original getDb and saveDb functions
-code = code.replace(
-  /function getDb\(\): DbSchema \{[\s\S]*?function saveDb\(data: DbSchema\) \{[\s\S]*?\}\s*\}/,
-  cacheLogic.trim()
-);
+const getPresentationRegex = /getPresentation: \(id: string\) => \(getDb\(\)\.presentations \|\| \[\]\)\.find\(p => p\.id === id\),/;
+const getPresentationReplacement = `getPresentation: (id: string) => {
+    const db = getDb();
+    const p = (db.presentations || []).find(p => p.id === id);
+    if (p && !p.slides) {
+      p.slides = Array.from({ length: p.totalSlides || 0 }).map((_, i) => ({
+        id: "slide_" + Date.now() + "_" + i,
+        fileUrl: p.fileUrl,
+        pageNumber: i + 1
+      }));
+      jsonDb.savePresentation(p);
+    }
+    return p;
+  },`;
+code = code.replace(getPresentationRegex, getPresentationReplacement);
 
 fs.writeFileSync('src/lib/jsonDb.ts', code);
-console.log('Added memory cache to jsonDb');
+console.log('Updated jsonDb.ts for slide array');
