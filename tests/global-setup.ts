@@ -1,0 +1,56 @@
+﻿import fs from 'fs';
+import path from 'path';
+
+async function globalSetup() {
+  console.log('Resetting test database...');
+  const dbPath = path.join(process.cwd(), 'src', 'data', 'db.test.json');
+  const initialDb = {
+    presentations: [
+      {
+        id: "test-pres-1",
+        teacherId: "teacher_1",
+        title: "E2E Test Presentation",
+        originalFileName: "test.pdf",
+        fileUrl: "", // Trống để không render PdfViewer (tránh crash do fetch failed)
+        totalSlides: 5,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }
+    ],
+    activities: [
+    {
+      id: "ACT_TEST_CLASS",
+      presentationId: "test-pres-1",
+      slideId: 3,
+      type: "CLASSIFICATION",
+      mode: "INDIVIDUAL",
+      groups: [
+        { id: "G1", name: "Nhóm Đúng" },
+        { id: "G2", name: "Nhóm Sai" }
+      ],
+      items: [
+        { id: "I1", text: "Mục 1", correctGroupId: "G1" },
+        { id: "I2", text: "Mục 2", correctGroupId: "G2" }
+      ],
+      settings: { allowMoveBack: true }
+    },
+    {
+      id: "ACT_TEST_SHORT_ANSWER",
+      presentationId: "test-pres-1",
+      slideId: 4,
+      type: "SHORT_ANSWER",
+      mode: "INDIVIDUAL"
+    }
+  ],
+    classCodes: [
+      {
+        classId: "CLS001",
+        code: "TEST61"
+      }
+    ],
+    bonusLedgers: []
+  };
+  fs.writeFileSync(dbPath, JSON.stringify(initialDb, null, 2), 'utf8');
+}
+
+export default globalSetup;

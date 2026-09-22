@@ -1,5 +1,14 @@
 ﻿const fs = require('fs');
-let content = fs.readFileSync('package.json', 'utf8');
-content = content.replace('"dev": "next dev"', '"dev": "node server.js"');
-fs.writeFileSync('package.json', content);
-console.log('Updated package.json');
+
+let pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+
+pkg.scripts = {
+  ...pkg.scripts,
+  "test:api": "playwright test tests/api/",
+  "test:e2e": "playwright test tests/e2e/",
+  "test:quick": "playwright test tests/api/ smoke.spec.ts",
+  "auto-check": "npm run test:api && npm run test:e2e"
+};
+
+fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2), 'utf8');
+console.log('Updated package.json scripts');

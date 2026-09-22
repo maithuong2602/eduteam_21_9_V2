@@ -1,7 +1,8 @@
 ﻿import fs from 'fs';
 import path from 'path';
 
-const DB_FILE = path.join(process.cwd(), 'src', 'data', 'db.json');
+const isTest = process.env.USE_TEST_DB === 'true';
+const DB_FILE = path.join(process.cwd(), 'src', 'data', isTest ? 'db.test.json' : 'db.json');
 
 export interface Presentation {
   id: string;

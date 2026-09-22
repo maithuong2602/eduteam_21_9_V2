@@ -1,0 +1,321 @@
+{
+  "presentations": [
+    {
+      "id": "test-pres-1",
+      "teacherId": "teacher_1",
+      "title": "E2E Test Presentation",
+      "originalFileName": "test.pdf",
+      "fileUrl": "",
+      "totalSlides": 5,
+      "createdAt": 1790054350431,
+      "updatedAt": 1790054350431,
+      "slides": [
+        {
+          "id": "slide_1790054353440_0",
+          "fileUrl": "",
+          "pageNumber": 1
+        },
+        {
+          "id": "slide_1790054353440_1",
+          "fileUrl": "",
+          "pageNumber": 2
+        },
+        {
+          "id": "slide_1790054353440_2",
+          "fileUrl": "",
+          "pageNumber": 3
+        },
+        {
+          "id": "slide_1790054353440_3",
+          "fileUrl": "",
+          "pageNumber": 4
+        },
+        {
+          "id": "slide_1790054353440_4",
+          "fileUrl": "",
+          "pageNumber": 5
+        }
+      ]
+    }
+  ],
+  "activities": [
+    {
+      "id": "ACT_1790054353668",
+      "type": "CLASSIFICATION",
+      "mode": "INDIVIDUAL",
+      "bonusType": "NONE",
+      "bonusPoints": 0,
+      "groups": [
+        {
+          "id": "G1",
+          "name": "Nhóm Test 1"
+        },
+        {
+          "id": "G2",
+          "name": "Nhóm Test 2"
+        }
+      ],
+      "items": [
+        {
+          "id": "I1",
+          "text": "Bàn phím",
+          "correctGroupId": "G1"
+        },
+        {
+          "id": "I2",
+          "text": "Chuột",
+          "correctGroupId": "G1"
+        },
+        {
+          "id": "I3",
+          "text": "Màn hình",
+          "correctGroupId": "G2"
+        },
+        {
+          "id": "I1790054353987",
+          "text": "Webcam",
+          "correctGroupId": "G1"
+        }
+      ],
+      "presentationId": "test-pres-1",
+      "slideId": 1
+    },
+    {
+      "id": "ACT_1790054363398",
+      "type": "MULTIPLE_CHOICE",
+      "mode": "INDIVIDUAL",
+      "bonusType": "NONE",
+      "bonusPoints": 0,
+      "options": [
+        {
+          "id": 1,
+          "text": "Đáp án A",
+          "isCorrect": true
+        },
+        {
+          "id": 2,
+          "text": "Đáp án B",
+          "isCorrect": false
+        },
+        {
+          "id": 3,
+          "text": "Đáp án C",
+          "isCorrect": false
+        },
+        {
+          "id": 4,
+          "text": "Đáp án D",
+          "isCorrect": false
+        }
+      ],
+      "presentationId": "test-pres-1",
+      "slideId": 2
+    },
+    {
+      "id": "ACT_TEST_CLASS",
+      "presentationId": "test-pres-1",
+      "slideId": 3,
+      "type": "CLASSIFICATION",
+      "mode": "INDIVIDUAL",
+      "groups": [
+        {
+          "id": "G1",
+          "name": "Nhóm Đúng"
+        },
+        {
+          "id": "G2",
+          "name": "Nhóm Sai"
+        }
+      ],
+      "items": [
+        {
+          "id": "I1",
+          "text": "Mục 1",
+          "correctGroupId": "G1"
+        },
+        {
+          "id": "I2",
+          "text": "Mục 2",
+          "correctGroupId": "G2"
+        }
+      ],
+      "settings": {
+        "allowMoveBack": true
+      }
+    },
+    {
+      "id": "ACT_TEST_SHORT_ANSWER",
+      "presentationId": "test-pres-1",
+      "slideId": 4,
+      "type": "SHORT_ANSWER",
+      "mode": "INDIVIDUAL"
+    }
+  ],
+  "classCodes": [
+    {
+      "classId": "CLS001",
+      "code": "TEST61"
+    },
+    {
+      "classId": "CLS002",
+      "code": "V4MVIV"
+    },
+    {
+      "classId": "CLS003",
+      "code": "ZGEUYK"
+    },
+    {
+      "classId": "CLS004",
+      "code": "F6CDNX"
+    },
+    {
+      "classId": "CLS005",
+      "code": "KBQUTI"
+    },
+    {
+      "classId": "CLS006",
+      "code": "N5FQ4S"
+    },
+    {
+      "classId": "CLS021",
+      "code": "8M4QJA"
+    },
+    {
+      "classId": "CLS022",
+      "code": "3UEB79"
+    },
+    {
+      "classId": "CLS023",
+      "code": "8X27BO"
+    },
+    {
+      "classId": "CLS024",
+      "code": "KNO1DS"
+    },
+    {
+      "classId": "CLS025",
+      "code": "MX3MOO"
+    },
+    {
+      "classId": "CLS026",
+      "code": "2CQCA3"
+    },
+    {
+      "classId": "CLS041",
+      "code": "363HPH"
+    },
+    {
+      "classId": "CLS042",
+      "code": "7H0NO6"
+    },
+    {
+      "classId": "CLS043",
+      "code": "I6H4ZR"
+    },
+    {
+      "classId": "CLS044",
+      "code": "9OZ3P0"
+    },
+    {
+      "classId": "CLS045",
+      "code": "LVAIA3"
+    },
+    {
+      "classId": "CLS046",
+      "code": "24EV7M"
+    },
+    {
+      "classId": "CLS061",
+      "code": "Q9V9UX"
+    },
+    {
+      "classId": "CLS062",
+      "code": "ZDVWJB"
+    },
+    {
+      "classId": "CLS063",
+      "code": "YNFXRK"
+    },
+    {
+      "classId": "CLS064",
+      "code": "2EP5JW"
+    },
+    {
+      "classId": "CLS065",
+      "code": "TT3TMP"
+    },
+    {
+      "classId": "CLS066",
+      "code": "4MTH7X"
+    },
+    {
+      "classId": "CLS007",
+      "code": "08Z4PK"
+    },
+    {
+      "classId": "CLS008",
+      "code": "KUAMO3"
+    },
+    {
+      "classId": "CLS009",
+      "code": "9PXAGH"
+    },
+    {
+      "classId": "CLS010",
+      "code": "AHDAXL"
+    },
+    {
+      "classId": "CLS027",
+      "code": "Q7C28P"
+    },
+    {
+      "classId": "CLS028",
+      "code": "91MY4Q"
+    },
+    {
+      "classId": "CLS029",
+      "code": "2F1JEZ"
+    },
+    {
+      "classId": "CLS030",
+      "code": "RN07JM"
+    },
+    {
+      "classId": "CLS047",
+      "code": "N7KHGO"
+    },
+    {
+      "classId": "CLS048",
+      "code": "L1YKBM"
+    },
+    {
+      "classId": "CLS049",
+      "code": "FPUBZD"
+    },
+    {
+      "classId": "CLS050",
+      "code": "P61T20"
+    },
+    {
+      "classId": "CLS067",
+      "code": "9NG0E1"
+    },
+    {
+      "classId": "CLS068",
+      "code": "4KDFU4"
+    },
+    {
+      "classId": "CLS069",
+      "code": "3OPLOQ"
+    },
+    {
+      "classId": "CLS070",
+      "code": "CQ3QHY"
+    },
+    {
+      "classId": "CLS071",
+      "code": "AWVSHY"
+    }
+  ],
+  "bonusLedgers": []
+}

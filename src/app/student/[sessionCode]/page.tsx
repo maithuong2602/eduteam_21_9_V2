@@ -30,6 +30,7 @@ export default function StudentSessionPage() {
   const [workspaceState, setWorkspaceState] = useState<any>({});
   const [workspaceVersion, setWorkspaceVersion] = useState(0);
   const [workspaceStatus, setWorkspaceStatus] = useState("WORKING");
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
 
   useEffect(() => {
     if (activity?.mode === 'GROUP' && groupInfo) {
@@ -427,7 +428,13 @@ export default function StudentSessionPage() {
                 <div 
                   className="bg-blue-50 border-2 border-dashed border-blue-200 rounded-xl p-4 min-h-[120px] flex flex-wrap gap-3 items-center justify-center transition-colors"
                   onDragOver={e => e.preventDefault()}
-                  onDrop={e => {
+                  onClick={() => {
+                      if (!isLocked && !submitted && selectedItemId && activity.settings?.allowMoveBack !== false) {
+                        handleWorkspaceChange(selectedItemId, null);
+                        setSelectedItemId(null);
+                      }
+                    }}
+                    onDrop={e => {
                     e.preventDefault();
                     if (isLocked || submitted) return;
                     const itemId = e.dataTransfer.getData('itemId');
@@ -445,9 +452,14 @@ export default function StudentSessionPage() {
                         key={item.id}
                         draggable={!isLocked && !submitted}
                         onDragStart={(e) => {
-                          e.dataTransfer.setData('itemId', item.id);
-                        }}
-                        className={`bg-white border-2 border-blue-400 px-4 py-2 rounded-lg shadow-sm font-bold text-black font-extrabold ${!isLocked && !submitted ? 'cursor-grab hover:shadow-md hover:-translate-y-1' : 'opacity-50 cursor-not-allowed'} transition-all`}
+                            e.dataTransfer.setData('itemId', item.id);
+                          }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (isLocked || submitted) return;
+                            setSelectedItemId(prev => prev === item.id ? null : item.id);
+                          }}
+                          className={`bg-white border-2 border-blue-400 px-4 py-2 rounded-lg shadow-sm font-bold text-black font-extrabold ${!isLocked && !submitted ? 'cursor-grab hover:shadow-md hover:-translate-y-1' : 'opacity-50 cursor-not-allowed'} transition-all ${selectedItemId === item.id ? 'ring-4 ring-yellow-400 bg-yellow-50 scale-105' : ''}`}
                       >
                         {item.text}
                       </div>
@@ -462,9 +474,15 @@ export default function StudentSessionPage() {
                     return (
                       <div 
                         key={group.id}
-                        className="bg-gray-100 border-2 border-gray-500 text-black rounded-xl overflow-hidden flex flex-col shadow-sm"
-                        onDragOver={e => e.preventDefault()}
-                        onDrop={e => {
+                        className="bg-gray-100 border-2 border-gray-500 text-black rounded-xl overflow-hidden flex flex-col shadow-sm cursor-pointer"
+                          onClick={() => {
+                             if (!isLocked && !submitted && selectedItemId) {
+                                handleWorkspaceChange(selectedItemId, group.id);
+                                setSelectedItemId(null);
+                             }
+                          }}
+                          onDragOver={e => e.preventDefault()}
+                          onDrop={e => {
                           e.preventDefault();
                           if (isLocked || submitted) return;
                           const itemId = e.dataTransfer.getData('itemId');
@@ -482,9 +500,14 @@ export default function StudentSessionPage() {
                               key={item.id}
                               draggable={!isLocked && !submitted && activity.settings?.allowMoveBack !== false}
                               onDragStart={(e) => {
-                                e.dataTransfer.setData('itemId', item.id);
-                              }}
-                              className={`bg-white border-2 border-gray-500 px-3 py-2 rounded text-black font-extrabold shadow-sm font-medium ${(!isLocked && !submitted && activity.settings?.allowMoveBack !== false) ? 'cursor-grab hover:border-blue-400' : ''}`}
+                                  e.dataTransfer.setData('itemId', item.id);
+                                }}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (isLocked || submitted || activity.settings?.allowMoveBack === false) return;
+                                  setSelectedItemId(prev => prev === item.id ? null : item.id);
+                                }}
+                                className={`bg-white border-2 border-gray-500 px-3 py-2 rounded text-black font-extrabold shadow-sm font-medium ${(!isLocked && !submitted && activity.settings?.allowMoveBack !== false) ? 'cursor-grab hover:border-blue-400' : ''} ${selectedItemId === item.id ? 'ring-4 ring-yellow-400 bg-yellow-50 scale-105' : ''}`}
                             >
                               {item.text}
                             </div>
@@ -497,7 +520,7 @@ export default function StudentSessionPage() {
 
                 {activity?.mode !== "GROUP" && (
                   <button
-                    onClick={handleSubmit}
+                    data-testid="submit-answer" onClick={handleSubmit}
                     disabled={uncategorizedItems.length > 0 || submitted || isLocked}
                     className={`w-full py-4 rounded-xl font-bold text-lg text-white flex items-center justify-center mt-6 transition-all ${
                       submitted ? "bg-green-500" : isLocked ? "bg-red-500 cursor-not-allowed" : uncategorizedItems.length === 0 ? "bg-blue-600 hover:bg-blue-700 shadow-md transform hover:-translate-y-1" : "bg-gray-300 cursor-not-allowed"
