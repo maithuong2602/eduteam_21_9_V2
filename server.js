@@ -518,6 +518,8 @@ io.on('connection', (socket) => {
       
       const actualStudentId = validSt ? validSt.id : systemId;
 
+      require('fs').appendFileSync('debug_approve.log', `[${new Date().toISOString()}] approve_points: session=${data.code} activityType=${data.activityDetails?.type} socketId=${socketId} student=${!!student} validSt=${!!validSt} systemId=${systemId} ans=${ans}\n`);
+
       if (student || validSt) {
         const input = {
            activityType: data.activityDetails.type || 'SHORT_ANSWER',

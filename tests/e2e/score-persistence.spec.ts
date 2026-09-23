@@ -140,6 +140,7 @@ test.describe('Score Persistence & Session Integrity (S2-B)', () => {
     if (hs1.activityResults.length < 2) {
       console.log("DEBUG_FAIL hs1.activityResults: ", JSON.stringify(hs1.activityResults));
       console.log("DEBUG_FAIL db sessionHistory count: ", db.sessionHistories.length);
+      console.log("DEBUG_FAIL savedHistory: ", JSON.stringify(savedHistory, null, 2));
     }
     expect(hs1.activityResults.length).toBeGreaterThanOrEqual(2);
     
