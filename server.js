@@ -152,13 +152,18 @@ io.on('connection', (socket) => {
       // Confirm to student
       socket.emit('join_success', { code: data.code, realName });
       if (session.groups) socket.emit('groups_updated', session.groups);
-      
       // Send current activity to student if active
-      if (session.activityConfig && !session.activityConfig.isLocked) {
-        socket.emit('activity_started', session.activityConfig);
-      } else if (session.activityConfig && session.activityConfig.isLocked) {
-        socket.emit('activity_started', session.activityConfig);
-        socket.emit('activity_locked');
+      if (session.activityConfig) {
+        const primaryId = validStudent ? validStudent.systemId : data.name;
+        const hasSubmitted = session.responses[session.activityConfig.slideNumber]?.[primaryId];
+        const configToEmit = hasSubmitted 
+          ? { ...session.activityConfig, hasSubmitted: true, submittedAnswer: hasSubmitted }
+          : session.activityConfig;
+
+        socket.emit('activity_started', configToEmit);
+        if (session.activityConfig.isLocked) {
+          socket.emit('activity_locked');
+        }
       }
       console.log(`${realName} joined ${data.code}`);
     } else {
@@ -207,21 +212,38 @@ io.on('connection', (socket) => {
     // data: { code, slideNumber, answer }
     const session = sessions[data.code];
     if (session && !session.activityConfig?.isLocked) {
+      const student = session.students.find(s => s.id === socket.id);
+      if (!student) return;
+
+      const primaryId = student.systemId || student.id;
+
       if (!session.responses[data.slideNumber]) {
         session.responses[data.slideNumber] = {};
       }
-      session.responses[data.slideNumber][socket.id] = data.answer;
+      
+      // Idempotency check: prevent duplicate submission
+      if (session.responses[data.slideNumber][primaryId]) {
+         return; 
+      }
+
+      session.responses[data.slideNumber][primaryId] = data.answer;
       
       // Notify teacher
-      const student = session.students.find(s => s.id === socket.id);
-      if (student) {
-        io.to(session.teacherSocketId).emit('student_answered', {
-          studentId: socket.id,
-          name: student.name,
-          answer: data.answer,
-          slideNumber: data.slideNumber
-        });
-      }
+      io.to(session.teacherSocketId).emit('student_answered', {
+        studentId: primaryId,
+        name: student.name,
+        answer: data.answer,
+        slideNumber: data.slideNumber
+      });
+    }
+  });
+
+  socket.on('end_session', (data) => {
+    const session = sessions[data.code];
+    if (session && session.teacherSocketId === socket.id) {
+      io.to(data.code).emit('session_ended');
+      delete sessions[data.code];
+      console.log(`Session ${data.code} ended by teacher`);
     }
   });
 

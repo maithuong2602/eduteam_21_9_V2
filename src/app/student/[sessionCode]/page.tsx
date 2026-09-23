@@ -112,7 +112,7 @@ export default function StudentSessionPage() {
     newSocket.on("bonus_requests_updated", (requests) => {
       setBonusRequests(requests || []);
     });
-    newSocket.on("joined", (data) => {
+    newSocket.on("join_success", (data) => {
       setStatus("waiting");
       if (data.activityConfig) {
         setActivity(data.activityConfig);
@@ -130,8 +130,15 @@ export default function StudentSessionPage() {
     newSocket.on("activity_started", (config) => {
       setActivity(config);
       setStatus("active");
-      setSubmitted(false);
-      setSelectedAnswers([]);
+      if (config.hasSubmitted) {
+        setSubmitted(true);
+        if (config.submittedAnswer) {
+          setSelectedAnswers(Array.isArray(config.submittedAnswer) ? config.submittedAnswer : [config.submittedAnswer]);
+        }
+      } else {
+        setSubmitted(false);
+        setSelectedAnswers([]);
+      }
       setIsLocked(false);
     });
 
@@ -210,6 +217,9 @@ export default function StudentSessionPage() {
     newSocket.on("leaderboard_updated", (data) => {
       setLeaderboard(data);
     });
+    newSocket.on("session_ended", () => {
+      setStatus("ended");
+    });
 
     return () => {
       newSocket.disconnect();
@@ -241,6 +251,21 @@ export default function StudentSessionPage() {
     });
     setSubmitted(true);
   };
+
+  if (status === "ended") {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center bg-gray-50 p-6 text-center">
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">Phiên học đã kết thúc</h2>
+        <p className="text-gray-600 mb-8">Giáo viên đã kết thúc phiên học này.</p>
+        <button 
+          onClick={() => router.push('/join')}
+          className="px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700"
+        >
+          Trở về màn hình chính
+        </button>
+      </div>
+    );
+  }
 
   if (status === "connecting") {
     return <div className="flex h-screen items-center justify-center bg-blue-50 text-blue-600 font-bold">Đang kết nối vào lớp...</div>;

@@ -73,6 +73,7 @@ export default function PresentationDetail() {
   const [timerDuration, setTimerDuration] = useState<number>(60);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [showResultsModal, setShowResultsModal] = useState(false);
+  const [showEndSessionDialog, setShowEndSessionDialog] = useState(false);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [groupApprovalModal, setGroupApprovalModal] = useState<{ groupId: string, name: string, members: any[], selectedMembers: string[] } | null>(null);
   const [showGroupModal, setShowGroupModal] = useState(false);
@@ -595,6 +596,104 @@ export default function PresentationDetail() {
     alert("Đã duyệt điểm thành công! Học sinh đã nhận được cúp!");
   };
 
+  const resetSessionState = () => {
+    setSessionCode(null);
+    setStudents([]);
+    setResponses({});
+    setApprovedPoints({});
+    setCurrentActivityId(null);
+    setTimeLeft(null);
+    setIsLocked(false);
+  };
+
+  const handleEndSession = async (type: 'SAVE' | 'DISCARD' | 'CONTINUE') => {
+    if (type === 'CONTINUE') {
+      setShowEndSessionDialog(false);
+      return;
+    }
+
+    if (type === 'DISCARD') {
+      if (window.confirm('Dữ liệu của phiên dạy hiện tại sẽ bị xóa và không được lưu vào lịch sử. Bạn có chắc chắn muốn tiếp tục?')) {
+        if (socket) socket.emit('end_session', { code: sessionCode });
+        resetSessionState();
+        setShowEndSessionDialog(false);
+      }
+      return;
+    }
+
+    if (type === 'SAVE') {
+      try {
+        // Collect session history payload
+        const historyPayload = {
+          sessionCode: sessionCode,
+          classId: selectedClass,
+          className: classList.find((c: any) => c.id === selectedClass)?.name || "Unknown",
+          topicIds: [], // Placeholder for topics
+          lessonIds: [], // Placeholder for lessons
+          startedAt: Date.now() - 3600000, // Dummy start time for now
+          completedAt: Date.now(),
+          status: 'COMPLETED',
+          activities: Object.keys(slideActivities).flatMap(slideNum => 
+            slideActivities[Number(slideNum)].map(actId => {
+              const act = activities[actId];
+              return {
+                activityId: act.id,
+                slideNumber: Number(slideNum),
+                activityType: act.type,
+                activityMode: act.mode,
+                maxScore: act.points || 1
+              };
+            })
+          ),
+          students: students.map(s => {
+            const actResults = [];
+            
+            // Reconstruct activity results from the current responses state
+            // Note: `responses` is state for current activity. We need to collect it properly or accept it's a simplification for Phase S1-A/B.
+            // Wait, currently responses only hold the CURRENT activity's responses because we do `setResponses({})` when starting a new activity! 
+            // So we just save the current one.
+            if (currentActivityId) {
+               const act = activities[currentActivityId];
+               const ans = responses[s.id] || responses[s.systemId];
+               if (ans !== undefined) {
+                  actResults.push({
+                    activityId: act.id,
+                    activityType: act.type,
+                    activityMode: act.mode,
+                    answer: ans,
+                    score: approvedPoints[s.id] || approvedPoints[s.systemId] || 0,
+                    maxScore: act.points || 1
+                  });
+               }
+            }
+
+            return {
+              studentId: s.systemId || s.id,
+              studentName: s.name,
+              sessionScore: approvedPoints[s.id] || approvedPoints[s.systemId] || 0,
+              activityResults: actResults
+            };
+          })
+        };
+
+        const res = await fetch('/api/history', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(historyPayload)
+        });
+
+        if (!res.ok) throw new Error('Failed to save');
+        
+        if (socket) socket.emit('end_session', { code: sessionCode });
+        resetSessionState();
+        setShowEndSessionDialog(false);
+      } catch (e) {
+        alert("Không thể lưu phiên dạy. Dữ liệu hiện tại vẫn được giữ nguyên. Vui lòng thử lại.");
+        // Do not close dialog, do not reset state
+      }
+    }
+  };
+
   const exportExcel = () => {
     if (socket && sessionCode) {
       socket.emit('request_export_ledgers', { code: sessionCode });
@@ -671,12 +770,9 @@ export default function PresentationDetail() {
       case "MULTIPLE_CHOICE": return "Trắc nghiệm";
       case "SHORT_ANSWER": return "Trả lời ngắn";
       case "CLASSIFICATION": return "Phân loại";
-      default: return "";
+      case "WORD_CLOUD": return "Đám mây từ";
+      default: return "Hoạt động";
     }
-    if (type === 'MULTIPLE_CHOICE') return 'Trắc nghiệm (Nhiều lựa chọn)';
-    if (type === 'SHORT_ANSWER') return 'Trả lời ngắn';
-    if (type === 'WORD_CLOUD') return 'Word Cloud (Đám mây từ)';
-    return 'Chưa có hoạt động';
   };
 
   const getActivityIcon = (type: string | null) => {
@@ -706,11 +802,11 @@ export default function PresentationDetail() {
           { id: 4, text: 'Đáp án D', isCorrect: false }
         ] : undefined,
         groups: type === 'CLASSIFICATION' ? [{ id: 'G1', name: 'THIẾT BỊ NHẬP' }, { id: 'G2', name: 'THIẾT BỊ XUẤT' }] : undefined,
-          items: type === 'CLASSIFICATION' ? [
-            { id: 'I1', text: 'Bàn phím', correctGroupId: 'G1' }, 
-            { id: 'I2', text: 'Chuột', correctGroupId: 'G1' }, 
-            { id: 'I3', text: 'Màn hình', correctGroupId: 'G2' }
-          ] : undefined
+        items: type === 'CLASSIFICATION' ? [
+          { id: 'I1', text: 'Bàn phím', correctGroupId: 'G1' }, 
+          { id: 'I2', text: 'Chuột', correctGroupId: 'G1' }, 
+          { id: 'I3', text: 'Màn hình', correctGroupId: 'G2' }
+        ] : undefined
       }
     }));
     setSlideActivities(prev => ({
@@ -781,6 +877,9 @@ export default function PresentationDetail() {
                 <Users className="mr-2 h-4 w-4" />
                 {students.filter(s => s.status === 'ONLINE').length} học sinh online
               </div>
+              <button onClick={() => setShowEndSessionDialog(true)} className="flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-red-700">
+                Kết thúc phiên
+              </button>
             </div>
           ) : (
             <>
@@ -811,11 +910,10 @@ export default function PresentationDetail() {
             </div>
             <div className="flex-1 overflow-y-auto p-3 space-y-3">
               {Array.from({ length: presentation?.totalSlides || 0 }).map((_, idx) => {
-                  const slide = { slideNumber: idx + 1 };
+                const slide = { slideNumber: idx + 1 };
                 const slideActs = slideActivities[slide.slideNumber] || [];
                 const hasActivity = slideActs.length > 0;
                 const actType = hasActivity ? activities[slideActs[0]]?.type : null;
-                
                 return (
                   <div 
                     key={slide.slideNumber}
@@ -1499,7 +1597,7 @@ export default function PresentationDetail() {
 
                 <div className="w-full">
                   <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Danh sách chi tiết ({currentActivity?.mode === 'GROUP' ? Object.keys(workspaces).length : Object.keys(responses).length} phản hồi)</h3>
-                                      {['SHORT_ANSWER', 'CLASSIFICATION'].includes(currentActivity?.type || '') ? (
+                    {['SHORT_ANSWER', 'CLASSIFICATION', 'WORD_CLOUD'].includes(currentActivity?.type || '') ? (
                       <div style={{ zoom: zoomLevel }} className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 transition-all duration-300 origin-top">
                         {(currentActivity?.mode === 'GROUP' ? Object.values(workspaces).map(ws => [ws.groupId, ws.state]) : Object.entries(responses)).map(([id, ans], index) => {
                           const displayName = currentActivity?.mode === 'GROUP' 
@@ -1785,6 +1883,44 @@ export default function PresentationDetail() {
                   })}
                 </div>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+      {/* End Session Dialog */}
+      {showEndSessionDialog && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden">
+            <div className="p-5 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+              <h3 className="text-xl font-bold text-gray-800">Kết thúc phiên dạy</h3>
+              <button onClick={() => setShowEndSessionDialog(false)} className="text-gray-400 hover:text-gray-600">
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <button 
+                onClick={() => handleEndSession('SAVE')}
+                className="w-full px-4 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 shadow-sm transition-colors text-left"
+              >
+                LƯU VÀ KẾT THÚC
+                <div className="text-xs font-normal text-blue-200 mt-1">Lưu dữ liệu vào lịch sử và đóng phiên dạy hiện tại</div>
+              </button>
+
+              <button 
+                onClick={() => handleEndSession('CONTINUE')}
+                className="w-full px-4 py-3 bg-gray-100 text-gray-800 font-bold rounded-lg hover:bg-gray-200 shadow-sm transition-colors text-left"
+              >
+                TIẾP TỤC DẠY
+                <div className="text-xs font-normal text-gray-500 mt-1">Quay lại màn hình trình chiếu</div>
+              </button>
+
+              <button 
+                onClick={() => handleEndSession('DISCARD')}
+                className="w-full px-4 py-3 bg-red-100 text-red-700 font-bold rounded-lg hover:bg-red-200 shadow-sm transition-colors text-left border border-red-200"
+              >
+                BỎ DỮ LIỆU
+                <div className="text-xs font-normal text-red-500 mt-1">Kết thúc phiên và không lưu kết quả</div>
+              </button>
             </div>
           </div>
         </div>

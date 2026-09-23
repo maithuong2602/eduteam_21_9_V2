@@ -1,4 +1,4 @@
-﻿import fs from 'fs';
+import fs from 'fs';
 import path from 'path';
 
 const isTest = process.env.USE_TEST_DB === 'true';
@@ -57,11 +57,54 @@ export interface BonusLedger {
   createdAt: number;
 }
 
+export interface ActivityResult {
+  activityId: string;
+  activityType: string;
+  activityMode: string;
+  answer: any;
+  score: number;
+  maxScore: number;
+  groupId?: string;
+  groupName?: string;
+  groupScore?: number;
+  individualScore?: number;
+}
+
+export interface StudentSessionResult {
+  studentId: string;
+  studentName: string;
+  sessionScore: number;
+  activityResults: ActivityResult[];
+}
+
+export interface ActivityHistorySnapshot {
+  activityId: string;
+  slideNumber: number;
+  activityType: string;
+  activityMode: string;
+  maxScore: number;
+}
+
+export interface SessionHistory {
+  id: string;
+  sessionCode: string;
+  classId: string;
+  className: string;
+  topicIds: string[];
+  lessonIds: string[];
+  startedAt: number;
+  completedAt: number;
+  status: 'ACTIVE' | 'COMPLETED';
+  activities: ActivityHistorySnapshot[];
+  students: StudentSessionResult[];
+}
+
 export interface DbSchema {
   presentations: Presentation[];
   activities: Activity[];
   classCodes: ClassCode[];
   bonusLedgers: BonusLedger[];
+  sessionHistories: SessionHistory[];
 }
 
 
@@ -71,7 +114,8 @@ function getDb(): DbSchema {
       presentations: [],
       activities: [],
       classCodes: [],
-      bonusLedgers: []
+      bonusLedgers: [],
+      sessionHistories: []
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf8');
     return initial;
@@ -81,7 +125,7 @@ function getDb(): DbSchema {
     return JSON.parse(data) as DbSchema;
   } catch (e) {
     console.error('Error parsing db.json', e);
-    return { presentations: [], activities: [], classCodes: [], bonusLedgers: [] };
+    return { presentations: [], activities: [], classCodes: [], bonusLedgers: [], sessionHistories: [] };
   }
 }
 
@@ -169,6 +213,20 @@ export const jsonDb = {
       type: 'RESET',
       createdAt: Date.now()
     });
+    saveDb(db);
+  },
+  
+  // Session History
+  getSessionHistories: () => getDb().sessionHistories || [],
+  getSessionHistory: (id: string) => {
+    return (getDb().sessionHistories || []).find(h => h.id === id);
+  },
+  saveSessionHistory: (history: SessionHistory) => {
+    const db = getDb();
+    if (!db.sessionHistories) db.sessionHistories = [];
+    const idx = db.sessionHistories.findIndex(h => h.id === history.id);
+    if (idx >= 0) db.sessionHistories[idx] = history;
+    else db.sessionHistories.push(history);
     saveDb(db);
   }
 };

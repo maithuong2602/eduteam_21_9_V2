@@ -1,4 +1,4 @@
-﻿import fs from 'fs';
+import fs from 'fs';
 import path from 'path';
 
 async function globalSetup() {
@@ -12,7 +12,7 @@ async function globalSetup() {
         title: "E2E Test Presentation",
         originalFileName: "test.pdf",
         fileUrl: "", // Trống để không render PdfViewer (tránh crash do fetch failed)
-        totalSlides: 5,
+        totalSlides: 7,
         createdAt: Date.now(),
         updatedAt: Date.now()
       }
@@ -40,6 +40,35 @@ async function globalSetup() {
       slideId: 4,
       type: "SHORT_ANSWER",
       mode: "INDIVIDUAL"
+    },
+    {
+      id: "ACT_TEST_WORD_CLOUD",
+      presentationId: "test-pres-1",
+      slideId: 5,
+      type: "WORD_CLOUD",
+      mode: "INDIVIDUAL"
+    },
+    {
+      id: "ACT_TEST_LOCK",
+      presentationId: "test-pres-1",
+      slideId: 6,
+      type: "MULTIPLE_CHOICE",
+      mode: "INDIVIDUAL",
+      options: [
+        { id: "OPT1", text: "Option A", isCorrect: true },
+        { id: "OPT2", text: "Option B", isCorrect: false }
+      ]
+    },
+    {
+      id: "ACT_TEST_RECONNECT",
+      presentationId: "test-pres-1",
+      slideId: 7,
+      type: "MULTIPLE_CHOICE",
+      mode: "INDIVIDUAL",
+      options: [
+        { id: "OPT1", text: "Option A", isCorrect: true },
+        { id: "OPT2", text: "Option B", isCorrect: false }
+      ]
     }
   ],
     classCodes: [

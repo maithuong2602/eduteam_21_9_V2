@@ -6,111 +6,49 @@
       "title": "E2E Test Presentation",
       "originalFileName": "test.pdf",
       "fileUrl": "",
-      "totalSlides": 5,
-      "createdAt": 1790054350431,
-      "updatedAt": 1790054350431,
+      "totalSlides": 7,
+      "createdAt": 1790097866376,
+      "updatedAt": 1790097866376,
       "slides": [
         {
-          "id": "slide_1790054353440_0",
+          "id": "slide_1790097868949_0",
           "fileUrl": "",
           "pageNumber": 1
         },
         {
-          "id": "slide_1790054353440_1",
+          "id": "slide_1790097868949_1",
           "fileUrl": "",
           "pageNumber": 2
         },
         {
-          "id": "slide_1790054353440_2",
+          "id": "slide_1790097868949_2",
           "fileUrl": "",
           "pageNumber": 3
         },
         {
-          "id": "slide_1790054353440_3",
+          "id": "slide_1790097868949_3",
           "fileUrl": "",
           "pageNumber": 4
         },
         {
-          "id": "slide_1790054353440_4",
+          "id": "slide_1790097868949_4",
           "fileUrl": "",
           "pageNumber": 5
+        },
+        {
+          "id": "slide_1790097868949_5",
+          "fileUrl": "",
+          "pageNumber": 6
+        },
+        {
+          "id": "slide_1790097868949_6",
+          "fileUrl": "",
+          "pageNumber": 7
         }
       ]
     }
   ],
   "activities": [
-    {
-      "id": "ACT_1790054353668",
-      "type": "CLASSIFICATION",
-      "mode": "INDIVIDUAL",
-      "bonusType": "NONE",
-      "bonusPoints": 0,
-      "groups": [
-        {
-          "id": "G1",
-          "name": "Nhóm Test 1"
-        },
-        {
-          "id": "G2",
-          "name": "Nhóm Test 2"
-        }
-      ],
-      "items": [
-        {
-          "id": "I1",
-          "text": "Bàn phím",
-          "correctGroupId": "G1"
-        },
-        {
-          "id": "I2",
-          "text": "Chuột",
-          "correctGroupId": "G1"
-        },
-        {
-          "id": "I3",
-          "text": "Màn hình",
-          "correctGroupId": "G2"
-        },
-        {
-          "id": "I1790054353987",
-          "text": "Webcam",
-          "correctGroupId": "G1"
-        }
-      ],
-      "presentationId": "test-pres-1",
-      "slideId": 1
-    },
-    {
-      "id": "ACT_1790054363398",
-      "type": "MULTIPLE_CHOICE",
-      "mode": "INDIVIDUAL",
-      "bonusType": "NONE",
-      "bonusPoints": 0,
-      "options": [
-        {
-          "id": 1,
-          "text": "Đáp án A",
-          "isCorrect": true
-        },
-        {
-          "id": 2,
-          "text": "Đáp án B",
-          "isCorrect": false
-        },
-        {
-          "id": 3,
-          "text": "Đáp án C",
-          "isCorrect": false
-        },
-        {
-          "id": 4,
-          "text": "Đáp án D",
-          "isCorrect": false
-        }
-      ],
-      "presentationId": "test-pres-1",
-      "slideId": 2
-    },
     {
       "id": "ACT_TEST_CLASS",
       "presentationId": "test-pres-1",
@@ -149,6 +87,51 @@
       "slideId": 4,
       "type": "SHORT_ANSWER",
       "mode": "INDIVIDUAL"
+    },
+    {
+      "id": "ACT_TEST_WORD_CLOUD",
+      "presentationId": "test-pres-1",
+      "slideId": 5,
+      "type": "WORD_CLOUD",
+      "mode": "INDIVIDUAL"
+    },
+    {
+      "id": "ACT_TEST_LOCK",
+      "presentationId": "test-pres-1",
+      "slideId": 6,
+      "type": "MULTIPLE_CHOICE",
+      "mode": "INDIVIDUAL",
+      "options": [
+        {
+          "id": "OPT1",
+          "text": "Option A",
+          "isCorrect": true
+        },
+        {
+          "id": "OPT2",
+          "text": "Option B",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "id": "ACT_TEST_RECONNECT",
+      "presentationId": "test-pres-1",
+      "slideId": 7,
+      "type": "MULTIPLE_CHOICE",
+      "mode": "INDIVIDUAL",
+      "options": [
+        {
+          "id": "OPT1",
+          "text": "Option A",
+          "isCorrect": true
+        },
+        {
+          "id": "OPT2",
+          "text": "Option B",
+          "isCorrect": false
+        }
+      ]
     }
   ],
   "classCodes": [
@@ -158,164 +141,231 @@
     },
     {
       "classId": "CLS002",
-      "code": "V4MVIV"
+      "code": "V1IZ5G"
     },
     {
       "classId": "CLS003",
-      "code": "ZGEUYK"
+      "code": "ERMI6Y"
     },
     {
       "classId": "CLS004",
-      "code": "F6CDNX"
+      "code": "3ZQ5MD"
     },
     {
       "classId": "CLS005",
-      "code": "KBQUTI"
+      "code": "UBURBL"
     },
     {
       "classId": "CLS006",
-      "code": "N5FQ4S"
+      "code": "JWU2VG"
     },
     {
       "classId": "CLS021",
-      "code": "8M4QJA"
+      "code": "PJT23F"
     },
     {
       "classId": "CLS022",
-      "code": "3UEB79"
+      "code": "M545P1"
     },
     {
       "classId": "CLS023",
-      "code": "8X27BO"
+      "code": "IGLX7M"
     },
     {
       "classId": "CLS024",
-      "code": "KNO1DS"
+      "code": "VBHHTT"
     },
     {
       "classId": "CLS025",
-      "code": "MX3MOO"
+      "code": "H1CVLA"
     },
     {
       "classId": "CLS026",
-      "code": "2CQCA3"
+      "code": "IOFAQA"
     },
     {
       "classId": "CLS041",
-      "code": "363HPH"
+      "code": "06JTZ1"
     },
     {
       "classId": "CLS042",
-      "code": "7H0NO6"
+      "code": "SYI8BF"
     },
     {
       "classId": "CLS043",
-      "code": "I6H4ZR"
+      "code": "UYMVI9"
     },
     {
       "classId": "CLS044",
-      "code": "9OZ3P0"
+      "code": "VVTXT3"
     },
     {
       "classId": "CLS045",
-      "code": "LVAIA3"
+      "code": "CYA6UT"
     },
     {
       "classId": "CLS046",
-      "code": "24EV7M"
+      "code": "AEI8KC"
     },
     {
       "classId": "CLS061",
-      "code": "Q9V9UX"
+      "code": "2SH6Z5"
     },
     {
       "classId": "CLS062",
-      "code": "ZDVWJB"
+      "code": "F5V5QV"
     },
     {
       "classId": "CLS063",
-      "code": "YNFXRK"
+      "code": "4L8Y7U"
     },
     {
       "classId": "CLS064",
-      "code": "2EP5JW"
+      "code": "V1TXA8"
     },
     {
       "classId": "CLS065",
-      "code": "TT3TMP"
+      "code": "DJ3UQN"
     },
     {
       "classId": "CLS066",
-      "code": "4MTH7X"
+      "code": "5JAUN9"
     },
     {
       "classId": "CLS007",
-      "code": "08Z4PK"
+      "code": "4MY1WS"
     },
     {
       "classId": "CLS008",
-      "code": "KUAMO3"
+      "code": "WW5TWQ"
     },
     {
       "classId": "CLS009",
-      "code": "9PXAGH"
+      "code": "2PD0OP"
     },
     {
       "classId": "CLS010",
-      "code": "AHDAXL"
+      "code": "SWLQBM"
     },
     {
       "classId": "CLS027",
-      "code": "Q7C28P"
+      "code": "6HXXJQ"
     },
     {
       "classId": "CLS028",
-      "code": "91MY4Q"
+      "code": "DS2CM4"
     },
     {
       "classId": "CLS029",
-      "code": "2F1JEZ"
+      "code": "CIHY4H"
     },
     {
       "classId": "CLS030",
-      "code": "RN07JM"
+      "code": "1DD16W"
     },
     {
       "classId": "CLS047",
-      "code": "N7KHGO"
+      "code": "2VEI01"
     },
     {
       "classId": "CLS048",
-      "code": "L1YKBM"
+      "code": "0GQLW4"
     },
     {
       "classId": "CLS049",
-      "code": "FPUBZD"
+      "code": "2Z171Z"
     },
     {
       "classId": "CLS050",
-      "code": "P61T20"
+      "code": "2H3EU6"
     },
     {
       "classId": "CLS067",
-      "code": "9NG0E1"
+      "code": "HM68VU"
     },
     {
       "classId": "CLS068",
-      "code": "4KDFU4"
+      "code": "E6CTT4"
     },
     {
       "classId": "CLS069",
-      "code": "3OPLOQ"
+      "code": "KQWQHI"
     },
     {
       "classId": "CLS070",
-      "code": "CQ3QHY"
+      "code": "4XRBLN"
     },
     {
       "classId": "CLS071",
-      "code": "AWVSHY"
+      "code": "AGUXV1"
     }
   ],
-  "bonusLedgers": []
+  "bonusLedgers": [],
+  "sessions": [],
+  "responses": {},
+  "sessionHistories": [
+    {
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "className": "6/1",
+      "topicIds": [],
+      "lessonIds": [],
+      "startedAt": 1790094272296,
+      "completedAt": 1790097872296,
+      "status": "COMPLETED",
+      "activities": [
+        {
+          "activityId": "ACT_TEST_CLASS",
+          "slideNumber": 3,
+          "activityType": "CLASSIFICATION",
+          "activityMode": "INDIVIDUAL",
+          "maxScore": 1
+        },
+        {
+          "activityId": "ACT_TEST_SHORT_ANSWER",
+          "slideNumber": 4,
+          "activityType": "SHORT_ANSWER",
+          "activityMode": "INDIVIDUAL",
+          "maxScore": 1
+        },
+        {
+          "activityId": "ACT_TEST_WORD_CLOUD",
+          "slideNumber": 5,
+          "activityType": "WORD_CLOUD",
+          "activityMode": "INDIVIDUAL",
+          "maxScore": 1
+        },
+        {
+          "activityId": "ACT_TEST_LOCK",
+          "slideNumber": 6,
+          "activityType": "MULTIPLE_CHOICE",
+          "activityMode": "INDIVIDUAL",
+          "maxScore": 1
+        },
+        {
+          "activityId": "ACT_TEST_RECONNECT",
+          "slideNumber": 7,
+          "activityType": "MULTIPLE_CHOICE",
+          "activityMode": "INDIVIDUAL",
+          "maxScore": 1
+        }
+      ],
+      "students": [
+        {
+          "studentId": 4866077784,
+          "studentName": "Nguyễn Phương Bình An",
+          "sessionScore": 0,
+          "activityResults": []
+        }
+      ],
+      "id": "hist_1790097872395_r5bup"
+    }
+  ],
+  "classes": [
+    {
+      "id": "CLS001",
+      "name": "Lớp 10A1",
+      "studentCount": 40
+    }
+  ]
 }

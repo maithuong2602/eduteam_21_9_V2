@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 test.describe('Classification Realtime Sync', () => {
   test('Teacher and Student realtime flow for Classification', async ({ browser }) => {
@@ -19,6 +19,7 @@ test.describe('Classification Realtime Sync', () => {
     await teacherPage.locator('select').first().selectOption('CLS001');
     await classResPromise;
     
+    await teacherPage.waitForTimeout(1000);
     await teacherPage.locator('button:has-text("Tạo phiên học")').click();
     
     const codeLocator = teacherPage.locator('span:has-text("Mã vào lớp:")');
