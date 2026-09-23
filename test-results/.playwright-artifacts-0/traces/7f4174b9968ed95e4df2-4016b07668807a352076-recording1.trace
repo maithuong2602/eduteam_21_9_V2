@@ -1,0 +1,1 @@
+{"version":9,"type":"context-options","origin":"library","browserName":"","playwrightVersion":"1.63.0","options":{},"platform":"win32","wallTime":1790179356001,"monotonicTime":4684.81,"sdkLanguage":"javascript","title":"e2e\\activity-persistence.spec.ts:4 › Activity Persistence › Classification activity saves and restores correctly"}
