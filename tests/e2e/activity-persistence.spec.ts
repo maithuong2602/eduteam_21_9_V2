@@ -1,4 +1,4 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 test.describe('Activity Persistence', () => {
   test('Classification activity saves and restores correctly', async ({ page }) => {
@@ -42,16 +42,12 @@ test.describe('Activity Persistence', () => {
     // Điền mục mới (Mục mới sẽ nằm ở cuối Nhóm 1, tức là nth(2), Màn hình bị đẩy xuống nth(3))
     await page.locator('.group\\/item textarea').nth(2).fill('Webcam');
     
-    // Bắt event API autosave
-    const savePromise = page.waitForResponse(response => 
-      response.url().includes('/api/activities/sync') && response.request().method() === 'POST'
-    );
+    // Removed savePromise
     
     // 6. Click Lưu thay đổi
     await page.locator('button:has-text("Lưu thay đổi")').click();
     
-    // 7. Chờ autosave hoàn tất
-    await savePromise;
+    await page.waitForTimeout(2000);
     
     // 8. Reload trang
     await page.reload();

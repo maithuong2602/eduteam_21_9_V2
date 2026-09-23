@@ -76,5 +76,10 @@ test.describe('Idempotency Realtime Sync', () => {
     
     // Verify teacher STILL sees 1 response
     await expect(teacherPage.locator('text="1 phản hồi"')).toBeVisible();
+    
+    // 8. Cleanup
+    await teacherPage.locator('button:has-text("Kết thúc phiên")').click();
+    await teacherPage.locator('button:has-text("BỎ DỮ LIỆU")').click();
+    await teacherPage.waitForTimeout(500);
   });
 });

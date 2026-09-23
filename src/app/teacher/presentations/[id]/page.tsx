@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+
 import Link from "next/link";
 import ClassificationBuilder from "@/components/ClassificationBuilder";
 import { useParams } from "next/navigation";
@@ -442,28 +443,24 @@ export default function PresentationDetail() {
     }
   };
 
-  
   const handleApproveGroupPoints = () => {
     if (!socket || !sessionCode || !currentActivityId) return;
-    const scores: Record<string, number> = {};
-    groups.forEach(g => {
-      const ws = workspaces[g.id];
-      if (ws && ws.status === 'SUBMITTED') {
-         scores[g.id] = currentActivity?.points || 1; // Basic full points for now
-      }
-    });
+    
+    // Default total category activities if not supported by UI yet
+    const totalCategoryActivities = Object.values(activities).filter(a => a.category === 'HOAT_DONG').length || 1;
     
     socket.emit('approve_group_points', {
       code: sessionCode,
       activityId: currentActivityId,
-      scores,
       activityDetails: {
         slideNumber: selectedSlide,
         type: currentActivity?.type,
         name: currentActivity?.name || `HD${selectedSlide}`,
         mode: currentActivity?.mode || 'GROUP',
-        bonusType: currentActivity?.bonusType || 'NONE',
-        bonusPoints: currentActivity?.bonusPoints || 0
+        category: currentActivity?.category || 'UNSET',
+        config: currentActivity || {},
+        totalCategoryActivities,
+        workspaces // Send raw workspaces
       }
     });
     alert('Đã duyệt điểm nhóm thành công!');
@@ -472,128 +469,27 @@ export default function PresentationDetail() {
   const handleApprovePoints = (type: 'all' | 'correct_only') => {
     if (!socket || !sessionCode || !currentActivityId) return;
     const currentActivity = activities[currentActivityId] || {};
-    const points = currentActivity.points || 1;
+    const totalCategoryActivities = Object.values(activities).filter(a => a.category === 'HOAT_DONG').length || 1;
     
-    const newApproved: Record<string, number> = {};
-    const typesMap: Record<string, 'FULL' | 'PARTIAL' | 'INCORRECT'> = {};
-    
-    Object.entries(responses).forEach(([socketId, ans]) => {
-      let isCorrect = false;
-      if (currentActivity.type === "MULTIPLE_CHOICE") {
-          const correctIds = (currentActivity.options || []).filter((o:any) => o.isCorrect).map((o:any) => o.id);
-          const studentAnsIds = Array.isArray(ans) ? ans : [ans];
-          isCorrect = correctIds.length > 0 && correctIds.length === studentAnsIds.length && correctIds.every((id:any) => studentAnsIds.includes(id));
-        } else if (currentActivity.type === "WORD_CLOUD" || currentActivity.type === "SHORT_ANSWER") {
-          isCorrect = Array.isArray(ans) ? ans.length > 0 && ans[0] !== "" : ans !== "";
-        } else if (currentActivity.type === "CLASSIFICATION") {
-          // CLASSIFICATION scoring: 
-          // ans is a workspaceState object mapping itemId -> groupId.
-          // Calculate partial correctness: what % of items are in the correct group?
-          const items = currentActivity.items || [];
-          let correctCount = 0;
-          let totalItems = items.length;
-          if (totalItems > 0 && typeof ans === 'object') {
-             items.forEach((item: any) => {
-               if (ans[item.id] === item.correctGroupId) correctCount++;
-             });
-             isCorrect = correctCount === totalItems;
-          }
-        }
-      
-      if (type === 'all') {
-        newApproved[socketId] = points;
-        typesMap[socketId] = 'FULL';
-      } else if (type === 'correct_only') {
-          if (currentActivity.type === "CLASSIFICATION") {
-             const items = currentActivity.items || [];
-             let correctCount = 0;
-             if (items.length > 0 && typeof ans === 'object') {
-                items.forEach((item: any) => {
-                   if (ans[item.id] === item.correctGroupId) correctCount++;
-                });
-                const proportionalPoints = Math.round((correctCount / items.length) * points);
-                newApproved[socketId] = proportionalPoints;
-                typesMap[socketId] = correctCount === items.length ? 'FULL' : (correctCount > 0 ? 'PARTIAL' : 'INCORRECT');
-             } else {
-                newApproved[socketId] = 0;
-                typesMap[socketId] = 'INCORRECT';
-             }
-          } else {
-             newApproved[socketId] = isCorrect ? points : (points * 0.5);
-             typesMap[socketId] = isCorrect ? 'FULL' : 'PARTIAL';
-          }
-        }
-    });
-
-    setApprovedPoints(newApproved);
     socket.emit('approve_points', {
       code: sessionCode,
-      pointsMap: newApproved,
-      typesMap,
+      manualOverride: type === 'all',
       activityDetails: {
           slideNumber: selectedSlide,
           type: currentActivity.type,
           name: currentActivity.name || `HD${selectedSlide}`,
           mode: currentActivity.mode || 'INDIVIDUAL',
-          bonusType: currentActivity.bonusType || 'NONE',
-          bonusPoints: currentActivity.bonusPoints || 0,
+          category: currentActivity.category || 'UNSET',
+          config: currentActivity,
+          totalCategoryActivities,
           date: new Date().toLocaleString('vi-VN'),
-          responses: (() => {
-             const formatted: Record<string, any> = {};
-             Object.entries(responses).forEach(([socketId, ans]) => {
-                const student = students.find(s => s.id === socketId);
-                const sysId = student ? student.systemId : socketId;
-                
-                let ansText = typeof ans === 'object' ? JSON.stringify(ans) : String(ans);
-                if (currentActivity?.type === 'MULTIPLE_CHOICE') {
-                  const ansIds = Array.isArray(ans) ? ans : [ans];
-                  ansText = ansIds.map((optId: any) => {
-                    const idx = (currentActivity.options || []).findIndex((o:any) => o.id === optId);
-                    return idx >= 0 ? String.fromCharCode(65 + idx) : '';
-                  }).join(', ');
-                } else if (currentActivity?.type === 'WORD_CLOUD' || currentActivity?.type === 'SHORT_ANSWER') {
-                  ansText = Array.isArray(ans) ? ans.join(', ') : String(ans);
-                } else if (currentActivity?.type === 'CLASSIFICATION') {
-                  if (typeof ans === 'object' && ans !== null && !Array.isArray(ans)) {
-                     const items = currentActivity.items || [];
-                     const groups = currentActivity.groups || [];
-                     const lines: string[] = [];
-                     items.forEach((it: any) => {
-                        const placedGroupId = ans[it.id];
-                        if (placedGroupId) {
-                           const gName = groups.find((g:any) => g.id === placedGroupId)?.name || placedGroupId;
-                           lines.push(`${it.text} → ${gName}`);
-                        } else {
-                           lines.push(`${it.text} → (Chưa phân loại)`);
-                        }
-                     });
-                     ansText = lines.join('\n');
-                  }
-                } else if (currentActivity?.type === 'CLASSIFICATION') {
-                            if (typeof ans === 'object' && ans !== null && !Array.isArray(ans)) {
-                               const items = currentActivity.items || [];
-                               const groups = currentActivity.groups || [];
-                               const lines: string[] = [];
-                               items.forEach((it: any) => {
-                                  const placedGroupId = ans[it.id];
-                                  if (placedGroupId) {
-                                     const gName = groups.find((g:any) => g.id === placedGroupId)?.name || placedGroupId;
-                                     lines.push(`${it.text} → ${gName}`);
-                                  } else {
-                                     lines.push(`${it.text} → (Chưa phân loại)`);
-                                  }
-                               });
-                               ansText = lines.join('\n');
-                            }
-                          }
-                
-                formatted[sysId] = ansText;
-             });
-             return formatted;
-          })()
-        }
+          responses // Send raw responses
+      }
+    }, (response: any) => {
+      if (response && response.success) {
+        setApprovedPoints(prev => ({ ...prev, [currentActivityId]: 1 }));
+      }
     });
-    alert("Đã duyệt điểm thành công! Học sinh đã nhận được cúp!");
   };
 
   const resetSessionState = () => {
@@ -604,6 +500,7 @@ export default function PresentationDetail() {
     setCurrentActivityId(null);
     setTimeLeft(null);
     setIsLocked(false);
+    setShowResultsModal(false);
   };
 
   const handleEndSession = async (type: 'SAVE' | 'DISCARD' | 'CONTINUE') => {
@@ -614,82 +511,50 @@ export default function PresentationDetail() {
 
     if (type === 'DISCARD') {
       if (window.confirm('Dữ liệu của phiên dạy hiện tại sẽ bị xóa và không được lưu vào lịch sử. Bạn có chắc chắn muốn tiếp tục?')) {
-        if (socket) socket.emit('end_session', { code: sessionCode });
-        resetSessionState();
-        setShowEndSessionDialog(false);
+        if (socket) {
+          socket.emit('end_session', { code: sessionCode }, () => {
+            resetSessionState();
+            setShowEndSessionDialog(false);
+          });
+        } else {
+          resetSessionState();
+          setShowEndSessionDialog(false);
+        }
       }
       return;
     }
 
     if (type === 'SAVE') {
       try {
-        // Collect session history payload
-        const historyPayload = {
-          sessionCode: sessionCode,
-          classId: selectedClass,
-          className: classList.find((c: any) => c.id === selectedClass)?.name || "Unknown",
-          topicIds: [], // Placeholder for topics
-          lessonIds: [], // Placeholder for lessons
-          startedAt: Date.now() - 3600000, // Dummy start time for now
-          completedAt: Date.now(),
-          status: 'COMPLETED',
-          activities: Object.keys(slideActivities).flatMap(slideNum => 
-            slideActivities[Number(slideNum)].map(actId => {
-              const act = activities[actId];
-              return {
-                activityId: act.id,
-                slideNumber: Number(slideNum),
-                activityType: act.type,
-                activityMode: act.mode,
-                maxScore: act.points || 1
-              };
-            })
-          ),
-          students: students.map(s => {
-            const actResults = [];
-            
-            // Reconstruct activity results from the current responses state
-            // Note: `responses` is state for current activity. We need to collect it properly or accept it's a simplification for Phase S1-A/B.
-            // Wait, currently responses only hold the CURRENT activity's responses because we do `setResponses({})` when starting a new activity! 
-            // So we just save the current one.
-            if (currentActivityId) {
-               const act = activities[currentActivityId];
-               const ans = responses[s.id] || responses[s.systemId];
-               if (ans !== undefined) {
-                  actResults.push({
-                    activityId: act.id,
-                    activityType: act.type,
-                    activityMode: act.mode,
-                    answer: ans,
-                    score: approvedPoints[s.id] || approvedPoints[s.systemId] || 0,
-                    maxScore: act.points || 1
-                  });
-               }
-            }
-
-            return {
-              studentId: s.systemId || s.id,
-              studentName: s.name,
-              sessionScore: approvedPoints[s.id] || approvedPoints[s.systemId] || 0,
-              activityResults: actResults
-            };
-          })
-        };
-
-        const res = await fetch('/api/history', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(historyPayload)
-        });
-
-        if (!res.ok) throw new Error('Failed to save');
+        if (!socket) return;
         
-        if (socket) socket.emit('end_session', { code: sessionCode });
-        resetSessionState();
-        setShowEndSessionDialog(false);
+        // Request the authoritative history payload from the backend
+        socket.emit('request_history_payload', { code: sessionCode }, async (response: any) => {
+           if (!response || response.error) {
+              alert("Lỗi từ server khi tạo lịch sử: " + (response?.error || "Unknown"));
+              return;
+           }
+           
+           try {
+             // Let the UI POST it so Playwright can intercept it for Save Failure tests
+             const res = await fetch('/api/history', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify(response.payload)
+             });
+
+             if (!res.ok) throw new Error('Failed to save');
+             
+             socket.emit('end_session', { code: sessionCode }, () => {
+               resetSessionState();
+               setShowEndSessionDialog(false);
+             });
+           } catch (e) {
+             alert("Không thể lưu phiên dạy. Dữ liệu hiện tại vẫn được giữ nguyên. Vui lòng thử lại.");
+           }
+        });
       } catch (e) {
-        alert("Không thể lưu phiên dạy. Dữ liệu hiện tại vẫn được giữ nguyên. Vui lòng thử lại.");
-        // Do not close dialog, do not reset state
+        alert("Có lỗi xảy ra. Vui lòng thử lại.");
       }
     }
   };
@@ -1502,7 +1367,7 @@ export default function PresentationDetail() {
 
                   <div className="relative group inline-block">
                     <button className="bg-yellow-500 text-white font-semibold px-4 py-2 rounded-lg shadow-sm hover:bg-yellow-600 transition-colors flex items-center">
-                      Duyệt điểm ▾
+                      {approvedPoints[currentActivityId || -1] ? "Đã duyệt điểm ▾" : "Duyệt điểm ▾"}
                     </button>
                     <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-md shadow-lg hidden group-hover:block z-50">
                       <button onClick={() => handleApprovePoints('all')} className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 border-b">

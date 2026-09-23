@@ -79,5 +79,11 @@ test.describe('Short Answer Realtime Sync', () => {
     
     // The modal should contain the exact text "EduTeam Test 3D"
     await expect(teacherPage.locator(`text="${testAnswer}"`)).toBeVisible();
+    await teacherPage.locator('button:has-text("Đóng")').click();
+    
+    // 8. Cleanup
+    await teacherPage.locator('button:has-text("Kết thúc phiên")').click();
+    await teacherPage.locator('button:has-text("BỎ DỮ LIỆU")').click();
+    await teacherPage.waitForTimeout(500);
   });
 });

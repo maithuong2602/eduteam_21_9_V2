@@ -12,20 +12,19 @@ test.describe('Phase S1-B: Session Save and Reset', () => {
     data.sessions = [];
     data.responses = {};
     data.sessionHistories = [];
-    // Ensure we have a class to select
     if (!data.classes) {
       data.classes = [{ id: "CLS001", name: "Lớp 10A1", studentCount: 40 }];
     }
     fs.writeFileSync(dbPath, JSON.stringify(data, null, 2));
   });
 
-  test('Test A, B, C, D: Save Session, Student Reset, Reset Teacher State, Validate History', async ({ browser }) => {
+  async function setupActiveSessionWithResponse(browser) {
     const teacherContext = await browser.newContext();
     const studentContext = await browser.newContext();
     const teacherPage = await teacherContext.newPage();
     const studentPage = await studentContext.newPage();
 
-    // 1. Teacher starts session
+    console.log("Teacher creating session...");
     await teacherPage.goto('http://localhost:3000/teacher/presentations/test-pres-1');
     await teacherPage.waitForSelector('[data-testid="teacher-page"]');
     
@@ -33,125 +32,197 @@ test.describe('Phase S1-B: Session Save and Reset', () => {
     await teacherPage.waitForTimeout(1000);
     await teacherPage.click('button:has-text("Tạo phiên học")');
 
-    // Extract session code
     const codeElement = await teacherPage.waitForSelector('span:has-text("Mã vào lớp:")');
     const text = await codeElement.textContent();
     const sessionCode = text?.replace('Mã vào lớp:', '').trim() || '';
-    expect(sessionCode).toBeTruthy();
 
-    // 2. Student joins
+    console.log("Student joining...");
     await studentPage.goto('http://localhost:3000/join');
     await studentPage.fill('input[placeholder="Ví dụ: 7K4P2"]', sessionCode);
-    await studentPage.fill('input[placeholder="Ví dụ: HS12345"]', '4866077784');
+    const studentId = '4866077784';
+    await studentPage.fill('input[placeholder="Ví dụ: HS12345"]', studentId);
     await studentPage.click('button:has-text("Vào lớp")');
-
     await expect(studentPage.locator('text=Bạn đã vào lớp thành công')).toBeVisible();
 
-    // 3. Teacher triggers End Session Dialog
-    await teacherPage.click('button:has-text("Kết thúc phiên")');
-    await expect(teacherPage.locator('text=Kết thúc phiên dạy')).toBeVisible();
+    console.log("Launching activity...");
+    for (let i = 0; i < 3; i++) {
+      await teacherPage.locator('button.right-4').click();
+      await teacherPage.waitForTimeout(500);
+    }
+    const startBtn = teacherPage.locator('button:has-text("Bắt đầu")');
+    await expect(startBtn).toBeVisible();
+    await startBtn.click();
 
-    // 4. Teacher selects LƯU VÀ KẾT THÚC
-    await teacherPage.click('button:has-text("LƯU VÀ KẾT THÚC")');
+    console.log("Submitting answer...");
+    await expect(studentPage.locator('textarea')).toBeVisible();
+    await studentPage.fill('textarea', 'My Test Answer');
+    await studentPage.click('button:has-text("Gửi câu trả lời")');
+    await expect(studentPage.locator('button', { hasText: /Đã Gửi/i })).toBeVisible();
 
-    // 5. Test B: Student Reset - verify student page shows termination
-    await expect(studentPage.locator('text=Phiên học đã kết thúc')).toBeVisible({ timeout: 10000 });
+    console.log("Giving score...");
+    const openResultsBtn = teacherPage.locator('button:has-text("Mở bảng Chi tiết Kết quả")').first();
+    await expect(openResultsBtn).toBeVisible();
+    await openResultsBtn.click();
     
-    // 6. Test C: Reset Teacher State - verify session code is gone and we can create a new session
-    await expect(teacherPage.locator('span:has-text("Mã vào lớp:")')).toBeHidden();
-    await expect(teacherPage.locator('select')).toBeVisible(); // Class selector is back
+    const scoreDropdown = teacherPage.locator('button:has-text("Duyệt điểm ▾")').first();
+    await expect(scoreDropdown).toBeVisible();
+    await scoreDropdown.hover();
+    
+    const approveAll = teacherPage.locator('button:has-text("Duyệt tất cả (Cộng 100%)")').first();
+    await expect(approveAll).toBeVisible();
+    await approveAll.click();
+    await teacherPage.waitForTimeout(500);
+    
+    // Close the Results Modal
+    await teacherPage.locator('button:has-text("Đóng")').dispatchEvent('click');
+    await teacherPage.waitForTimeout(300);
 
-    // 7. Test D: Validate History Persistence
+    console.log("Setup complete!");
+    return { teacherContext, studentContext, teacherPage, studentPage, sessionCode, studentId };
+  }
+
+  test('Test A: Full Save & Validate History Content', async ({ browser }) => {
+    const { teacherContext, studentContext, teacherPage, studentPage, sessionCode, studentId } = await setupActiveSessionWithResponse(browser);
+
+    // End Session and Save
+    await teacherPage.locator('button:has-text("Kết thúc phiên")').dispatchEvent('click');
+    await teacherPage.locator('button:has-text("LƯU VÀ KẾT THÚC")').dispatchEvent('click');
+
+    // Wait for reset
+    await expect(teacherPage.locator('select').first()).toBeVisible();
+    await expect(studentPage.locator('text=Phiên học đã kết thúc')).toBeVisible({ timeout: 10000 });
+
+    // Validate DB History
     const dbContent = fs.readFileSync(dbPath, 'utf8');
     const db = JSON.parse(dbContent);
     expect(db.sessionHistories.length).toBe(1);
+    
     const history = db.sessionHistories[0];
     expect(history.sessionCode).toBe(sessionCode);
+    expect(history.classId).toBe('CLS001');
     expect(history.className).toBe('6/1');
-    expect(history.students.length).toBe(1);
-    expect(history.students[0].studentName).toBeTruthy();
+    expect(history.status).toBe('COMPLETED');
+    expect(history.completedAt).toBeGreaterThan(0);
+    
+    expect(history.activities.length).toBeGreaterThan(0);
+    const actInfo = history.activities.find(a => a.activityType === 'SHORT_ANSWER');
+    expect(actInfo).toBeTruthy();
+    expect(actInfo.activityMode).toBe('INDIVIDUAL');
+    expect(actInfo.maxScore).toBe(1);
+
+    expect(history.students.length).toBeGreaterThanOrEqual(1);
+    const st = history.students.find((s: any) => String(s.studentId) === studentId);
+    expect(st).toBeDefined();
+    expect(st.studentName).toBeTruthy();
+    expect(st.sessionScore).toBe(1);
+    expect(st.activityResults.length).toBe(1);
+    
+    const res = st.activityResults[0];
+    expect(res.activityType).toBe('SHORT_ANSWER');
+    expect(res.answer).toEqual(['My Test Answer']);
+    expect(res.score).toBe(1);
 
     await teacherContext.close();
     await studentContext.close();
   });
 
-  test('Test E: Discard Data', async ({ browser }) => {
-    const teacherContext = await browser.newContext();
-    const teacherPage = await teacherContext.newPage();
+  test('Test B: Session A saved -> reset -> create Session B', async ({ browser }) => {
+    const { teacherContext, studentContext, teacherPage, studentPage, sessionCode } = await setupActiveSessionWithResponse(browser);
 
-    // 1. Teacher starts session
-    await teacherPage.goto('http://localhost:3000/teacher/presentations/test-pres-1');
-    await teacherPage.waitForSelector('[data-testid="teacher-page"]');
-    
+    // End Session A
+    await teacherPage.locator('button:has-text("Kết thúc phiên")').dispatchEvent('click');
+    await teacherPage.locator('button:has-text("LƯU VÀ KẾT THÚC")').dispatchEvent('click');
+    await expect(teacherPage.locator('select').first()).toBeVisible();
+
+    // Create Session B
     await teacherPage.locator('select').first().selectOption('CLS001');
     await teacherPage.waitForTimeout(1000);
     await teacherPage.click('button:has-text("Tạo phiên học")');
+    const codeElement = await teacherPage.waitForSelector('span:has-text("Mã vào lớp:")');
+    const text = await codeElement.textContent();
+    const sessionCodeB = text?.replace('Mã vào lớp:', '').trim() || '';
+    expect(sessionCodeB).toBeTruthy();
+    expect(sessionCodeB).toBe(sessionCode);
 
-    // Automatically accept window.confirm
+    // Session A history is intact
+    const dbContent = fs.readFileSync(dbPath, 'utf8');
+    const db = JSON.parse(dbContent);
+    expect(db.sessionHistories.length).toBe(1);
+    expect(db.sessionHistories[0].sessionCode).toBe(sessionCode);
+
+    await teacherContext.close();
+    await studentContext.close();
+  });
+
+  test('Test C: Tiếp tục dạy does not lose state', async ({ browser }) => {
+    const { teacherContext, studentContext, teacherPage, studentPage, sessionCode } = await setupActiveSessionWithResponse(browser);
+
+    await teacherPage.locator('button:has-text("Kết thúc phiên")').dispatchEvent('click');
+    await teacherPage.locator('button:has-text("TIẾP TỤC DẠY")').dispatchEvent('click');
+
+    // Dialog is hidden, session still active
+    await expect(teacherPage.locator('text=Kết thúc phiên dạy')).toBeHidden();
+    await expect(teacherPage.locator('span:has-text("Mã vào lớp:")')).toBeVisible();
+    // Verify session is still active
+    await expect(teacherPage.locator('button:has-text("Kết thúc phiên")')).toBeVisible();
+
+    await teacherContext.close();
+    await studentContext.close();
+  });
+
+  test('Test D: Discard Data (BỎ DỮ LIỆU) prevents history creation', async ({ browser }) => {
+    const { teacherContext, studentContext, teacherPage, studentPage, sessionCode } = await setupActiveSessionWithResponse(browser);
+
     teacherPage.on('dialog', dialog => dialog.accept());
+    await teacherPage.locator('button:has-text("Kết thúc phiên")').dispatchEvent('click');
+    await teacherPage.locator('button:has-text("BỎ DỮ LIỆU")').dispatchEvent('click');
 
-    // 2. Trigger End Session
-    await teacherPage.click('button:has-text("Kết thúc phiên")');
-    
-    // 3. Select BỎ DỮ LIỆU
-    await teacherPage.click('button:has-text("BỎ DỮ LIỆU")');
-
-    // Verify reset but NO persistence
-    await expect(teacherPage.locator('select')).toBeVisible();
+    await expect(teacherPage.locator('select').first()).toBeVisible();
     
     const dbContent = fs.readFileSync(dbPath, 'utf8');
     const db = JSON.parse(dbContent);
-    expect(db.sessionHistories.length).toBe(0); // History is empty!
+    expect(db.sessionHistories.length).toBe(0);
 
     await teacherContext.close();
+    await studentContext.close();
   });
 
-  test('Test F: Save Failure Mutation (No Reset)', async ({ browser }) => {
-    const teacherContext = await browser.newContext();
-    const teacherPage = await teacherContext.newPage();
+  test('Test E: Save Failure Mutation (route.abort)', async ({ browser }) => {
+    const { teacherContext, studentContext, teacherPage, studentPage, sessionCode } = await setupActiveSessionWithResponse(browser);
 
-    // 1. Intercept POST /api/history and force failure (HTTP 500)
+    // Force network failure for the HTTP request using route.abort()
     await teacherPage.route('/api/history', async route => {
-      await route.fulfill({ status: 500, body: 'Internal Server Error' });
+      await route.abort('failed');
     });
 
-    // Handle alert dialog that pops up on save failure
     let alertMessage = '';
     teacherPage.on('dialog', dialog => {
       alertMessage = dialog.message();
       dialog.accept();
     });
 
-    // 2. Teacher starts session
-    await teacherPage.goto('http://localhost:3000/teacher/presentations/test-pres-1');
-    await teacherPage.waitForSelector('[data-testid="teacher-page"]');
-    
-    await teacherPage.locator('select').first().selectOption('CLS001');
-    await teacherPage.waitForTimeout(1000);
-    await teacherPage.click('button:has-text("Tạo phiên học")');
+    await teacherPage.locator('button:has-text("Kết thúc phiên")').dispatchEvent('click');
+    await teacherPage.locator('button:has-text("LƯU VÀ KẾT THÚC")').dispatchEvent('click');
 
-    // Extract session code
-    const codeElement = await teacherPage.waitForSelector('span:has-text("Mã vào lớp:")');
-    const text = await codeElement.textContent();
-    const sessionCode = text?.replace('Mã vào lớp:', '').trim() || '';
-
-    // 3. Trigger End Session
-    await teacherPage.click('button:has-text("Kết thúc phiên")');
-    
-    // 4. Select LƯU VÀ KẾT THÚC
-    await teacherPage.click('button:has-text("LƯU VÀ KẾT THÚC")');
-
-    // Verify alert happened
-    await teacherPage.waitForTimeout(1000); // Wait for async fetch to finish and alert to trigger
+    await teacherPage.waitForTimeout(1000); 
     expect(alertMessage).toContain('Không thể lưu phiên dạy');
 
-    // 5. Verify NO RESET (session code is still visible)
+    // Current session NO RESET
     await expect(teacherPage.locator('span:has-text("Mã vào lớp:")')).toBeVisible();
-    expect(await teacherPage.locator('span:has-text("Mã vào lớp:")').textContent()).toContain(sessionCode);
-    
-    // Dialog should still be visible because we didn't close it on failure
-    await expect(teacherPage.locator('text=Kết thúc phiên dạy')).toBeVisible();
+    await expect(teacherPage.locator('text=Kết thúc phiên dạy')).toBeVisible(); // Dialog still open
+
+    // Response and score still intact behind dialog
+    await teacherPage.click('button:has-text("TIẾP TỤC DẠY")'); // Close dialog to check
+    // Verify session is still active
+    await expect(teacherPage.locator('button:has-text("Kết thúc phiên")')).toBeVisible();
+
+    // Verify DB History not created
+    const dbContent = fs.readFileSync(dbPath, 'utf8');
+    const db = JSON.parse(dbContent);
+    expect(db.sessionHistories.length).toBe(0);
 
     await teacherContext.close();
+    await studentContext.close();
   });
 });
+

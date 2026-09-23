@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const next = require('next');
+const scoreEngine = require('./src/lib/scoreEngine');
 
 const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({ dev });
@@ -238,12 +239,70 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('end_session', (data) => {
+  socket.on('request_history_payload', (data, callback) => {
+    const session = sessions[data.code];
+    if (!session || session.teacherSocketId !== socket.id) {
+      if (callback) callback({ error: 'Session not found or unauthorized' });
+      return;
+    }
+    
+    try {
+      const historyPayload = {
+        sessionCode: data.code,
+        classId: session.classId,
+        className: session.className || "Unknown",
+        topicIds: [],
+        lessonIds: [],
+        startedAt: Date.now() - 3600000,
+        completedAt: Date.now(),
+        status: 'COMPLETED',
+        activities: (session.activityHistory || []).map((h, i) => ({
+          activityId: `ACT_${h.slideNumber}_${i}`,
+          slideNumber: h.slideNumber,
+          activityType: h.type,
+          activityMode: h.mode,
+          maxScore: 1 // Fallback
+        })),
+        students: (session.validStudents || []).map(s => {
+          const actResults = [];
+          (session.activityHistory || []).forEach((h, i) => {
+            const systemId = s.systemId;
+            const points = h.pointsRecord ? h.pointsRecord[systemId] : undefined;
+            if (points !== undefined) {
+               actResults.push({
+                 activityId: `ACT_${h.slideNumber}_${i}`,
+                 activityType: h.type,
+                 activityMode: h.mode,
+                 answer: h.responses ? (h.responses[systemId] || h.responses[s.id]) : undefined,
+                 score: points,
+                 maxScore: 1
+               });
+            }
+          });
+          return {
+            studentId: s.systemId || s.id,
+            studentName: s.name,
+            sessionScore: (session.studentPoints && session.studentPoints[s.systemId]) || 0,
+            activityResults: actResults
+          };
+        })
+      };
+      
+      if (callback) callback({ payload: historyPayload });
+    } catch (error) {
+      if (callback) callback({ error: error.message });
+    }
+  });
+
+  socket.on('end_session', (data, callback) => {
     const session = sessions[data.code];
     if (session && session.teacherSocketId === socket.id) {
       io.to(data.code).emit('session_ended');
       delete sessions[data.code];
       console.log(`Session ${data.code} ended by teacher`);
+      if (typeof callback === 'function') callback({ success: true });
+    } else {
+      if (typeof callback === 'function') callback({ success: false });
     }
   });
 
@@ -306,9 +365,29 @@ io.on('connection', (socket) => {
       session.activityHistory.push(historyRecord);
     }
     if (!historyRecord.pointsRecord) historyRecord.pointsRecord = {};
+    if (!historyRecord.breakdownRecord) historyRecord.breakdownRecord = {};
+    if (!historyRecord.bonusRecord) historyRecord.bonusRecord = {};
 
-    for (const groupId in data.scores) {
-      const scoreObj = data.scores[groupId];
+    for (const groupId in data.activityDetails.workspaces) {
+      const wsState = data.activityDetails.workspaces[groupId].state;
+      const wsStatus = data.activityDetails.workspaces[groupId].status;
+      if (wsStatus !== 'SUBMITTED') continue;
+
+      const input = {
+         activityType: data.activityDetails.type || 'SHORT_ANSWER',
+         activityMode: 'GROUP',
+         activityCategory: data.activityDetails.category || 'UNSET',
+         totalCategoryActivities: data.activityDetails.totalCategoryActivities || 1,
+         studentAnswer: wsState,
+         activityConfig: data.activityDetails.config || {},
+         bonusConfig: { hasBonus: data.activityDetails.bonusPoints > 0, maxBonusPoints: data.activityDetails.bonusPoints }
+      };
+      
+      const result = scoreEngine.calculateActivityScore(input);
+      const scoreObj = result.score;
+      const breakdown = result.breakdown;
+      const bonusScore = result.bonusScore;
+
       const ws = session.workspaces?.[activityId]?.[groupId];
       if (ws) {
         ws.groupScore = scoreObj; // Save GroupScore
@@ -325,11 +404,17 @@ io.on('connection', (socket) => {
         const validSt = session.validStudents.find(vs => String(vs.id) === String(studentId));
         const primaryId = validSt ? validSt.systemId : studentId;
 
-        // Prevent double counting if teacher clicks Duyệt multiple times for the same group
-        if (historyRecord.pointsRecord[primaryId] === undefined) {
-           historyRecord.pointsRecord[primaryId] = scoreObj;
-           if (!session.studentPoints) session.studentPoints = {};
-           session.studentPoints[primaryId] = (session.studentPoints[primaryId] || 0) + scoreObj;
+         // Prevent double counting if teacher clicks Duyệt multiple times for the same group
+          if (historyRecord.pointsRecord[primaryId] === undefined) {
+            historyRecord.pointsRecord[primaryId] = scoreObj;
+            if (breakdown) {
+               historyRecord.breakdownRecord[primaryId] = breakdown;
+            }
+            if (bonusScore) {
+               historyRecord.bonusRecord[primaryId] = bonusScore;
+            }
+            if (!session.studentPoints) session.studentPoints = {};
+            session.studentPoints[primaryId] = (session.studentPoints[primaryId] || 0) + scoreObj;
              
              saveLedger({
                ledgerId: 'LED_' + Date.now() + '_' + (validSt ? validSt.id : studentId),
@@ -406,24 +491,68 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('approve_points', (data) => {
+  socket.on('approve_points', (data, callback) => {
     const session = sessions[data.code];
-    if (!session) return;
+    if (!session) {
+      if (typeof callback === 'function') callback({ success: false });
+      return;
+    }
     
     if (!session.studentPoints) session.studentPoints = {};
     if (!session.activityHistory) session.activityHistory = [];
 
     const activityPointsRecord = {};
+    const breakdownRecord = {};
+    const bonusRecord = {};
 
-    for (const [socketId, points] of Object.entries(data.pointsMap)) {
-      const student = session.students.find(s => s.id === socketId);
-      if (student) {
-        const systemId = student.systemId;
-        const validSt = session.validStudents?.find(vs => String(vs.systemId) === String(systemId));
-        const actualStudentId = validSt ? validSt.id : systemId;
+    const rawResponses = data.activityDetails?.responses || {};
+    const pointsMap = {};
+    const typesMap = {};
+
+    for (const [socketId, ans] of Object.entries(rawResponses)) {
+      let student = session.students.find(s => String(s.systemId) === String(socketId) || String(s.id) === String(socketId));
+      let systemId = student ? student.systemId : String(socketId);
+      
+      const validSt = session.validStudents?.find(vs => String(vs.systemId) === String(systemId) || String(vs.id) === String(systemId));
+      if (validSt) systemId = validSt.systemId; // Always fallback to systemId for mapping
+      
+      const actualStudentId = validSt ? validSt.id : systemId;
+
+      if (student || validSt) {
+        const input = {
+           activityType: data.activityDetails.type || 'SHORT_ANSWER',
+           activityMode: 'INDIVIDUAL',
+           activityCategory: data.activityDetails.category || 'UNSET',
+           totalCategoryActivities: data.activityDetails.totalCategoryActivities || 1,
+           studentAnswer: ans,
+           activityConfig: data.activityDetails.config || {},
+           bonusConfig: { hasBonus: data.activityDetails.bonusPoints > 0, maxBonusPoints: data.activityDetails.bonusPoints }
+        };
+
+        const result = scoreEngine.calculateActivityScore(input);
         
+        let points = result.score;
+        let typeStr = result.isCorrect ? 'FULL' : (points > 0 ? 'PARTIAL' : 'INCORRECT');
+        let bd = result.breakdown;
+        let bs = result.bonusScore;
+
+        if (data.manualOverride) {
+           points = result.maxScore;
+           typeStr = 'FULL';
+           bd = 'Duyệt thủ công (Full)';
+        }
+
+        pointsMap[socketId] = points;
+        typesMap[socketId] = typeStr;
+
         session.studentPoints[systemId] = (session.studentPoints[systemId] || 0) + points;
         activityPointsRecord[systemId] = points;
+        if (bd) {
+           breakdownRecord[systemId] = bd;
+        }
+        if (bs) {
+           bonusRecord[systemId] = bs;
+        }
         
         saveLedger({
           ledgerId: 'LED_' + Date.now() + '_' + actualStudentId,
@@ -448,11 +577,13 @@ io.on('connection', (socket) => {
        bonusPoints: data.activityDetails?.bonusPoints,
        date: data.activityDetails?.date,
        pointsRecord: activityPointsRecord,
+       breakdownRecord,
+       bonusRecord,
        responses: data.activityDetails?.responses
     });
 
     // Broadcast points_awarded for the animation
-    io.to(data.code).emit('points_awarded', data.pointsMap, data.typesMap || {});
+    io.to(data.code).emit('points_awarded', pointsMap, typesMap || {});
 
     // Calculate leaderboard
     const leaderboard = Object.entries(session.studentPoints).map(([systemId, total]) => {
@@ -471,6 +602,8 @@ io.on('connection', (socket) => {
       session.bonusRequests = session.bonusRequests.filter(id => id !== data.studentId);
       io.to(data.code).emit('bonus_requests_updated', session.bonusRequests);
     }
+    
+    if (typeof callback === 'function') callback({ success: true });
   });
 
   socket.on('approve_all_bonus', (data) => {

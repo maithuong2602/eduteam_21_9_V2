@@ -111,5 +111,11 @@ test.describe('Word Cloud Realtime Sync', () => {
     const aiOccurrences = await teacherPage.locator('text="AI"').count();
     expect(aiOccurrences).toBeGreaterThanOrEqual(2); // In details it shows original text "AI"
     await expect(teacherPage.locator('text="Dữ liệu"')).toBeVisible();
+    await teacherPage.locator('button:has-text("Đóng")').click();
+    
+    // 9. Cleanup
+    await teacherPage.locator('button:has-text("Kết thúc phiên")').click();
+    await teacherPage.locator('button:has-text("BỎ DỮ LIỆU")').click();
+    await teacherPage.waitForTimeout(500);
   });
 });
