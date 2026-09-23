@@ -989,16 +989,26 @@ export default function PresentationDetail() {
                       <div className="flex justify-between items-center mb-2">
                         <label className="block text-sm font-medium text-gray-700">Cài đặt đáp án</label>
                         <button 
+                          type="button"
                           onClick={() => {
                             const currentOptions = currentActivity.options || [
-                              { id: 1, text: "Đáp án 1", isCorrect: true },
-                              { id: 2, text: "Đáp án 2", isCorrect: false }
+                              { id: 1, text: "Đáp án A", isCorrect: true },
+                              { id: 2, text: "Đáp án B", isCorrect: false },
+                              { id: 3, text: "Đáp án C", isCorrect: false },
+                              { id: 4, text: "Đáp án D", isCorrect: false }
                             ];
+                            const nextCharCode = currentOptions.length > 0 
+                              ? Math.max(...currentOptions.map((o: any) => {
+                                  const match = o.text.match(/Đáp án ([A-Z])/);
+                                  return match ? match[1].charCodeAt(0) : 64;
+                                })) + 1
+                              : 65;
+                            const nextLetter = String.fromCharCode(nextCharCode > 64 ? nextCharCode : 65 + currentOptions.length);
                             setActivities(prev => ({
                               ...prev,
                               [currentActivityId as string]: { 
                                 ...prev[currentActivityId as string], 
-                                options: [...currentOptions, { id: Date.now(), text: `Đáp án ${String.fromCharCode(65 + currentOptions.length)}`, isCorrect: false }] 
+                                options: [...currentOptions, { id: Date.now(), text: `Đáp án ${nextLetter}`, isCorrect: false }] 
                               }
                             }));
                           }}
