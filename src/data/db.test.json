@@ -7,41 +7,41 @@
       "originalFileName": "test.pdf",
       "fileUrl": "",
       "totalSlides": 7,
-      "createdAt": 1790180455016,
-      "updatedAt": 1790180455016,
+      "createdAt": 1790180677149,
+      "updatedAt": 1790180677149,
       "slides": [
         {
-          "id": "slide_1790180457356_0",
+          "id": "slide_1790180679737_0",
           "fileUrl": "",
           "pageNumber": 1
         },
         {
-          "id": "slide_1790180457356_1",
+          "id": "slide_1790180679737_1",
           "fileUrl": "",
           "pageNumber": 2
         },
         {
-          "id": "slide_1790180457356_2",
+          "id": "slide_1790180679737_2",
           "fileUrl": "",
           "pageNumber": 3
         },
         {
-          "id": "slide_1790180457356_3",
+          "id": "slide_1790180679737_3",
           "fileUrl": "",
           "pageNumber": 4
         },
         {
-          "id": "slide_1790180457356_4",
+          "id": "slide_1790180679737_4",
           "fileUrl": "",
           "pageNumber": 5
         },
         {
-          "id": "slide_1790180457356_5",
+          "id": "slide_1790180679737_5",
           "fileUrl": "",
           "pageNumber": 6
         },
         {
-          "id": "slide_1790180457356_6",
+          "id": "slide_1790180679737_6",
           "fileUrl": "",
           "pageNumber": 7
         }
@@ -49,47 +49,6 @@
     }
   ],
   "activities": [
-    {
-      "id": "ACT_1790180457810",
-      "type": "CLASSIFICATION",
-      "mode": "INDIVIDUAL",
-      "bonusType": "NONE",
-      "bonusPoints": 0,
-      "groups": [
-        {
-          "id": "G1",
-          "name": "Nhóm Test 1"
-        },
-        {
-          "id": "G2",
-          "name": "Nhóm Test 2"
-        }
-      ],
-      "items": [
-        {
-          "id": "I1",
-          "text": "Bàn phím",
-          "correctGroupId": "G1"
-        },
-        {
-          "id": "I2",
-          "text": "Chuột",
-          "correctGroupId": "G1"
-        },
-        {
-          "id": "I3",
-          "text": "Màn hình",
-          "correctGroupId": "G2"
-        },
-        {
-          "id": "I1790180458126",
-          "text": "Webcam",
-          "correctGroupId": "G1"
-        }
-      ],
-      "presentationId": "test-pres-1",
-      "slideId": 1
-    },
     {
       "id": "ACT_TEST_CLASS",
       "presentationId": "test-pres-1",
@@ -182,163 +141,163 @@
     },
     {
       "classId": "CLS002",
-      "code": "7YHAGG"
+      "code": "CHXGC7"
     },
     {
       "classId": "CLS003",
-      "code": "GZEKVB"
+      "code": "RJD4SF"
     },
     {
       "classId": "CLS004",
-      "code": "7HLEKC"
+      "code": "ZHUECB"
     },
     {
       "classId": "CLS005",
-      "code": "EF2A5V"
+      "code": "6QSDWJ"
     },
     {
       "classId": "CLS006",
-      "code": "RDK3XK"
+      "code": "PEML7U"
     },
     {
       "classId": "CLS021",
-      "code": "YKDJ04"
+      "code": "3LL7BQ"
     },
     {
       "classId": "CLS022",
-      "code": "XXQKEJ"
+      "code": "YZGNUY"
     },
     {
       "classId": "CLS023",
-      "code": "WR670I"
+      "code": "W4K8L0"
     },
     {
       "classId": "CLS024",
-      "code": "IYEUFC"
+      "code": "0SZLSK"
     },
     {
       "classId": "CLS025",
-      "code": "DIP88G"
+      "code": "8IM5D0"
     },
     {
       "classId": "CLS026",
-      "code": "AOZNA8"
+      "code": "4I4RTA"
     },
     {
       "classId": "CLS041",
-      "code": "3NTEQ0"
+      "code": "VOF1KV"
     },
     {
       "classId": "CLS042",
-      "code": "NOUPFR"
+      "code": "FJFZHQ"
     },
     {
       "classId": "CLS043",
-      "code": "LGEQHI"
+      "code": "1A7UV3"
     },
     {
       "classId": "CLS044",
-      "code": "4DZ8K5"
+      "code": "3AOERH"
     },
     {
       "classId": "CLS045",
-      "code": "M5G52N"
+      "code": "3ETPCA"
     },
     {
       "classId": "CLS046",
-      "code": "JO9QXI"
+      "code": "CDQA01"
     },
     {
       "classId": "CLS061",
-      "code": "FUO03D"
+      "code": "BJDRBT"
     },
     {
       "classId": "CLS062",
-      "code": "034TDL"
+      "code": "L9A55N"
     },
     {
       "classId": "CLS063",
-      "code": "9Z16NG"
+      "code": "LJ361G"
     },
     {
       "classId": "CLS064",
-      "code": "BDPA39"
+      "code": "611GVT"
     },
     {
       "classId": "CLS065",
-      "code": "WO8DJ4"
+      "code": "VTGDLV"
     },
     {
       "classId": "CLS066",
-      "code": "GULB8G"
+      "code": "NBJG2C"
     },
     {
       "classId": "CLS007",
-      "code": "YKQTD1"
+      "code": "JZV5EK"
     },
     {
       "classId": "CLS008",
-      "code": "Y9S6QS"
+      "code": "B55HUS"
     },
     {
       "classId": "CLS009",
-      "code": "BDDOVC"
+      "code": "XUU6G6"
     },
     {
       "classId": "CLS010",
-      "code": "3ULVY8"
+      "code": "9GEK6C"
     },
     {
       "classId": "CLS027",
-      "code": "NLKIMI"
+      "code": "6LISWY"
     },
     {
       "classId": "CLS028",
-      "code": "6VHAGI"
+      "code": "WTYHLS"
     },
     {
       "classId": "CLS029",
-      "code": "EW3TN2"
+      "code": "54WKUW"
     },
     {
       "classId": "CLS030",
-      "code": "GDRSX7"
+      "code": "DS0BD4"
     },
     {
       "classId": "CLS047",
-      "code": "S8HESF"
+      "code": "2Q8DGF"
     },
     {
       "classId": "CLS048",
-      "code": "70ZHPG"
+      "code": "PKACRL"
     },
     {
       "classId": "CLS049",
-      "code": "4W8FDM"
+      "code": "HRMDX8"
     },
     {
       "classId": "CLS050",
-      "code": "C3NR2J"
+      "code": "05SOTY"
     },
     {
       "classId": "CLS067",
-      "code": "P7KCDA"
+      "code": "1POS9F"
     },
     {
       "classId": "CLS068",
-      "code": "JSZ0GD"
+      "code": "IN341X"
     },
     {
       "classId": "CLS069",
-      "code": "5DUNKT"
+      "code": "VV3C0Q"
     },
     {
       "classId": "CLS070",
-      "code": "W1NX79"
+      "code": "N941L0"
     },
     {
       "classId": "CLS071",
-      "code": "T00EGW"
+      "code": "J1NTEG"
     }
   ],
   "bonusLedgers": []

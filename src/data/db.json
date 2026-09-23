@@ -2367,6 +2367,127 @@
       "reason": "ACTIVITY_SCORE",
       "groupId": null,
       "createdAt": 1790180220985
+    },
+    {
+      "ledgerId": "LED_1790180474533_HS018",
+      "studentId": "HS018",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180474533
+    },
+    {
+      "ledgerId": "LED_1790180474535_HS020",
+      "studentId": "HS020",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 0,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180474535
+    },
+    {
+      "ledgerId": "LED_1790180479571_HS018",
+      "studentId": "HS018",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180479571
+    },
+    {
+      "ledgerId": "LED_1790180503307_HS018",
+      "studentId": "HS018",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180503307
+    },
+    {
+      "ledgerId": "LED_1790180503309_HS020",
+      "studentId": "HS020",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 0,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180503309
+    },
+    {
+      "ledgerId": "LED_1790180507271_HS018",
+      "studentId": "HS018",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180507271
+    },
+    {
+      "ledgerId": "LED_1790180580959_HS001",
+      "studentId": "HS001",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180580959
+    },
+    {
+      "ledgerId": "LED_1790180587520_HS001",
+      "studentId": "HS001",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180587520
+    },
+    {
+      "ledgerId": "LED_1790180595219_HS001",
+      "studentId": "HS001",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180595219
+    },
+    {
+      "ledgerId": "LED_1790180601781_HS001",
+      "studentId": "HS001",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180601781
+    },
+    {
+      "ledgerId": "LED_1790180608122_HS001",
+      "studentId": "HS001",
+      "sessionCode": "DUP1MH",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790180608122
     }
   ]
 }
