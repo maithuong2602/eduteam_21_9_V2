@@ -126,7 +126,7 @@ test.describe('Score Persistence & Session Integrity (S2-B)', () => {
     const dbContent = fs.readFileSync(dbPath, 'utf8');
     const db = JSON.parse(dbContent);
     
-    const savedHistory = db.sessionHistories.find((h: any) => h.sessionCode === sessionCode);
+    const savedHistory = [...db.sessionHistories].reverse().find((h: any) => h.sessionCode === sessionCode);
     expect(savedHistory).toBeDefined();
 
     // Student Isolation
