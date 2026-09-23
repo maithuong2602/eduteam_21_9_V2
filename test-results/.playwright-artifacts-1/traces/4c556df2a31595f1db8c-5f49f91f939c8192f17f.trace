@@ -1,0 +1,33 @@
+{"version":9,"type":"context-options","origin":"library","browserName":"","playwrightVersion":"1.63.0","options":{},"platform":"win32","wallTime":1790179427536,"monotonicTime":76222.508,"sdkLanguage":"javascript","title":"e2e\\session-history-persistence.spec.ts:4 › Session History Persistence › Session and Activity data successfully persist matching the S1-A Data Model"}
+{"type":"before","callId":"call@5","startTime":76227.866,"class":"APIRequestContext","method":"fetch","params":{"url":"/api/history","method":"POST","jsonData":"{\"id\":\"hist_test_1790179427538\",\"sessionCode\":\"TEST_HIST\",\"classId\":\"CLS001\",\"className\":\"Lớp 10A1\",\"topicIds\":[\"TOPIC_1\"],\"lessonIds\":[\"LESSON_1\",\"LESSON_2\"],\"startedAt\":1790175827538,\"completedAt\":1790179427538,\"status\":\"COMPLETED\",\"activities\":[{\"activityId\":\"ACT_TEST\",\"slideNumber\":7,\"activityType\":\"MULTIPLE_CHOICE\",\"activityMode\":\"INDIVIDUAL\",\"maxScore\":1}],\"students\":[{\"studentId\":\"HS001\",\"studentName\":\"Nguyễn Văn A\",\"sessionScore\":1,\"activityResults\":[{\"activityId\":\"ACT_TEST\",\"activityType\":\"MULTIPLE_CHOICE\",\"activityMode\":\"INDIVIDUAL\",\"answer\":[\"A\"],\"score\":1,\"maxScore\":1}]}]}","timeout":15000},"stepId":"pw:api@30"}
+{"type":"log","callId":"call@5","time":76261.759,"message":"→ POST http://localhost:3000/api/history"}
+{"type":"log","callId":"call@5","time":76261.82,"message":"  user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Safari/537.36"}
+{"type":"log","callId":"call@5","time":76261.837,"message":"  accept: */*"}
+{"type":"log","callId":"call@5","time":76261.848,"message":"  accept-encoding: gzip,deflate,br"}
+{"type":"log","callId":"call@5","time":76261.863,"message":"  content-type: application/json"}
+{"type":"log","callId":"call@5","time":76261.889,"message":"  content-length: 596"}
+{"type":"log","callId":"call@5","time":76291.76,"message":"← 200 OK"}
+{"type":"log","callId":"call@5","time":76291.789,"message":"  x-powered-by: Express"}
+{"type":"log","callId":"call@5","time":76291.802,"message":"  access-control-allow-origin: *"}
+{"type":"log","callId":"call@5","time":76291.818,"message":"  vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"}
+{"type":"log","callId":"call@5","time":76291.828,"message":"  content-type: application/json"}
+{"type":"log","callId":"call@5","time":76291.832,"message":"  date: Wed, 23 Sep 2026 16:03:47 GMT"}
+{"type":"log","callId":"call@5","time":76291.836,"message":"  connection: keep-alive"}
+{"type":"log","callId":"call@5","time":76291.84,"message":"  keep-alive: timeout=5"}
+{"type":"log","callId":"call@5","time":76291.843,"message":"  transfer-encoding: chunked"}
+{"type":"after","callId":"call@5","endTime":76294.603,"result":{"response":{"url":"http://localhost:3000/api/history","status":200,"statusText":"OK","headers":[{"name":"X-Powered-By","value":"Express"},{"name":"Access-Control-Allow-Origin","value":"*"},{"name":"vary","value":"rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"},{"name":"content-type","value":"application/json"},{"name":"Date","value":"Wed, 23 Sep 2026 16:03:47 GMT"},{"name":"Connection","value":"keep-alive"},{"name":"Keep-Alive","value":"timeout=5"},{"name":"Transfer-Encoding","value":"chunked"}],"serverAddr":{"ipAddress":"::1","port":3000},"timing":{"startTime":1790179427545,"domainLookupStart":0,"domainLookupEnd":33.61699999999837,"connectStart":33.61699999999837,"secureConnectionStart":-1,"connectEnd":35.36000000000058,"requestStart":35.36000000000058,"responseStart":59.24199999999837},"responseEndTiming":60.61599999999453,"fetchUid":"d32c90722161796eee10fe2aa43a1f3e"}}}
+{"type":"before","callId":"call@8","startTime":76305.181,"class":"APIRequestContext","method":"fetch","params":{"url":"/api/history","method":"GET","timeout":15000},"stepId":"pw:api@33"}
+{"type":"log","callId":"call@8","time":76306.138,"message":"→ GET http://localhost:3000/api/history"}
+{"type":"log","callId":"call@8","time":76306.157,"message":"  user-agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.8010.12 Safari/537.36"}
+{"type":"log","callId":"call@8","time":76306.165,"message":"  accept: */*"}
+{"type":"log","callId":"call@8","time":76306.171,"message":"  accept-encoding: gzip,deflate,br"}
+{"type":"log","callId":"call@8","time":76326.994,"message":"← 200 OK"}
+{"type":"log","callId":"call@8","time":76327.022,"message":"  x-powered-by: Express"}
+{"type":"log","callId":"call@8","time":76327.03,"message":"  access-control-allow-origin: *"}
+{"type":"log","callId":"call@8","time":76327.037,"message":"  vary: rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"}
+{"type":"log","callId":"call@8","time":76327.044,"message":"  content-type: application/json"}
+{"type":"log","callId":"call@8","time":76327.05,"message":"  date: Wed, 23 Sep 2026 16:03:47 GMT"}
+{"type":"log","callId":"call@8","time":76327.056,"message":"  connection: keep-alive"}
+{"type":"log","callId":"call@8","time":76327.062,"message":"  keep-alive: timeout=5"}
+{"type":"log","callId":"call@8","time":76327.068,"message":"  transfer-encoding: chunked"}
+{"type":"after","callId":"call@8","endTime":76328.736,"result":{"response":{"url":"http://localhost:3000/api/history","status":200,"statusText":"OK","headers":[{"name":"X-Powered-By","value":"Express"},{"name":"Access-Control-Allow-Origin","value":"*"},{"name":"vary","value":"rsc, next-router-state-tree, next-router-prefetch, next-router-segment-prefetch"},{"name":"content-type","value":"application/json"},{"name":"Date","value":"Wed, 23 Sep 2026 16:03:47 GMT"},{"name":"Connection","value":"keep-alive"},{"name":"Keep-Alive","value":"timeout=5"},{"name":"Transfer-Encoding","value":"chunked"}],"serverAddr":{"ipAddress":"::1","port":3000},"timing":{"startTime":1790179427619,"domainLookupStart":-1,"domainLookupEnd":-1,"connectStart":-1,"secureConnectionStart":-1,"connectEnd":-1,"requestStart":0.7240000000019791,"responseStart":21.188999999998487},"responseEndTiming":22.286999999996624,"fetchUid":"807b659d9682243134279cfba88d9e0a"}}}
