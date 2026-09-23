@@ -105,6 +105,7 @@ export interface DbSchema {
   classCodes: ClassCode[];
   bonusLedgers: BonusLedger[];
   sessionHistories: SessionHistory[];
+  activeSessions?: Record<string, any>;
 }
 
 
@@ -115,7 +116,8 @@ function getDb(): DbSchema {
       activities: [],
       classCodes: [],
       bonusLedgers: [],
-      sessionHistories: []
+      sessionHistories: [],
+      activeSessions: {}
     };
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf8');
     return initial;

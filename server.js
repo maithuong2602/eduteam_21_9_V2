@@ -46,14 +46,33 @@ function saveLedger(ledger) {
 }
 
 const fs = require("fs");
+let sessions = {};
 try {
     if (fs.existsSync(DB_FILE)) {
        const db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
        if (db.bonusLedgers) studentBonusLedgers = db.bonusLedgers;
+       if (db.activeSessions) sessions = db.activeSessions;
     }
 } catch(e) { console.error(e) }
 
-const sessions = {};
+// Persist active sessions to disk periodically to survive server restarts
+let lastSessionsStr = JSON.stringify(sessions);
+setInterval(() => {
+  try {
+     const currentStr = JSON.stringify(sessions);
+     if (currentStr !== lastSessionsStr) {
+        lastSessionsStr = currentStr;
+        let db = { classCodes: [], bonusLedgers: [], activeSessions: {} };
+        if (fs.existsSync(DB_FILE)) {
+           db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+        }
+        db.activeSessions = sessions;
+        fs.writeFile(DB_FILE, JSON.stringify(db, null, 2), 'utf8', (err) => {
+           if (err) console.error('Auto-save activeSessions error:', err);
+        });
+     }
+  } catch(e) {}
+}, 3000);
 
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);

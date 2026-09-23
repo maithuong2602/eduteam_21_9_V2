@@ -165,6 +165,10 @@
     {
       "classId": "CLS071",
       "code": "0NW3I9"
+    },
+    {
+      "classId": "TEST_CLASS",
+      "code": "FJ31S"
     }
   ],
   "bonusLedgers": [
@@ -2489,5 +2493,19 @@
       "groupId": null,
       "createdAt": 1790180608122
     }
-  ]
+  ],
+  "activeSessions": {
+    "FJ31S": {
+      "teacherSocketId": "noglXlWcOx0kGT9UAAAA",
+      "classId": "TEST_CLASS",
+      "presentationId": "TEST_PRES",
+      "title": "TEST",
+      "validStudents": [],
+      "className": "N/A",
+      "students": [],
+      "currentSlide": 1,
+      "activityConfig": null,
+      "responses": {}
+    }
+  }
 }
