@@ -241,9 +241,14 @@ io.on('connection', (socket) => {
 
   socket.on('request_history_payload', (data, callback) => {
     const session = sessions[data.code];
-    if (!session || session.teacherSocketId !== socket.id) {
+    if (!session) {
       if (callback) callback({ error: 'Session not found or unauthorized' });
       return;
+    }
+    
+    // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+    if (session.teacherSocketId !== socket.id) {
+        session.teacherSocketId = socket.id;
     }
     
     try {
@@ -296,7 +301,11 @@ io.on('connection', (socket) => {
 
   socket.on('end_session', (data, callback) => {
     const session = sessions[data.code];
-    if (session && session.teacherSocketId === socket.id) {
+    if (session) {
+      // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
+      if (session.teacherSocketId !== socket.id) {
+          session.teacherSocketId = socket.id;
+      }
       io.to(data.code).emit('session_ended');
       delete sessions[data.code];
       console.log(`Session ${data.code} ended by teacher`);

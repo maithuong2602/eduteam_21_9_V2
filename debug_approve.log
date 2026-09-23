@@ -7,3 +7,19 @@
 [2026-09-23T16:10:43.393Z] approve_points: session=DUP1MH activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
 [2026-09-23T16:10:43.396Z] approve_points: session=DUP1MH activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
 [2026-09-23T16:10:50.159Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4869456649 student=true validSt=true systemId=4869456649 ans=Test 1
+[2026-09-23T16:11:53.817Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-23T16:12:01.062Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-23T16:12:11.908Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-23T16:12:19.856Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-23T16:12:26.852Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-23T16:14:59.390Z] approve_points: session=DUP1MH activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
+[2026-09-23T16:14:59.393Z] approve_points: session=DUP1MH activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
+[2026-09-23T16:15:04.142Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4869456649 student=true validSt=true systemId=4869456649 ans=Test 2
+[2026-09-23T16:15:27.724Z] approve_points: session=DUP1MH activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
+[2026-09-23T16:15:27.726Z] approve_points: session=DUP1MH activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
+[2026-09-23T16:15:31.268Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4869456649 student=true validSt=true systemId=4869456649 ans=Test 1
+[2026-09-23T16:16:31.626Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-23T16:16:38.691Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-23T16:16:46.754Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-23T16:16:54.234Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-23T16:17:00.984Z] approve_points: session=DUP1MH activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer

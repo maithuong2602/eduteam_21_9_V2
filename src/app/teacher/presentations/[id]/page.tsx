@@ -996,9 +996,9 @@ export default function PresentationDetail() {
                             ];
                             setActivities(prev => ({
                               ...prev,
-                              [selectedSlide]: { 
-                                ...prev[selectedSlide], 
-                                options: [...currentOptions, { id: Date.now(), text: `Đáp án ${currentOptions.length + 1}`, isCorrect: false }] 
+                              [currentActivityId as string]: { 
+                                ...prev[currentActivityId as string], 
+                                options: [...currentOptions, { id: Date.now(), text: `Đáp án ${String.fromCharCode(65 + currentOptions.length)}`, isCorrect: false }] 
                               }
                             }));
                           }}
