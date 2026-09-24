@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Short Answer Realtime Sync', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   test('Teacher and Student realtime flow for Short Answer', async ({ browser }) => {
     const teacherContext = await browser.newContext();
     const teacherPage = await teacherContext.newPage();

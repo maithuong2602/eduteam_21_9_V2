@@ -3,6 +3,10 @@ import fs from 'fs';
 import path from 'path';
 
 test.describe('Audit 1: Persistence over process restart', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   test('should keep presentation and active session data after server restart', async ({ request }) => {
     // 1. Create presentation
     const presData = {

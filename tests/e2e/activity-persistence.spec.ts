@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Activity Persistence', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   test('Classification activity saves and restores correctly', async ({ page }) => {
     // 1. Mở presentation (id đã được tạo trong global-setup)
     await page.goto('/teacher/presentations/test-pres-1');

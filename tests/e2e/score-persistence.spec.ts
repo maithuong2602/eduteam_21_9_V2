@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Score Persistence & Session Integrity (S2-B)', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   let sessionCode = '';
   let teacherPage;
   let studentPage1;

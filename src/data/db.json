@@ -1,6 +1,18 @@
 {
   "presentations": [],
-  "activities": [],
+  "activities": [
+    {
+      "id": "act_restart_test_999",
+      "presentationId": "test-pres-1",
+      "slideId": 1,
+      "type": "SHORT_ANSWER",
+      "name": "Test Answer",
+      "mode": "INDIVIDUAL",
+      "points": 1,
+      "createdAt": 1790213998047,
+      "updatedAt": 1790213999941
+    }
+  ],
   "classCodes": [
     {
       "classId": "CLS001",

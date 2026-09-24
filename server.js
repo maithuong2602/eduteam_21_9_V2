@@ -35,13 +35,6 @@ const DB_FILE = path.join(process.cwd(), 'src', 'data', 'db.json');
 function saveLedger(ledger) {
   try {
     studentBonusLedgers.push(ledger);
-    let db = { classCodes: [], bonusLedgers: [] };
-    if (fs.existsSync(DB_FILE)) {
-       db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-    }
-    if (!db.bonusLedgers) db.bonusLedgers = [];
-    db.bonusLedgers.push(ledger);
-    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
   } catch(e) { console.error(e) }
 }
 
@@ -57,18 +50,22 @@ try {
 
 // Persist active sessions to disk periodically to survive server restarts
 let lastSessionsStr = JSON.stringify(sessions);
+let lastLedgersStr = JSON.stringify(studentBonusLedgers);
 setInterval(() => {
   try {
-     const currentStr = JSON.stringify(sessions);
-     if (currentStr !== lastSessionsStr) {
-        lastSessionsStr = currentStr;
+     const currentSessionsStr = JSON.stringify(sessions);
+     const currentLedgersStr = JSON.stringify(studentBonusLedgers);
+     if (currentSessionsStr !== lastSessionsStr || currentLedgersStr !== lastLedgersStr) {
+        lastSessionsStr = currentSessionsStr;
+        lastLedgersStr = currentLedgersStr;
         let db = { classCodes: [], bonusLedgers: [], activeSessions: {} };
         if (fs.existsSync(DB_FILE)) {
            db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
         }
         db.activeSessions = sessions;
+        db.bonusLedgers = studentBonusLedgers;
         fs.writeFile(DB_FILE, JSON.stringify(db, null, 2), 'utf8', (err) => {
-           if (err) console.error('Auto-save activeSessions error:', err);
+           if (err) console.error('Auto-save error:', err);
         });
      }
   } catch(e) {}
@@ -195,6 +192,9 @@ io.on('connection', (socket) => {
     // data: { code, slideNumber, text, activityType, options, presentationType, fileUrl }
     const session = sessions[data.code];
     if (session) {
+      if (session.activityConfig && session.activityConfig.slideNumber === data.slideNumber && session.activityConfig.activityId === data.activityId) {
+         return; // Idempotency: Prevent resetting responses if already started
+      }
         // Auto-reclaim session for teacher if socket changed (e.g. after reconnect)
         if (session.teacherSocketId !== socket.id) {
             session.teacherSocketId = socket.id;
@@ -285,7 +285,7 @@ io.on('connection', (socket) => {
           slideNumber: h.slideNumber,
           activityType: h.type,
           activityMode: h.mode,
-          maxScore: 1 // Fallback
+          maxScore: h.maxScore || 1 // Fixed: extract maxScore from history
         })),
         students: (session.validStudents || []).map(s => {
           const actResults = [];
@@ -299,7 +299,7 @@ io.on('connection', (socket) => {
                  activityMode: h.mode,
                  answer: h.responses ? (h.responses[systemId] || h.responses[s.id]) : undefined,
                  score: points,
-                 maxScore: 1
+                 maxScore: h.maxScore || 1 // Fixed: extract maxScore from history
                });
             }
           });
@@ -387,6 +387,7 @@ io.on('connection', (socket) => {
         mode: actDetails.mode,
         bonusType: actDetails.bonusType,
         bonusPoints: actDetails.bonusPoints,
+        maxScore: scoreEngine.calculateMaxScore({ activityCategory: actDetails.category, totalCategoryActivities: actDetails.totalCategoryActivities, activityConfig: actDetails.config }),
         pointsRecord: {},
         createdAt: Date.now()
       };
@@ -442,7 +443,7 @@ io.on('connection', (socket) => {
                historyRecord.bonusRecord[primaryId] = bonusScore;
             }
             if (!session.studentPoints) session.studentPoints = {};
-            session.studentPoints[primaryId] = (session.studentPoints[primaryId] || 0) + scoreObj;
+            session.studentPoints[primaryId] = Math.round(((session.studentPoints[primaryId] || 0) + scoreObj) * 100) / 100;
              
              saveLedger({
                ledgerId: 'LED_' + Date.now() + '_' + (validSt ? validSt.id : studentId),
@@ -495,7 +496,7 @@ io.on('connection', (socket) => {
           });
 
           if (!session.studentPoints) session.studentPoints = {};
-          session.studentPoints[primaryId] = (session.studentPoints[primaryId] || 0) + bonusPoints;
+          session.studentPoints[primaryId] = Math.round(((session.studentPoints[primaryId] || 0) + bonusPoints) * 100) / 100;
           
           const onlineStudent = session.students.find(s => s.systemId === primaryId || s.id === studentId);
           if (onlineStudent) {
@@ -528,6 +529,12 @@ io.on('connection', (socket) => {
     
     if (!session.studentPoints) session.studentPoints = {};
     if (!session.activityHistory) session.activityHistory = [];
+
+    // Idempotency check: Prevent duplicate point assignment if teacher clicks multiple times
+    if (session.activityHistory.some(h => h.slideNumber === data.activityDetails?.slideNumber && h.name === data.activityDetails?.name)) {
+        if (typeof callback === 'function') callback({ success: false, reason: 'ALREADY_APPROVED' });
+        return;
+    }
 
     const activityPointsRecord = {};
     const breakdownRecord = {};
@@ -575,7 +582,7 @@ io.on('connection', (socket) => {
         pointsMap[socketId] = points;
         typesMap[socketId] = typeStr;
 
-        session.studentPoints[systemId] = (session.studentPoints[systemId] || 0) + points;
+        session.studentPoints[systemId] = Math.round(((session.studentPoints[systemId] || 0) + points) * 100) / 100;
         activityPointsRecord[systemId] = points;
         if (bd) {
            breakdownRecord[systemId] = bd;
@@ -605,6 +612,7 @@ io.on('connection', (socket) => {
        mode: data.activityDetails?.mode,
        bonusType: data.activityDetails?.bonusType,
        bonusPoints: data.activityDetails?.bonusPoints,
+       maxScore: scoreEngine.calculateMaxScore({ activityCategory: data.activityDetails?.category, totalCategoryActivities: data.activityDetails?.totalCategoryActivities, activityConfig: data.activityDetails?.config }),
        date: data.activityDetails?.date,
        pointsRecord: activityPointsRecord,
        breakdownRecord,
@@ -1017,6 +1025,34 @@ io.on('connection', (socket) => {
     }
   });
 });
+
+  app.get('/api/test/reset', (req, res) => {
+    if (process.env.USE_TEST_DB === 'true') {
+      const fs = require('fs');
+      const path = require('path');
+      const dbPath = path.join(process.cwd(), 'src', 'data', 'db.test.json');
+      for (let prop in sessions) delete sessions[prop];
+      studentBonusLedgers.length = 0;
+      const initialDb = {
+        presentations: [{
+          id: "test-pres-1", teacherId: "teacher_1", title: "E2E Test Presentation", originalFileName: "test.pdf", fileUrl: "", totalSlides: 7, createdAt: Date.now(), updatedAt: Date.now()
+        }],
+        activities: [
+          { id: "ACT_TEST_CLASS", presentationId: "test-pres-1", slideId: 3, type: "CLASSIFICATION", mode: "INDIVIDUAL", groups: [{ id: "G1", name: "Nhóm Đúng" }, { id: "G2", name: "Nhóm Sai" }], items: [{ id: "I1", text: "Mục 1", correctGroupId: "G1" }, { id: "I2", text: "Mục 2", correctGroupId: "G2" }], settings: { allowMoveBack: true } },
+          { id: "ACT_TEST_SHORT_ANSWER", presentationId: "test-pres-1", slideId: 4, type: "SHORT_ANSWER", mode: "INDIVIDUAL" },
+          { id: "ACT_TEST_WORD_CLOUD", presentationId: "test-pres-1", slideId: 5, type: "WORD_CLOUD", mode: "INDIVIDUAL" },
+          { id: "ACT_TEST_LOCK", presentationId: "test-pres-1", slideId: 6, type: "MULTIPLE_CHOICE", mode: "INDIVIDUAL", options: [{ id: "OPT1", text: "Option A", isCorrect: true }, { id: "OPT2", text: "Option B", isCorrect: false }] },
+          { id: "ACT_TEST_RECONNECT", presentationId: "test-pres-1", slideId: 7, type: "MULTIPLE_CHOICE", mode: "INDIVIDUAL", options: [{ id: "OPT1", text: "Option A", isCorrect: true }, { id: "OPT2", text: "Option B", isCorrect: false }] }
+        ],
+        classCodes: [{ classId: "CLS001", code: "TEST61" }],
+        bonusLedgers: [],
+        activeSessions: {}
+      };
+      fs.writeFileSync(dbPath, JSON.stringify(initialDb, null, 2), 'utf8');
+      return res.json({ success: true });
+    }
+    return res.status(403).json({ error: 'Not in test mode' });
+  });
 
   app.use((req, res) => {
     return handle(req, res);

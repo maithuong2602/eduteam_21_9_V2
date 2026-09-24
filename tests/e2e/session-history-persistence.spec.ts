@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Session History Persistence', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   test('Session and Activity data successfully persist matching the S1-A Data Model', async ({ request }) => {
     
     const mockSessionHistory = {

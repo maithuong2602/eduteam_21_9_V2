@@ -7,43 +7,23 @@
       "originalFileName": "test.pdf",
       "fileUrl": "",
       "totalSlides": 7,
-      "createdAt": 1790180677149,
-      "updatedAt": 1790180677149,
+      "createdAt": 1790214693593,
+      "updatedAt": 1790214693593
+    },
+    {
+      "id": "pres_test_process_1790214693610",
+      "teacherId": "teacher_1",
+      "title": "E2E Test Process Restart",
+      "originalFileName": "dummy.pdf",
+      "fileUrl": "http://example.com/dummy.pdf",
+      "totalSlides": 1,
+      "createdAt": 1790214693610,
+      "updatedAt": 1790214693610,
       "slides": [
         {
-          "id": "slide_1790180679737_0",
-          "fileUrl": "",
+          "id": "slide_1790214694877_0",
+          "fileUrl": "http://example.com/dummy.pdf",
           "pageNumber": 1
-        },
-        {
-          "id": "slide_1790180679737_1",
-          "fileUrl": "",
-          "pageNumber": 2
-        },
-        {
-          "id": "slide_1790180679737_2",
-          "fileUrl": "",
-          "pageNumber": 3
-        },
-        {
-          "id": "slide_1790180679737_3",
-          "fileUrl": "",
-          "pageNumber": 4
-        },
-        {
-          "id": "slide_1790180679737_4",
-          "fileUrl": "",
-          "pageNumber": 5
-        },
-        {
-          "id": "slide_1790180679737_5",
-          "fileUrl": "",
-          "pageNumber": 6
-        },
-        {
-          "id": "slide_1790180679737_6",
-          "fileUrl": "",
-          "pageNumber": 7
         }
       ]
     }
@@ -132,173 +112,28 @@
           "isCorrect": false
         }
       ]
+    },
+    {
+      "id": "act_test_process_1790214693611",
+      "presentationId": "pres_test_process_1790214693610",
+      "slideId": 1,
+      "type": "MULTIPLE_CHOICE",
+      "name": "Cau Hoi Test",
+      "mode": "INDIVIDUAL",
+      "points": 1,
+      "createdAt": 1790214693611,
+      "updatedAt": 1790214693929,
+      "config": {
+        "specific_key": "value_123"
+      }
     }
   ],
   "classCodes": [
     {
       "classId": "CLS001",
       "code": "TEST61"
-    },
-    {
-      "classId": "CLS002",
-      "code": "CHXGC7"
-    },
-    {
-      "classId": "CLS003",
-      "code": "RJD4SF"
-    },
-    {
-      "classId": "CLS004",
-      "code": "ZHUECB"
-    },
-    {
-      "classId": "CLS005",
-      "code": "6QSDWJ"
-    },
-    {
-      "classId": "CLS006",
-      "code": "PEML7U"
-    },
-    {
-      "classId": "CLS021",
-      "code": "3LL7BQ"
-    },
-    {
-      "classId": "CLS022",
-      "code": "YZGNUY"
-    },
-    {
-      "classId": "CLS023",
-      "code": "W4K8L0"
-    },
-    {
-      "classId": "CLS024",
-      "code": "0SZLSK"
-    },
-    {
-      "classId": "CLS025",
-      "code": "8IM5D0"
-    },
-    {
-      "classId": "CLS026",
-      "code": "4I4RTA"
-    },
-    {
-      "classId": "CLS041",
-      "code": "VOF1KV"
-    },
-    {
-      "classId": "CLS042",
-      "code": "FJFZHQ"
-    },
-    {
-      "classId": "CLS043",
-      "code": "1A7UV3"
-    },
-    {
-      "classId": "CLS044",
-      "code": "3AOERH"
-    },
-    {
-      "classId": "CLS045",
-      "code": "3ETPCA"
-    },
-    {
-      "classId": "CLS046",
-      "code": "CDQA01"
-    },
-    {
-      "classId": "CLS061",
-      "code": "BJDRBT"
-    },
-    {
-      "classId": "CLS062",
-      "code": "L9A55N"
-    },
-    {
-      "classId": "CLS063",
-      "code": "LJ361G"
-    },
-    {
-      "classId": "CLS064",
-      "code": "611GVT"
-    },
-    {
-      "classId": "CLS065",
-      "code": "VTGDLV"
-    },
-    {
-      "classId": "CLS066",
-      "code": "NBJG2C"
-    },
-    {
-      "classId": "CLS007",
-      "code": "JZV5EK"
-    },
-    {
-      "classId": "CLS008",
-      "code": "B55HUS"
-    },
-    {
-      "classId": "CLS009",
-      "code": "XUU6G6"
-    },
-    {
-      "classId": "CLS010",
-      "code": "9GEK6C"
-    },
-    {
-      "classId": "CLS027",
-      "code": "6LISWY"
-    },
-    {
-      "classId": "CLS028",
-      "code": "WTYHLS"
-    },
-    {
-      "classId": "CLS029",
-      "code": "54WKUW"
-    },
-    {
-      "classId": "CLS030",
-      "code": "DS0BD4"
-    },
-    {
-      "classId": "CLS047",
-      "code": "2Q8DGF"
-    },
-    {
-      "classId": "CLS048",
-      "code": "PKACRL"
-    },
-    {
-      "classId": "CLS049",
-      "code": "HRMDX8"
-    },
-    {
-      "classId": "CLS050",
-      "code": "05SOTY"
-    },
-    {
-      "classId": "CLS067",
-      "code": "1POS9F"
-    },
-    {
-      "classId": "CLS068",
-      "code": "IN341X"
-    },
-    {
-      "classId": "CLS069",
-      "code": "VV3C0Q"
-    },
-    {
-      "classId": "CLS070",
-      "code": "N941L0"
-    },
-    {
-      "classId": "CLS071",
-      "code": "J1NTEG"
     }
   ],
-  "bonusLedgers": []
+  "bonusLedgers": [],
+  "activeSessions": {}
 }

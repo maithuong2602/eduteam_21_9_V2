@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Word Cloud Realtime Sync', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   test('Concurrent multi-student realtime flow for Word Cloud', async ({ browser }) => {
     const teacherContext = await browser.newContext();
     const teacherPage = await teacherContext.newPage();

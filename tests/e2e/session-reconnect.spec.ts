@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Session Reconnect Realtime Sync', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   // Increase timeout for this test as reconnect/disconnect might take a few seconds
   test.setTimeout(120000);
 

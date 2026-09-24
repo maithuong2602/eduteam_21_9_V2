@@ -3,6 +3,10 @@ import fs from 'fs';
 import path from 'path';
 
 test.describe('Phase S1-B: Session Save and Reset', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   const dbPath = path.resolve(__dirname, '../../src/data/db.test.json');
 
   test.beforeEach(async () => {

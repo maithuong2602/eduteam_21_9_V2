@@ -3,6 +3,10 @@ import fs from 'fs';
 import path from 'path';
 
 test.describe('Cumulative Score (S2-C)', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   let teacherPage: any;
   let studentPage1: any;
   let studentPage2: any;

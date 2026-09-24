@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Idempotency Realtime Sync', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   test('Student cannot submit duplicate response after reconnect', async ({ browser }) => {
     const teacherContext = await browser.newContext();
     const teacherPage = await teacherContext.newPage();

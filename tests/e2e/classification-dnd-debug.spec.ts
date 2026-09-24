@@ -1,6 +1,10 @@
 ﻿import { test, expect } from '@playwright/test';
 
 test.describe('Classification DnD Debug', () => {
+  test.beforeEach(async ({ request }) => {
+    await request.get('/api/test/reset');
+  });
+
   test.fixme('Playwright interaction debug (Fails due to React synthetic event limitations with Playwright DnD)', async ({ browser }) => {
     const teacherContext = await browser.newContext();
     const teacherPage = await teacherContext.newPage();
