@@ -300,7 +300,30 @@
       "code": "ZYCVEH"
     }
   ],
-  "bonusLedgers": [],
+  "bonusLedgers": [
+    {
+      "ledgerId": "LED_1790438258619_HS018",
+      "studentId": "HS018",
+      "sessionCode": "TEST61",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 1,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790438258619
+    },
+    {
+      "ledgerId": "LED_1790438258620_HS020",
+      "studentId": "HS020",
+      "sessionCode": "TEST61",
+      "classId": "CLS001",
+      "activityId": "ACTIVITY_SCORE",
+      "points": 0,
+      "reason": "ACTIVITY_SCORE",
+      "groupId": null,
+      "createdAt": 1790438258620
+    }
+  ],
   "activeSessions": {
     "TEST61": {
       "teacherSocketId": "83jULAht-dowRMzlAAAX",
@@ -589,11 +612,26 @@
           "systemId": 4869456649,
           "name": "Lê Trương Đức Minh",
           "status": "ONLINE"
+        },
+        {
+          "id": "oiak4-s6X780Cu6YAAAb",
+          "systemId": 4824891635,
+          "name": "Phạm Hoàng Nam",
+          "status": "ONLINE"
         }
       ],
-      "currentSlide": 1,
+      "currentSlide": 5,
       "activityConfig": null,
-      "responses": {},
+      "responses": {
+        "6": {
+          "4869456649": [
+            "OPT1"
+          ],
+          "4824891635": [
+            "OPT2"
+          ]
+        }
+      },
       "groups": [
         {
           "id": "SES_61_Nhóm 1",
@@ -800,6 +838,37 @@
               "role": "Thành viên"
             }
           ]
+        }
+      ],
+      "studentPoints": {
+        "4869456649": 1,
+        "4824891635": 0
+      },
+      "activityHistory": [
+        {
+          "slideNumber": 6,
+          "type": "MULTIPLE_CHOICE",
+          "name": "HD6",
+          "mode": "INDIVIDUAL",
+          "maxScore": 1,
+          "date": "22:57:38 26/9/2026",
+          "pointsRecord": {
+            "4869456649": 1,
+            "4824891635": 0
+          },
+          "breakdownRecord": {
+            "4869456649": "Correct (+1)",
+            "4824891635": "Incorrect (0)"
+          },
+          "bonusRecord": {},
+          "responses": {
+            "4869456649": [
+              "OPT1"
+            ],
+            "4824891635": [
+              "OPT2"
+            ]
+          }
         }
       ]
     }
