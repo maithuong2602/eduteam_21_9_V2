@@ -106,3 +106,6 @@
 [2026-09-26T13:12:53.124Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
 [2026-09-26T13:12:53.126Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
 [2026-09-26T13:12:56.094Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4869456649 student=true validSt=true systemId=4869456649 ans=Test 1
+[2026-09-26T15:56:35.880Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
+[2026-09-26T15:56:35.883Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
+[2026-09-26T15:56:44.525Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4869456649 student=true validSt=true systemId=4869456649 ans=Test 2
