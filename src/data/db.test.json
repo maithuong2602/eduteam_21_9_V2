@@ -303,7 +303,7 @@
   "bonusLedgers": [],
   "activeSessions": {
     "TEST61": {
-      "teacherSocketId": "7mE2Tuferi_R6fyYAAAN",
+      "teacherSocketId": "2F4E4LnwclaIMrDjAAAR",
       "classId": "CLS001",
       "presentationId": "test-pres-1",
       "title": "E2E Test Presentation",
@@ -588,7 +588,7 @@
           "id": "l8B4HblP85OL0-a6AAAe",
           "systemId": 4866077784,
           "name": "Nguyễn Phương Bình An",
-          "status": "ONLINE"
+          "status": "OFFLINE"
         }
       ],
       "currentSlide": 7,
