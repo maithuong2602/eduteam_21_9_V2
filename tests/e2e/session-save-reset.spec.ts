@@ -29,7 +29,7 @@ test.describe('Phase S1-B: Session Save and Reset', () => {
     const studentPage = await studentContext.newPage();
 
     console.log("Teacher creating session...");
-    await teacherPage.goto('http://localhost:3000/teacher/presentations/test-pres-1');
+    await teacherPage.goto('/teacher/presentations/test-pres-1');
     await teacherPage.waitForSelector('[data-testid="teacher-page"]');
     
     await teacherPage.locator('select').first().selectOption('CLS001');
@@ -41,7 +41,7 @@ test.describe('Phase S1-B: Session Save and Reset', () => {
     const sessionCode = text?.replace('Mã vào lớp:', '').trim() || '';
 
     console.log("Student joining...");
-    await studentPage.goto('http://localhost:3000/join');
+    await studentPage.goto('/join');
     await studentPage.fill('input[placeholder="Ví dụ: 7K4P2"]', sessionCode);
     const studentId = '4866077784';
     await studentPage.fill('input[placeholder="Ví dụ: HS12345"]', studentId);
