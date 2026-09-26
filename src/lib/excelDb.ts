@@ -1,11 +1,12 @@
 import * as xlsx from 'xlsx';
+import { getExcelPath } from './dataConfig';
 
 let cachedData: any = null;
 
 export function getExcelData() {
   if (cachedData) return cachedData;
 
-  const filePath = require('path').join(process.cwd(), 'src', 'data', '02_DANH_SACH_HOC_SINH.xlsx');
+  const filePath = getExcelPath('02_DANH_SACH_HOC_SINH.xlsx');
   const fs = require('fs');
   if (!fs.existsSync(filePath)) { console.error('Excel file missing:', filePath); return { classes: [], students: [] }; }
   const buffer = fs.readFileSync(filePath);
@@ -55,7 +56,7 @@ let cachedActivityData: any = null;
 export function getActivityData() {
   if (cachedActivityData) return cachedActivityData;
 
-  const filePath = require('path').join(process.cwd(), 'src', 'data', '04_HOAT_DONG.xlsx');
+  const filePath = getExcelPath('04_HOAT_DONG.xlsx');
   const fs = require('fs');
   if (!fs.existsSync(filePath)) {
     return [];

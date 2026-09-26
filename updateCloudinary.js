@@ -1,4 +1,4 @@
-﻿const fs = require('fs');
+const fs = require('fs');
 
 const uploadCode = `
 import { NextResponse } from 'next/server';
@@ -6,9 +6,9 @@ import { v2 as cloudinary } from 'cloudinary';
 
 // Configure Cloudinary with the user's credentials
 cloudinary.config({
-  cloud_name: 'i5jbdpzg',
-  api_key: '569753364163795',
-  api_secret: '_1vx6_pU_G8FGdvrYaQuNoq4ewc'
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 export async function POST(request: Request) {

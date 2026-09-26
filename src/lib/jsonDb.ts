@@ -1,8 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 
-const isTest = process.env.USE_TEST_DB === 'true';
-const DB_FILE = path.join(process.cwd(), 'src', 'data', isTest ? 'db.test.json' : 'db.json');
+import { runStartupMigration } from './dbMigration';
+
+import { getDbFilePath, getDataDir } from './dataConfig';
+
+export { getDbFilePath, getDataDir };
+export const DB_FILE = getDbFilePath();
+runStartupMigration();
 
 export interface Presentation {
   id: string;
@@ -119,6 +124,9 @@ function getDb(): DbSchema {
       sessionHistories: [],
       activeSessions: {}
     };
+    if (!fs.existsSync(path.dirname(DB_FILE))) {
+      fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
+    }
     fs.writeFileSync(DB_FILE, JSON.stringify(initial, null, 2), 'utf8');
     return initial;
   }
@@ -132,7 +140,17 @@ function getDb(): DbSchema {
 }
 
 function saveDb(data: DbSchema) {
-  fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf8');
+  if (!fs.existsSync(path.dirname(DB_FILE))) {
+    fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
+  }
+  const tmpFile = `${DB_FILE}.tmp.${Date.now()}`;
+  fs.writeFileSync(tmpFile, JSON.stringify(data, null, 2), 'utf8');
+  try {
+    fs.renameSync(tmpFile, DB_FILE);
+  } catch(e) {
+    fs.copyFileSync(tmpFile, DB_FILE);
+    try { fs.unlinkSync(tmpFile); } catch(_) {}
+  }
 }
 
 

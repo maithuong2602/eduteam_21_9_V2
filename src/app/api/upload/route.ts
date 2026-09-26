@@ -2,15 +2,26 @@ import { NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
 import { jsonDb } from '@/lib/jsonDb';
 
-// Configure Cloudinary with the user's credentials
-cloudinary.config({
-  cloud_name: 'i5jbdpzg',
-  api_key: '569753364163795',
-  api_secret: '_1vx6_pU_G8FGdvrYaQuNoq4ewc'
-});
-
 export async function POST(request: Request) {
   try {
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+    if (!cloudName || !apiKey || !apiSecret) {
+      console.error('Upload Error: Cloudinary environment variables are missing');
+      return NextResponse.json(
+        { error: 'Server configuration error: Cloudinary credentials missing' },
+        { status: 500 }
+      );
+    }
+
+    cloudinary.config({
+      cloud_name: cloudName,
+      api_key: apiKey,
+      api_secret: apiSecret
+    });
+
     const formData = await request.formData();
     const file = formData.get('file') as any;
 
@@ -60,7 +71,7 @@ export async function POST(request: Request) {
   } catch (error: any) {
     console.error('Upload Error:', error);
     return NextResponse.json(
-      { error: 'Failed to upload to Cloudinary', details: error.message || error.toString() },
+      { error: 'Failed to upload presentation' },
       { status: 500 }
     );
   }

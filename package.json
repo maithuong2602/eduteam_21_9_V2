@@ -7,9 +7,10 @@
     "build": "next build",
     "start": "NODE_ENV=production node server.js",
     "lint": "eslint",
-    "test:api": "playwright test tests/api/",
-    "test:e2e": "playwright test tests/e2e/",
-    "test:quick": "playwright test tests/api/ smoke.spec.ts",
+    "test:api": "cross-env USE_TEST_DB=true playwright test tests/api/",
+    "test:e2e": "cross-env USE_TEST_DB=true playwright test tests/e2e/",
+    "test:quick": "cross-env USE_TEST_DB=true playwright test tests/api/ smoke.spec.ts",
+    "audit:production-package": "node scripts/audit-production-package.js",
     "auto-check": "npm run test:api && npm run test:e2e"
   },
   "dependencies": {

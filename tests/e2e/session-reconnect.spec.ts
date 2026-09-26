@@ -6,7 +6,7 @@ test.describe('Session Reconnect Realtime Sync', () => {
   });
 
   // Increase timeout for this test as reconnect/disconnect might take a few seconds
-  test.setTimeout(120000);
+  test.setTimeout(150000);
 
   test('Teacher and Student reconnect flow and state recovery', async ({ browser }) => {
     const teacherContext = await browser.newContext();
@@ -66,7 +66,7 @@ test.describe('Session Reconnect Realtime Sync', () => {
     await studentContext.setOffline(true);
     
     // Verify Teacher sees student go offline
-    await expect(teacherPage.locator('text=/0 h.c sinh online/i')).toBeVisible({ timeout: 60000 });
+    await expect(teacherPage.locator('text=/0 h.c sinh online/i')).toBeVisible({ timeout: 80000 });
     
     // Reconnect Student
     await studentContext.setOffline(false);

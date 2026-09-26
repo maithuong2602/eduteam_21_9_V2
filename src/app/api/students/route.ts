@@ -1,10 +1,12 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import * as xlsx from 'xlsx';
 import fs from 'fs';
 import path from 'path';
 
+import { getExcelPath } from '@/lib/dataConfig';
+
 export async function GET() {
-  const filePath = path.join(process.cwd(), 'src', 'data', '02_DANH_SACH_HOC_SINH.xlsx');
+  const filePath = getExcelPath('02_DANH_SACH_HOC_SINH.xlsx');
   if (!fs.existsSync(filePath)) {
     return NextResponse.json({ students: [] });
   }

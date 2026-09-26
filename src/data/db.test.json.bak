@@ -1,0 +1,139 @@
+{
+  "presentations": [
+    {
+      "id": "test-pres-1",
+      "teacherId": "teacher_1",
+      "title": "E2E Test Presentation",
+      "originalFileName": "test.pdf",
+      "fileUrl": "",
+      "totalSlides": 7,
+      "createdAt": 1790214693593,
+      "updatedAt": 1790214693593
+    },
+    {
+      "id": "pres_test_process_1790214693610",
+      "teacherId": "teacher_1",
+      "title": "E2E Test Process Restart",
+      "originalFileName": "dummy.pdf",
+      "fileUrl": "http://example.com/dummy.pdf",
+      "totalSlides": 1,
+      "createdAt": 1790214693610,
+      "updatedAt": 1790214693610,
+      "slides": [
+        {
+          "id": "slide_1790214694877_0",
+          "fileUrl": "http://example.com/dummy.pdf",
+          "pageNumber": 1
+        }
+      ]
+    }
+  ],
+  "activities": [
+    {
+      "id": "ACT_TEST_CLASS",
+      "presentationId": "test-pres-1",
+      "slideId": 3,
+      "type": "CLASSIFICATION",
+      "mode": "INDIVIDUAL",
+      "groups": [
+        {
+          "id": "G1",
+          "name": "Nhóm Đúng"
+        },
+        {
+          "id": "G2",
+          "name": "Nhóm Sai"
+        }
+      ],
+      "items": [
+        {
+          "id": "I1",
+          "text": "Mục 1",
+          "correctGroupId": "G1"
+        },
+        {
+          "id": "I2",
+          "text": "Mục 2",
+          "correctGroupId": "G2"
+        }
+      ],
+      "settings": {
+        "allowMoveBack": true
+      }
+    },
+    {
+      "id": "ACT_TEST_SHORT_ANSWER",
+      "presentationId": "test-pres-1",
+      "slideId": 4,
+      "type": "SHORT_ANSWER",
+      "mode": "INDIVIDUAL"
+    },
+    {
+      "id": "ACT_TEST_WORD_CLOUD",
+      "presentationId": "test-pres-1",
+      "slideId": 5,
+      "type": "WORD_CLOUD",
+      "mode": "INDIVIDUAL"
+    },
+    {
+      "id": "ACT_TEST_LOCK",
+      "presentationId": "test-pres-1",
+      "slideId": 6,
+      "type": "MULTIPLE_CHOICE",
+      "mode": "INDIVIDUAL",
+      "options": [
+        {
+          "id": "OPT1",
+          "text": "Option A",
+          "isCorrect": true
+        },
+        {
+          "id": "OPT2",
+          "text": "Option B",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "id": "ACT_TEST_RECONNECT",
+      "presentationId": "test-pres-1",
+      "slideId": 7,
+      "type": "MULTIPLE_CHOICE",
+      "mode": "INDIVIDUAL",
+      "options": [
+        {
+          "id": "OPT1",
+          "text": "Option A",
+          "isCorrect": true
+        },
+        {
+          "id": "OPT2",
+          "text": "Option B",
+          "isCorrect": false
+        }
+      ]
+    },
+    {
+      "id": "act_test_process_1790214693611",
+      "presentationId": "pres_test_process_1790214693610",
+      "slideId": 1,
+      "type": "MULTIPLE_CHOICE",
+      "name": "Cau Hoi Test",
+      "mode": "INDIVIDUAL",
+      "points": 1,
+      "createdAt": 1790214693611,
+      "updatedAt": 1790214693929,
+      "config": {
+        "specific_key": "value_123"
+      }
+    }
+  ],
+  "classCodes": [
+    {
+      "classId": "CLS001",
+      "code": "TEST61"
+    }
+  ],
+  "bonusLedgers": [],
+  "activeSessions": {}
+}

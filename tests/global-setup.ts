@@ -2,6 +2,9 @@ import fs from 'fs';
 import path from 'path';
 
 async function globalSetup() {
+  if (process.env.NODE_ENV === 'production' || (process.env.DB_FILE && process.env.DB_FILE.includes('/var/lib/eduteam'))) {
+    throw new Error('FATAL: Tests are strictly forbidden from running in production or against production DB_FILE!');
+  }
   console.log('Resetting test database...');
   const dbPath = path.join(process.cwd(), 'src', 'data', 'db.test.json');
   const initialDb = {

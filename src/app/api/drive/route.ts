@@ -1,6 +1,8 @@
-﻿import { NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { google } from 'googleapis';
 import path from 'path';
+
+import fs from 'fs';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -11,9 +13,37 @@ export async function GET(request: Request) {
   }
 
   try {
-    const b64 = require('fs').readFileSync(require('path').join(process.cwd(), 'drive_credentials.b64'), 'utf8');
-    const decoded = Buffer.from(b64, 'base64').toString('utf8');
-    const creds = JSON.parse(decoded.charCodeAt(0) === 0xFEFF ? decoded.slice(1) : decoded);
+    let creds: any = null;
+
+    // 1. Check direct Base64 env variable
+    if (process.env.GOOGLE_CREDENTIALS_B64) {
+      const decoded = Buffer.from(process.env.GOOGLE_CREDENTIALS_B64, 'base64').toString('utf8');
+      creds = JSON.parse(decoded.charCodeAt(0) === 0xFEFF ? decoded.slice(1) : decoded);
+    } 
+    // 2. Check external secret file path
+    else {
+      const credsPath = process.env.GOOGLE_CREDENTIALS_PATH 
+        || (process.env.NODE_ENV === 'production' 
+          ? '/var/lib/eduteam/secrets/drive_credentials.b64' 
+          : path.join(process.cwd(), 'drive_credentials.b64'));
+
+      if (fs.existsSync(credsPath)) {
+        const fileContent = fs.readFileSync(credsPath, 'utf8').trim();
+        // Determine if file is JSON or Base64
+        if (fileContent.startsWith('{')) {
+          creds = JSON.parse(fileContent);
+        } else {
+          const decoded = Buffer.from(fileContent, 'base64').toString('utf8');
+          creds = JSON.parse(decoded.charCodeAt(0) === 0xFEFF ? decoded.slice(1) : decoded);
+        }
+      }
+    }
+
+    if (!creds) {
+      console.warn('[DRIVE API] Google Drive integration not configured.');
+      return new NextResponse('Google Drive integration not configured on this server', { status: 503 });
+    }
+
     const auth = new google.auth.GoogleAuth({
       credentials: creds,
       scopes: ['https://www.googleapis.com/auth/drive.readonly'],
@@ -42,7 +72,7 @@ export async function GET(request: Request) {
       }
     });
   } catch (error: any) {
-    console.error('Drive API Error:', error);
+    console.error('Drive API Error:', error?.message || 'Unknown error');
     return new NextResponse('Failed to fetch file from Drive', { status: 500 });
   }
 }

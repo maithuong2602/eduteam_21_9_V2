@@ -14,6 +14,12 @@ nextApp.prepare().then(() => {
   app.use(cors());
 
   const path = require('path');
+  const fs = require('fs');
+  const { isTest, getDbFilePath, getDataDir } = require('./src/lib/dataConfig');
+  const customUploads = process.env.EDUTEAM_UPLOADS_DIR || (process.env.EDUTEAM_DATA_DIR ? path.join(path.dirname(process.env.EDUTEAM_DATA_DIR), 'uploads') : null);
+  if (customUploads && fs.existsSync(customUploads)) {
+    app.use('/uploads', express.static(customUploads));
+  }
   app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
 
   const server = http.createServer(app);
@@ -22,7 +28,9 @@ nextApp.prepare().then(() => {
     cors: {
       origin: "*",
       methods: ["GET", "POST"]
-    }
+    },
+    pingInterval: 10000,
+    pingTimeout: 5000
   });
 
 // In-memory state
@@ -30,7 +38,11 @@ nextApp.prepare().then(() => {
 
 const groupBonusAwards = [];
 let studentBonusLedgers = [];
-const DB_FILE = path.join(process.cwd(), 'src', 'data', 'db.json');
+const DB_FILE = getDbFilePath();
+
+// Execute startup migration if target DB needs migration from source
+const { runStartupMigration } = require('./src/lib/dbMigration');
+runStartupMigration();
 
 function saveLedger(ledger) {
   try {
@@ -38,7 +50,6 @@ function saveLedger(ledger) {
   } catch(e) { console.error(e) }
 }
 
-const fs = require("fs");
 let sessions = {};
 try {
     if (fs.existsSync(DB_FILE)) {
@@ -64,8 +75,18 @@ setInterval(() => {
         }
         db.activeSessions = sessions;
         db.bonusLedgers = studentBonusLedgers;
-        fs.writeFile(DB_FILE, JSON.stringify(db, null, 2), 'utf8', (err) => {
-           if (err) console.error('Auto-save error:', err);
+        if (!fs.existsSync(path.dirname(DB_FILE))) {
+           fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
+        }
+        const tmpFile = `${DB_FILE}.tmp.${Date.now()}`;
+        fs.writeFile(tmpFile, JSON.stringify(db, null, 2), 'utf8', (err) => {
+           if (err) return console.error('Auto-save error:', err);
+           try {
+              fs.renameSync(tmpFile, DB_FILE);
+           } catch(e) {
+              fs.copyFileSync(tmpFile, DB_FILE);
+              try { fs.unlinkSync(tmpFile); } catch(_) {}
+           }
         });
      }
   } catch(e) {}
@@ -80,9 +101,6 @@ io.on('connection', (socket) => {
     let code = Math.random().toString(36).substring(2, 7).toUpperCase();
     
     if (classId) {
-      const fs = require('fs');
-      const path = require('path');
-      const DB_FILE = path.join(process.cwd(), 'src', 'data', 'db.json');
       try {
         let db = { classCodes: [], bonusLedgers: [] };
         if (fs.existsSync(DB_FILE)) {
@@ -94,6 +112,9 @@ io.on('connection', (socket) => {
           code = cc.code;
         } else {
           db.classCodes.push({ classId, code });
+          if (!fs.existsSync(path.dirname(DB_FILE))) {
+            fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
+          }
           fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
         }
       } catch(e) { console.error('Error with db.json', e) }
@@ -1029,8 +1050,7 @@ io.on('connection', (socket) => {
   app.get('/api/test/reset', (req, res) => {
     if (process.env.USE_TEST_DB === 'true') {
       const fs = require('fs');
-      const path = require('path');
-      const dbPath = path.join(process.cwd(), 'src', 'data', 'db.test.json');
+      const dbPath = DB_FILE; // Use the globally resolved test DB path
       for (let prop in sessions) delete sessions[prop];
       studentBonusLedgers.length = 0;
       const initialDb = {
@@ -1058,10 +1078,11 @@ io.on('connection', (socket) => {
     return handle(req, res);
   });
 
-  const PORT = process.env.PORT || 3000;
-  server.listen(PORT, (err) => {
+  const PORT = parseInt(process.env.PORT || '3000', 10);
+  const HOST = process.env.HOST || '127.0.0.1';
+  server.listen(PORT, HOST, (err) => {
     if (err) throw err;
-    console.log(`> Ready on http://localhost:${PORT} (Next.js + Socket.io Unified)`);
+    console.log(`> Ready on http://${HOST}:${PORT} (Next.js + Socket.io Unified)`);
   });
 }).catch((ex) => {
   console.error(ex.stack);
