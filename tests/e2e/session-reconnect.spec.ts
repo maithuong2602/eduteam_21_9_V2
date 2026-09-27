@@ -41,7 +41,10 @@ test.describe('Session Reconnect Realtime Sync', () => {
     await studentPage.goto('/join');
     await studentPage.locator('input').nth(0).fill(sessionCode);
     await studentPage.locator('input').nth(1).fill('HS001');
-    await studentPage.locator('button:has-text("Vào lớp")').click();
+    await Promise.all([
+      studentPage.waitForURL(/\/student\/.+/),
+      studentPage.locator('button:has-text("Vào lớp")').click()
+    ]);
     
     // Teacher receives student online realtime
     await expect(teacherPage.locator('text=/1 h.c sinh online/i')).toBeVisible();

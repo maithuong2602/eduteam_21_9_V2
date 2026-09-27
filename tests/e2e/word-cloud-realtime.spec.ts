@@ -56,6 +56,9 @@ test.describe('Word Cloud Realtime Sync', () => {
     await joinStudent(student2Page, 'HS002');
     await joinStudent(student3Page, 'HS003');
     
+    // Teacher sees all 3 students online
+    await expect(teacherPage.locator('text=/3 h.c sinh online/i')).toBeVisible();
+
     // 3. Teacher starts activity
     await teacherPage.locator('button:has-text("Bắt đầu hoạt động")').click();
     

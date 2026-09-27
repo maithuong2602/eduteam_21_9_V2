@@ -35,10 +35,13 @@ test.describe('Realtime Sync', () => {
     await studentPage.goto('/join');
     await studentPage.locator('input').nth(0).fill(sessionCode);
     await studentPage.locator('input').nth(1).fill('HS001');
-    await studentPage.locator('button:has-text("Vào lớp")').click();
+    await Promise.all([
+      studentPage.waitForURL(/\/student\/.+/),
+      studentPage.locator('button:has-text("Vào lớp")').click()
+    ]);
     
     // Teacher sees 1 học sinh online
-    await expect(teacherPage.locator('text="1 học sinh online"')).toBeVisible();
+    await expect(teacherPage.locator('text=/1 h.c sinh online/i')).toBeVisible();
     
     // 3. Teacher starts activity (MULTIPLE_CHOICE)
     await teacherPage.locator('button:has-text("Trắc nghiệm")').click();
