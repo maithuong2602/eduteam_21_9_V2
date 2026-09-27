@@ -112,17 +112,17 @@ export async function POST(req: NextRequest) {
 
     // Explicitly reject query tokens
     if (req.nextUrl.searchParams.get('token')) {
-      return NextResponse.json({ error: 'Unauthorized: Query token not allowed' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized: Query token not allowed' }, { status: 401, headers: { 'Connection': 'close' } });
     }
 
     const authHeader = req.headers.get('authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: { 'Connection': 'close' } });
     }
 
     const providedToken = authHeader.substring(7).trim();
     if (providedToken !== adminToken) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401, headers: { 'Connection': 'close' } });
     }
 
     // 2. Read multipart payload

@@ -7,41 +7,41 @@
       "originalFileName": "test.pdf",
       "fileUrl": "",
       "totalSlides": 7,
-      "createdAt": 1790515650261,
-      "updatedAt": 1790515650261,
+      "createdAt": 1790520286624,
+      "updatedAt": 1790520286624,
       "slides": [
         {
-          "id": "slide_1790515653440_0",
+          "id": "slide_1790520289877_0",
           "fileUrl": "",
           "pageNumber": 1
         },
         {
-          "id": "slide_1790515653440_1",
+          "id": "slide_1790520289877_1",
           "fileUrl": "",
           "pageNumber": 2
         },
         {
-          "id": "slide_1790515653440_2",
+          "id": "slide_1790520289877_2",
           "fileUrl": "",
           "pageNumber": 3
         },
         {
-          "id": "slide_1790515653440_3",
+          "id": "slide_1790520289877_3",
           "fileUrl": "",
           "pageNumber": 4
         },
         {
-          "id": "slide_1790515653440_4",
+          "id": "slide_1790520289877_4",
           "fileUrl": "",
           "pageNumber": 5
         },
         {
-          "id": "slide_1790515653440_5",
+          "id": "slide_1790520289877_5",
           "fileUrl": "",
           "pageNumber": 6
         },
         {
-          "id": "slide_1790515653440_6",
+          "id": "slide_1790520289877_6",
           "fileUrl": "",
           "pageNumber": 7
         }
@@ -141,175 +141,727 @@
     },
     {
       "classId": "CLS002",
-      "code": "L4SPF9"
+      "code": "1UXF2Z"
     },
     {
       "classId": "CLS003",
-      "code": "A6PXS4"
+      "code": "ZZZPS6"
     },
     {
       "classId": "CLS004",
-      "code": "GIZ0ME"
+      "code": "4TG5HX"
     },
     {
       "classId": "CLS005",
-      "code": "T143V2"
+      "code": "W9LQLD"
     },
     {
       "classId": "CLS006",
-      "code": "55HKGH"
+      "code": "JN50WM"
     },
     {
       "classId": "CLS021",
-      "code": "HRU2DQ"
+      "code": "5BMZZD"
     },
     {
       "classId": "CLS022",
-      "code": "GK4B02"
+      "code": "8JIQMJ"
     },
     {
       "classId": "CLS023",
-      "code": "QD4IAU"
+      "code": "ET23H2"
     },
     {
       "classId": "CLS024",
-      "code": "DEDKTG"
+      "code": "PA3IAM"
     },
     {
       "classId": "CLS025",
-      "code": "RSKJDZ"
+      "code": "YVWM7X"
     },
     {
       "classId": "CLS026",
-      "code": "SULQ83"
+      "code": "FHL3VA"
     },
     {
       "classId": "CLS041",
-      "code": "8JRXXC"
+      "code": "9VMY0A"
     },
     {
       "classId": "CLS042",
-      "code": "FOW6N8"
+      "code": "CM95VV"
     },
     {
       "classId": "CLS043",
-      "code": "UJBBEN"
+      "code": "C4T3YB"
     },
     {
       "classId": "CLS044",
-      "code": "SNV7T2"
+      "code": "595T4W"
     },
     {
       "classId": "CLS045",
-      "code": "10K927"
+      "code": "G9DGUW"
     },
     {
       "classId": "CLS046",
-      "code": "X51O52"
+      "code": "3CZG3I"
     },
     {
       "classId": "CLS061",
-      "code": "LSI6MJ"
+      "code": "V022BE"
     },
     {
       "classId": "CLS062",
-      "code": "FJJRQF"
+      "code": "K9JUVL"
     },
     {
       "classId": "CLS063",
-      "code": "CVLZ0C"
+      "code": "RDXUVZ"
     },
     {
       "classId": "CLS064",
-      "code": "DGXJX7"
+      "code": "XEK3YO"
     },
     {
       "classId": "CLS065",
-      "code": "DKRH48"
+      "code": "34I63G"
     },
     {
       "classId": "CLS066",
-      "code": "SMZQ0S"
+      "code": "L6XL33"
     },
     {
       "classId": "CLS007",
-      "code": "71NPP7"
+      "code": "JGYH0N"
     },
     {
       "classId": "CLS008",
-      "code": "XJO9B4"
+      "code": "QGRK0D"
     },
     {
       "classId": "CLS009",
-      "code": "N5RHFG"
+      "code": "24YEJ6"
     },
     {
       "classId": "CLS010",
-      "code": "AXUYWN"
+      "code": "R3K4W5"
     },
     {
       "classId": "CLS027",
-      "code": "NPOTIO"
+      "code": "7VDRF6"
     },
     {
       "classId": "CLS028",
-      "code": "AJZMKS"
+      "code": "MXDWR8"
     },
     {
       "classId": "CLS029",
-      "code": "6S06U1"
+      "code": "NT35VL"
     },
     {
       "classId": "CLS030",
-      "code": "8N42M8"
+      "code": "7HMTS4"
     },
     {
       "classId": "CLS047",
-      "code": "GKPAB7"
+      "code": "A61HMA"
     },
     {
       "classId": "CLS048",
-      "code": "C61RXK"
+      "code": "NAF7BC"
     },
     {
       "classId": "CLS049",
-      "code": "BGFLCR"
+      "code": "M094GP"
     },
     {
       "classId": "CLS050",
-      "code": "UMWAB4"
+      "code": "19N4Y0"
     },
     {
       "classId": "CLS067",
-      "code": "9LJD8Q"
+      "code": "DFGONE"
     },
     {
       "classId": "CLS068",
-      "code": "UW1S63"
+      "code": "2UZD6M"
     },
     {
       "classId": "CLS069",
-      "code": "EZWA69"
+      "code": "0T6R4J"
     },
     {
       "classId": "CLS070",
-      "code": "K1UR05"
+      "code": "CGG560"
     },
     {
       "classId": "CLS071",
-      "code": "Y85FOS"
+      "code": "XX0FIT"
     }
   ],
   "bonusLedgers": [],
   "sessionHistories": [],
-  "activeSessions": {},
-  "sessions": [],
-  "responses": {},
-  "classes": [
-    {
-      "id": "CLS001",
-      "name": "Lớp 10A1",
-      "studentCount": 40
+  "activeSessions": {
+    "TEST61": {
+      "teacherSocketId": "TbxTMQ5G7B0ZPzMGAAA7",
+      "classId": "CLS001",
+      "presentationId": "test-pres-1",
+      "title": "E2E Test Presentation",
+      "validStudents": [
+        {
+          "id": "HS001",
+          "systemId": 4866077784,
+          "name": "Nguyễn Phương Bình An",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS002",
+          "systemId": 4860962187,
+          "name": "Nguyễn Tường Anh",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS003",
+          "systemId": 4862448088,
+          "name": "Phạm Minh Anh",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS004",
+          "systemId": 4861226785,
+          "name": "Trương Ngọc Bảo",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS005",
+          "systemId": 4864104755,
+          "name": "VÕ NGỌC GIA BẢO",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS006",
+          "systemId": 4861143151,
+          "name": "Tôn Nữ Bảo Châu",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS007",
+          "systemId": 2262139741,
+          "name": "TRẦN BẢO CHÂU",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS008",
+          "systemId": 4835310350,
+          "name": "Đỗ Bảo Chi",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS009",
+          "systemId": 4860964250,
+          "name": "Bùi Ngọc Gia Hân",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS010",
+          "systemId": 4654084137,
+          "name": "Hoàng Gia Hân",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS011",
+          "systemId": 4847444868,
+          "name": "Huỳnh Nhật Huy",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS012",
+          "systemId": 4864930193,
+          "name": "Phạm Gia Hưng",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS013",
+          "systemId": 4835280771,
+          "name": "Nguyễn Minh Khang",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS014",
+          "systemId": 4864933354,
+          "name": "Văn Phú Trường Khang",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS015",
+          "systemId": 4860964256,
+          "name": "Nguyễn Vĩnh Khiêm",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS016",
+          "systemId": 4860962192,
+          "name": "Phạm Trung Kiên",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS017",
+          "systemId": 4860964429,
+          "name": "Lê Huỳnh Thiên Kim",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS018",
+          "systemId": 4869456649,
+          "name": "Lê Trương Đức Minh",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS019",
+          "systemId": 4860964260,
+          "name": "Hoàng Bảo Nam",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS020",
+          "systemId": 4824891635,
+          "name": "Phạm Hoàng Nam",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS021",
+          "systemId": 4830263165,
+          "name": "Trần Phúc Gia Nghi",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS022",
+          "systemId": 4824695999,
+          "name": "Lê Nguyễn Bảo Ngọc",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS023",
+          "systemId": 4869276270,
+          "name": "Võ Đức Nguyên",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS024",
+          "systemId": 4861186082,
+          "name": "Huỳnh Quang Nhân",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS025",
+          "systemId": 4861142810,
+          "name": "Nguyễn Trần Bảo Nhi",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS026",
+          "systemId": 4860962196,
+          "name": "Nguyễn Trương Tâm Nhi",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS027",
+          "systemId": 4858608500,
+          "name": "Võ Hà Nhiên",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS028",
+          "systemId": 4809951445,
+          "name": "Phạm Phương Phương",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS029",
+          "systemId": 4862449095,
+          "name": "Nguyễn Minh Quân",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS030",
+          "systemId": 4860964440,
+          "name": "Lê Thị Bảo Quyên",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS031",
+          "systemId": 4857956743,
+          "name": "Đào Trần Phương Thảo",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS032",
+          "systemId": 4860964274,
+          "name": "Đoàn Trang Thư",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS033",
+          "systemId": 4860962200,
+          "name": "Trần Minh Triết",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        },
+        {
+          "id": "HS034",
+          "systemId": 4862442937,
+          "name": "Ngô Đoàn Thanh Tuấn",
+          "status": "Đang học",
+          "classId": "CLS001",
+          "bonusPoints": 0
+        }
+      ],
+      "className": "6/1",
+      "fileUrl": "",
+      "students": [
+        {
+          "id": "_Zm0Tjo_uB9THBvkAAA9",
+          "systemId": 4866077784,
+          "name": "Nguyễn Phương Bình An",
+          "status": "ONLINE"
+        },
+        {
+          "id": "rC9dskgZ0q_BE5CrAAA_",
+          "systemId": 4860962187,
+          "name": "Nguyễn Tường Anh",
+          "status": "ONLINE"
+        },
+        {
+          "id": "SYYucEzIPVQ88A_HAABB",
+          "systemId": 4862448088,
+          "name": "Phạm Minh Anh",
+          "status": "ONLINE"
+        }
+      ],
+      "currentSlide": 5,
+      "activityConfig": {
+        "slideNumber": 5,
+        "activityId": "ACT_TEST_WORD_CLOUD",
+        "text": "",
+        "type": "WORD_CLOUD",
+        "name": "HD5",
+        "mode": "INDIVIDUAL",
+        "points": 1,
+        "bonusType": "NONE",
+        "bonusPoints": 0,
+        "endTime": 1790520358734,
+        "options": [
+          {
+            "id": 1,
+            "text": "Đáp án A",
+            "isCorrect": true
+          },
+          {
+            "id": 2,
+            "text": "Đáp án B",
+            "isCorrect": false
+          },
+          {
+            "id": 3,
+            "text": "Đáp án C",
+            "isCorrect": false
+          },
+          {
+            "id": 4,
+            "text": "Đáp án D",
+            "isCorrect": false
+          }
+        ],
+        "presentationType": "pptx",
+        "fileUrl": null
+      },
+      "responses": {
+        "5": {
+          "4866077784": [
+            "AI"
+          ],
+          "4860962187": [
+            "AI"
+          ],
+          "4862448088": [
+            "Dữ liệu"
+          ]
+        }
+      },
+      "groups": [
+        {
+          "id": "SES_61_Nhóm 1",
+          "name": "Nhóm 1",
+          "members": [
+            {
+              "studentId": "HS001",
+              "name": "Nguyễn Phương Bình An",
+              "role": "Nhóm trưởng"
+            },
+            {
+              "studentId": "HS007",
+              "name": "TRẦN BẢO CHÂU",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS013",
+              "name": "Nguyễn Minh Khang",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS019",
+              "name": "Hoàng Bảo Nam",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS025",
+              "name": "Nguyễn Trần Bảo Nhi",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS031",
+              "name": "Đào Trần Phương Thảo",
+              "role": "Thành viên"
+            }
+          ]
+        },
+        {
+          "id": "SES_61_Nhóm 2",
+          "name": "Nhóm 2",
+          "members": [
+            {
+              "studentId": "HS002",
+              "name": "Nguyễn Tường Anh",
+              "role": "Nhóm trưởng"
+            },
+            {
+              "studentId": "HS008",
+              "name": "Đỗ Bảo Chi",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS014",
+              "name": "Văn Phú Trường Khang",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS020",
+              "name": "Phạm Hoàng Nam",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS026",
+              "name": "Nguyễn Trương Tâm Nhi",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS032",
+              "name": "Đoàn Trang Thư",
+              "role": "Thành viên"
+            }
+          ]
+        },
+        {
+          "id": "SES_61_Nhóm 3",
+          "name": "Nhóm 3",
+          "members": [
+            {
+              "studentId": "HS003",
+              "name": "Phạm Minh Anh",
+              "role": "Nhóm trưởng"
+            },
+            {
+              "studentId": "HS009",
+              "name": "Bùi Ngọc Gia Hân",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS015",
+              "name": "Nguyễn Vĩnh Khiêm",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS021",
+              "name": "Trần Phúc Gia Nghi",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS027",
+              "name": "Võ Hà Nhiên",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS033",
+              "name": "Trần Minh Triết",
+              "role": "Thành viên"
+            }
+          ]
+        },
+        {
+          "id": "SES_61_Nhóm 4",
+          "name": "Nhóm 4",
+          "members": [
+            {
+              "studentId": "HS004",
+              "name": "Trương Ngọc Bảo",
+              "role": "Nhóm trưởng"
+            },
+            {
+              "studentId": "HS010",
+              "name": "Hoàng Gia Hân",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS016",
+              "name": "Phạm Trung Kiên",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS022",
+              "name": "Lê Nguyễn Bảo Ngọc",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS028",
+              "name": "Phạm Phương Phương",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS034",
+              "name": "Ngô Đoàn Thanh Tuấn",
+              "role": "Thành viên"
+            }
+          ]
+        },
+        {
+          "id": "SES_61_Nhóm 5",
+          "name": "Nhóm 5",
+          "members": [
+            {
+              "studentId": "HS005",
+              "name": "VÕ NGỌC GIA BẢO",
+              "role": "Nhóm trưởng"
+            },
+            {
+              "studentId": "HS011",
+              "name": "Huỳnh Nhật Huy",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS017",
+              "name": "Lê Huỳnh Thiên Kim",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS023",
+              "name": "Võ Đức Nguyên",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS029",
+              "name": "Nguyễn Minh Quân",
+              "role": "Thành viên"
+            }
+          ]
+        },
+        {
+          "id": "SES_61_Nhóm 6",
+          "name": "Nhóm 6",
+          "members": [
+            {
+              "studentId": "HS006",
+              "name": "Tôn Nữ Bảo Châu",
+              "role": "Nhóm trưởng"
+            },
+            {
+              "studentId": "HS012",
+              "name": "Phạm Gia Hưng",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS018",
+              "name": "Lê Trương Đức Minh",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS024",
+              "name": "Huỳnh Quang Nhân",
+              "role": "Thành viên"
+            },
+            {
+              "studentId": "HS030",
+              "name": "Lê Thị Bảo Quyên",
+              "role": "Thành viên"
+            }
+          ]
+        }
+      ]
     }
-  ]
+  }
 }

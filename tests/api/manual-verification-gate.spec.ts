@@ -45,20 +45,21 @@ test.describe('TEST 3 & TEST 4: Manual Verification Gate Specs', () => {
 
     // 1. Không Authorization header -> 401/403
     const resNoAuth = await request.post('/api/restore', {
+      headers: { 'Connection': 'close' },
       multipart: { file: { name: 'test.zip', mimeType: 'application/zip', buffer } }
     });
     expect([401, 403]).toContain(resNoAuth.status());
 
     // 2. Bearer token sai -> 401
     const resWrong = await request.post('/api/restore', {
-      headers: { 'Authorization': 'Bearer wrong-secret-token' },
+      headers: { 'Authorization': 'Bearer wrong-secret-token', 'Connection': 'close' },
       multipart: { file: { name: 'test.zip', mimeType: 'application/zip', buffer } }
     });
     expect(resWrong.status()).toBe(401);
 
     // 3. Query token -> 401/403
     const resQuery = await request.post(`/api/restore?token=${ADMIN_TOKEN}`, {
-      headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}` },
+      headers: { 'Authorization': `Bearer ${ADMIN_TOKEN}`, 'Connection': 'close' },
       multipart: { file: { name: 'test.zip', mimeType: 'application/zip', buffer } }
     });
     expect([401, 403]).toContain(resQuery.status());
