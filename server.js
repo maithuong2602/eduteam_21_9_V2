@@ -164,6 +164,21 @@ io.on('connection', (socket) => {
       socket.join(data.code);
       socket.join(`teacher_${data.code}`);
       socket.emit('student_joined', session.students);
+      if (session.activityHistory && session.activityHistory.length > 0) {
+        socket.emit('history_updated', session.activityHistory);
+      }
+      if (session.studentPoints && Object.keys(session.studentPoints).length > 0) {
+        const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
+          const st = session.validStudents?.find(vs => String(vs.systemId) === String(sysId));
+          return { systemId: sysId, name: st ? st.name : sysId, total };
+        }).sort((a, b) => (b.total - a.total));
+        socket.emit('leaderboard_updated', leaderboard);
+      }
+      if (session.activityConfig && session.responses && session.responses[session.activityConfig.slideNumber]) {
+        for (const [sId, ans] of Object.entries(session.responses[session.activityConfig.slideNumber])) {
+          socket.emit('student_answered', { studentId: sId, answer: ans, slideNumber: session.activityConfig.slideNumber });
+        }
+      }
     }
   });
 
@@ -328,38 +343,47 @@ io.on('connection', (socket) => {
         sessionCode: data.code,
         classId: session.classId,
         className: session.className || "Unknown",
-        topicIds: [],
-        lessonIds: [],
-        startedAt: Date.now() - 3600000,
+        topicIds: session.topicIds || [],
+        lessonIds: session.lessonIds || [],
+        startedAt: session.startedAt || (Date.now() - 3600000),
         completedAt: Date.now(),
         status: 'COMPLETED',
         activities: (session.activityHistory || []).map((h, i) => ({
-          activityId: `ACT_${h.slideNumber}_${i}`,
+          activityId: h.activityId || `ACT_${h.slideNumber}_${i}`,
           slideNumber: h.slideNumber,
           activityType: h.type,
           activityMode: h.mode,
-          maxScore: h.maxScore || 1 // Fixed: extract maxScore from history
+          maxScore: h.maxScore || 1
         })),
         students: (session.validStudents || []).map(s => {
           const actResults = [];
           (session.activityHistory || []).forEach((h, i) => {
             const systemId = s.systemId;
-            const points = h.pointsRecord ? h.pointsRecord[systemId] : undefined;
+            const studentId = s.id;
+            const points = h.pointsRecord ? (h.pointsRecord[systemId] ?? h.pointsRecord[studentId]) : undefined;
             if (points !== undefined) {
                actResults.push({
-                 activityId: `ACT_${h.slideNumber}_${i}`,
+                 activityId: h.activityId || `ACT_${h.slideNumber}_${i}`,
                  activityType: h.type,
                  activityMode: h.mode,
-                 answer: h.responses ? (h.responses[systemId] || h.responses[s.id]) : undefined,
+                 answer: h.responses ? (h.responses[systemId] ?? h.responses[studentId]) : undefined,
                  score: points,
-                 maxScore: h.maxScore || 1 // Fixed: extract maxScore from history
+                 maxScore: h.maxScore || 1,
+                 isCorrect: h.isCorrectRecord ? (h.isCorrectRecord[systemId] ?? h.isCorrectRecord[studentId] ?? null) : null,
+                 breakdown: h.breakdownRecord ? (h.breakdownRecord[systemId] ?? h.breakdownRecord[studentId] ?? '') : '',
+                 calculatedAt: h.calculatedAtRecord ? (h.calculatedAtRecord[systemId] ?? h.calculatedAtRecord[studentId] ?? h.createdAt ?? Date.now()) : (h.createdAt || Date.now()),
+                 groupId: h.groupRecord?.[systemId]?.groupId ?? h.groupRecord?.[studentId]?.groupId,
+                 groupName: h.groupRecord?.[systemId]?.groupName ?? h.groupRecord?.[studentId]?.groupName,
+                 groupScore: h.groupRecord?.[systemId]?.groupScore ?? h.groupRecord?.[studentId]?.groupScore,
+                 individualScore: h.groupRecord?.[systemId]?.individualScore ?? h.groupRecord?.[studentId]?.individualScore
                });
             }
           });
+          const calculatedScore = actResults.reduce((acc, curr) => acc + (Number(curr.score) || 0), 0);
           return {
             studentId: s.systemId || s.id,
             studentName: s.name,
-            sessionScore: (session.studentPoints && session.studentPoints[s.systemId]) || 0,
+            sessionScore: scoreEngine.cleanScore(calculatedScore),
             activityResults: actResults
           };
         })
@@ -425,7 +449,7 @@ io.on('connection', (socket) => {
       if (session.teacherSocketId !== socket.id) session.teacherSocketId = socket.id;
 
     const activityId = data.activityId;
-    const bonusPoints = (data.activityDetails ? data.activityDetails.bonusPoints : session.activityConfig?.bonusPoints) || 0;
+    const bonusPoints = Math.min(Math.max(Number(data.activityDetails ? data.activityDetails.bonusPoints : session.activityConfig?.bonusPoints) || 0, 0), 3);
     const pointsAwarded = {};
 
     // Find or create activityHistory for this group activity
@@ -442,12 +466,21 @@ io.on('connection', (socket) => {
         bonusPoints: actDetails.bonusPoints,
         maxScore: scoreEngine.calculateMaxScore({ activityCategory: actDetails.category, totalCategoryActivities: actDetails.totalCategoryActivities, activityConfig: actDetails.config }),
         pointsRecord: {},
+        breakdownRecord: {},
+        isCorrectRecord: {},
+        calculatedAtRecord: {},
+        groupRecord: {},
+        responses: {},
         createdAt: Date.now()
       };
       session.activityHistory.push(historyRecord);
     }
     if (!historyRecord.pointsRecord) historyRecord.pointsRecord = {};
     if (!historyRecord.breakdownRecord) historyRecord.breakdownRecord = {};
+    if (!historyRecord.isCorrectRecord) historyRecord.isCorrectRecord = {};
+    if (!historyRecord.calculatedAtRecord) historyRecord.calculatedAtRecord = {};
+    if (!historyRecord.groupRecord) historyRecord.groupRecord = {};
+    if (!historyRecord.responses) historyRecord.responses = {};
     if (!historyRecord.bonusRecord) historyRecord.bonusRecord = {};
 
     for (const groupId in data.activityDetails.workspaces) {
@@ -466,9 +499,9 @@ io.on('connection', (socket) => {
       };
       
       const result = scoreEngine.calculateActivityScore(input);
-      const scoreObj = result.score;
+      const scoreObj = scoreEngine.cleanScore(result.score);
       const breakdown = result.breakdown;
-      const bonusScore = result.bonusScore;
+      const bonusScore = result.bonusScore ? scoreEngine.cleanScore(result.bonusScore) : undefined;
 
       const ws = session.workspaces?.[activityId]?.[groupId];
       if (ws) {
@@ -489,6 +522,15 @@ io.on('connection', (socket) => {
          // Prevent double counting if teacher clicks Duyệt multiple times for the same group
           if (historyRecord.pointsRecord[primaryId] === undefined) {
             historyRecord.pointsRecord[primaryId] = scoreObj;
+            historyRecord.isCorrectRecord[primaryId] = result.isCorrect;
+            historyRecord.calculatedAtRecord[primaryId] = Date.now();
+            historyRecord.groupRecord[primaryId] = {
+              groupId: groupId,
+              groupName: group.name,
+              groupScore: scoreObj,
+              individualScore: 0
+            };
+            historyRecord.responses[primaryId] = wsState;
             if (breakdown) {
                historyRecord.breakdownRecord[primaryId] = breakdown;
             }
@@ -496,7 +538,7 @@ io.on('connection', (socket) => {
                historyRecord.bonusRecord[primaryId] = bonusScore;
             }
             if (!session.studentPoints) session.studentPoints = {};
-            session.studentPoints[primaryId] = Math.round(((session.studentPoints[primaryId] || 0) + scoreObj) * 100) / 100;
+            session.studentPoints[primaryId] = scoreEngine.cleanScore((session.studentPoints[primaryId] || 0) + scoreObj);
              
              saveLedger({
                ledgerId: 'LED_' + Date.now() + '_' + (validSt ? validSt.id : studentId),
@@ -584,13 +626,15 @@ io.on('connection', (socket) => {
     if (!session.activityHistory) session.activityHistory = [];
 
     // Idempotency check: Prevent duplicate point assignment if teacher clicks multiple times
-    if (session.activityHistory.some(h => h.slideNumber === data.activityDetails?.slideNumber && h.name === data.activityDetails?.name)) {
+    if (session.activityHistory.some(h => (h.activityId && data.activityDetails?.id && h.activityId === data.activityDetails?.id) || (h.slideNumber === data.activityDetails?.slideNumber && h.name === data.activityDetails?.name))) {
         if (typeof callback === 'function') callback({ success: false, reason: 'ALREADY_APPROVED' });
         return;
     }
 
     const activityPointsRecord = {};
     const breakdownRecord = {};
+    const isCorrectRecord = {};
+    const calculatedAtRecord = {};
     const bonusRecord = {};
 
     const rawResponses = data.activityDetails?.responses || {};
@@ -632,11 +676,14 @@ io.on('connection', (socket) => {
            bd = 'Duyệt thủ công (Full)';
         }
 
+        points = scoreEngine.cleanScore(points);
         pointsMap[socketId] = points;
         typesMap[socketId] = typeStr;
 
-        session.studentPoints[systemId] = Math.round(((session.studentPoints[systemId] || 0) + points) * 100) / 100;
+        session.studentPoints[systemId] = scoreEngine.cleanScore((session.studentPoints[systemId] || 0) + points);
         activityPointsRecord[systemId] = points;
+        isCorrectRecord[systemId] = data.manualOverride ? true : result.isCorrect;
+        calculatedAtRecord[systemId] = Date.now();
         if (bd) {
            breakdownRecord[systemId] = bd;
         }
@@ -659,16 +706,19 @@ io.on('connection', (socket) => {
     }
 
     session.activityHistory.push({
+       activityId: data.activityDetails?.id || `ACT_${data.activityDetails?.slideNumber}`,
        slideNumber: data.activityDetails?.slideNumber,
        type: data.activityDetails?.type,
        name: data.activityDetails?.name,
-       mode: data.activityDetails?.mode,
+       mode: data.activityDetails?.mode || 'INDIVIDUAL',
        bonusType: data.activityDetails?.bonusType,
        bonusPoints: data.activityDetails?.bonusPoints,
        maxScore: scoreEngine.calculateMaxScore({ activityCategory: data.activityDetails?.category, totalCategoryActivities: data.activityDetails?.totalCategoryActivities, activityConfig: data.activityDetails?.config }),
        date: data.activityDetails?.date,
        pointsRecord: activityPointsRecord,
        breakdownRecord,
+       isCorrectRecord,
+       calculatedAtRecord,
        bonusRecord,
        responses: data.activityDetails?.responses
     });
@@ -1029,14 +1079,14 @@ io.on('connection', (socket) => {
       if (session.teacherSocketId !== socket.id) session.teacherSocketId = socket.id;
     
     const studentId = data.studentId;
-    const bonusPoints = data.points || 1;
+    const bonusPoints = Math.min(Math.max(Number(data.points) || 1, 1), 3);
     
     const validSt = session.validStudents?.find(vs => String(vs.id) === String(studentId) || String(vs.systemId) === String(studentId));
     const primaryId = validSt ? validSt.systemId : studentId;
     const actualStudentId = validSt ? validSt.id : studentId;
 
     if (!session.studentPoints) session.studentPoints = {};
-    session.studentPoints[primaryId] = (session.studentPoints[primaryId] || 0) + bonusPoints;
+    session.studentPoints[primaryId] = scoreEngine.cleanScore((session.studentPoints[primaryId] || 0) + bonusPoints);
     
     saveLedger({
       ledgerId: 'LED_' + Date.now() + '_' + actualStudentId,
@@ -1115,6 +1165,7 @@ io.on('connection', (socket) => {
         ],
         classCodes: [{ classId: "CLS001", code: "TEST61" }],
         bonusLedgers: [],
+        sessionHistories: [],
         activeSessions: {}
       };
       fs.writeFileSync(dbPath, JSON.stringify(initialDb, null, 2), 'utf8');

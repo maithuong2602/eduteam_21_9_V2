@@ -74,8 +74,11 @@ export function calculateCumulativeScore(params: CumulativeParams): StudentCumul
   // If we calculate topic or lesson aggregation, we must ALSO ensure deduplication.
   
   for (const session of validSessions) {
+    const seenStudents = new Set<string>();
     for (const studentResult of session.students) {
       const sId = String(studentResult.studentId);
+      if (seenStudents.has(sId)) continue;
+      seenStudents.add(sId);
       
       // If studentId filter is provided, skip others
       if (studentId && String(studentId) !== sId) continue;

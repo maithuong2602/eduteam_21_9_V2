@@ -80,7 +80,9 @@ async function globalSetup() {
         code: "TEST61"
       }
     ],
-    bonusLedgers: []
+    bonusLedgers: [],
+    sessionHistories: [],
+    activeSessions: {}
   };
   fs.writeFileSync(dbPath, JSON.stringify(initialDb, null, 2), 'utf8');
 }

@@ -20,27 +20,39 @@
  */
 
 /**
+ * Helper to clean decimal points to prevent floating point inaccuracies.
+ * @param {number} val 
+ * @returns {number}
+ */
+function cleanScore(val) {
+  return Math.round((Number(val) || 0) * 10000) / 10000;
+}
+
+/**
  * Calculates the maximum score for the activity based on category and rules.
  * @param {ScoreInput} input 
  * @returns {number}
  */
 function calculateMaxScore(input) {
+  if (!input) return 1;
   if (input.activityCategory === 'KHOI_DONG') return 1;
   if (input.activityCategory === 'HOAT_DONG') {
-    const total = input.totalCategoryActivities || 1;
-    // Exactly 6 divided by N
-    return 6 / total;
+    const total = Math.max(1, Number(input.totalCategoryActivities) || 1);
+    // Exactly 6 divided by N (N=1 -> 6, N=2 -> 3, N=3 -> 2, N=4 -> 1.5, N=5 -> 1.2, N=6 -> 1)
+    return cleanScore(6 / total);
   }
   if (input.activityCategory === 'LUYEN_TAP') return 3;
   if (input.activityCategory === 'VAN_DUNG') return 1;
-  if (input.activityCategory === 'BONUS') return 3;
+  if (input.activityCategory === 'BONUS') {
+    return cleanScore(Number(input.bonusConfig?.maxBonusPoints) || 3);
+  }
   
   // UNSET or Fallback to configured points or default to 1
-  return input.activityConfig?.points || 1;
+  return cleanScore(Number(input.activityConfig?.points) || 1);
 }
 
 /**
- * Main function to evaluate a student's answer and generate a score.
+ * Main function to evaluate a student's answer and generate an authoritative score.
  * @param {ScoreInput} input
  * @returns {ScoreResult}
  */
@@ -56,7 +68,7 @@ function calculateActivityScore(input) {
     const correctIds = (input.activityConfig?.options || [])
       .filter((o) => o.isCorrect)
       .map((o) => o.id);
-    const studentAnsIds = Array.isArray(ans) ? ans : (ans ? [ans] : []);
+    const studentAnsIds = Array.isArray(ans) ? ans : (ans !== undefined && ans !== null && ans !== '' ? [ans] : []);
     
     isCorrect = correctIds.length > 0 && 
                 correctIds.length === studentAnsIds.length && 
@@ -66,12 +78,16 @@ function calculateActivityScore(input) {
     breakdown = isCorrect ? `Correct (+${score})` : 'Incorrect (0)';
   } 
   else if (input.activityType === 'SHORT_ANSWER' || input.activityType === 'WORD_CLOUD') {
-    // Current semantics: Just having an answer counts as a response. We don't grade correctness.
-    const hasResponse = Array.isArray(ans) ? ans.length > 0 && ans[0] !== "" && ans[0] !== null : ans !== "" && ans !== null && ans !== undefined;
-    isCorrect = null; // We cannot determine correctness
+    // Current semantics: Just having an answer counts as a response.
+    // NOTE: There is currently NO AI grading for Short Answer and Word Cloud.
+    // Therefore, isCorrect is strictly null (cannot judge correctness automatically).
+    const hasResponse = Array.isArray(ans) 
+      ? ans.length > 0 && ans[0] !== "" && ans[0] !== null && ans[0] !== undefined
+      : ans !== "" && ans !== null && ans !== undefined;
+      
+    isCorrect = null; // We cannot determine correctness automatically
     
     if (input.activityType === 'WORD_CLOUD') {
-       // Based on rules: Word Cloud is usually not right/wrong. Keep current semantics (gives score if responded).
        score = hasResponse ? maxScore : 0;
        breakdown = hasResponse ? `Responded (+${score})` : 'No valid response (0)';
     } else {
@@ -92,9 +108,7 @@ function calculateActivityScore(input) {
         }
       });
       isCorrect = correctCount === totalItems;
-      score = (correctCount / totalItems) * maxScore;
-      // Round to 2 decimal places to avoid floating point anomalies in display if needed
-      score = Math.round(score * 100) / 100;
+      score = cleanScore((correctCount / totalItems) * maxScore);
       breakdown = correctCount === totalItems ? `Correct (+${score})` : 
                  (correctCount > 0 ? `Partial (${correctCount}/${totalItems} items, +${score})` : 'Incorrect (0)');
     } else {
@@ -112,24 +126,24 @@ function calculateActivityScore(input) {
   // Bonus calculation
   let bonusScore = 0;
   if (input.bonusConfig?.hasMindMap || input.bonusConfig?.hasBonus) {
-     // Topic bonus max 3 points. For simplicity in S2-A, if they get the activity correct or responded, give the bonus.
      if (isCorrect === true || (isCorrect === null && score > 0)) {
-       const maxB = input.bonusConfig.maxBonusPoints || 3;
-       bonusScore = maxB;
+       const maxB = Number(input.bonusConfig.maxBonusPoints) || 3;
+       bonusScore = cleanScore(maxB);
      }
   }
 
   return {
-    score,
-    maxScore,
+    score: cleanScore(score),
+    maxScore: cleanScore(maxScore),
     isCorrect,
     breakdown,
-    bonusScore: bonusScore > 0 ? bonusScore : undefined,
-    totalScore: score + bonusScore
+    bonusScore: bonusScore > 0 ? cleanScore(bonusScore) : undefined,
+    totalScore: cleanScore(score + bonusScore)
   };
 }
 
 module.exports = {
+  cleanScore,
   calculateMaxScore,
   calculateActivityScore
 };
