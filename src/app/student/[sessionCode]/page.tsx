@@ -97,8 +97,17 @@ export default function StudentSessionPage() {
     }
     setStudentName(name);
 
-    const newSocket = io(undefined);
+    const newSocket = io(undefined, { transports: ['websocket', 'polling'] });
     setSocket(newSocket);
+
+    const handleOffline = () => {
+      newSocket.disconnect();
+    };
+    const handleOnline = () => {
+      newSocket.connect();
+    };
+    window.addEventListener('offline', handleOffline);
+    window.addEventListener('online', handleOnline);
 
     newSocket.on("connect", () => {
       newSocket.emit("join_session", { code: sessionCode, name });
@@ -222,6 +231,8 @@ export default function StudentSessionPage() {
     });
 
     return () => {
+      window.removeEventListener('offline', handleOffline);
+      window.removeEventListener('online', handleOnline);
       newSocket.disconnect();
     };
   }, [sessionCode, router]);

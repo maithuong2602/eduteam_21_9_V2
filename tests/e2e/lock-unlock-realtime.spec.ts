@@ -18,13 +18,14 @@ test.describe('Lock / Unlock Realtime Sync', () => {
     await presResPromise;
     await expect(teacherPage.locator('[data-testid="teacher-page"]')).toBeVisible();
     
-    // Choose Slide 6 (Lock Test)
-    await teacherPage.locator('text="Slide 6"').click();
-    await expect(teacherPage.locator('text="Tương tác (Slide 6)"')).toBeVisible();
-
+    // Select class CLS001
     const classResPromise = teacherPage.waitForResponse(res => res.url().includes('/api/classes/') && res.status() === 200);
     await teacherPage.locator('select').first().selectOption('CLS001');
     await classResPromise;
+
+    // Choose Slide 6 (Lock Test)
+    await teacherPage.locator('text="Slide 6"').click();
+    await expect(teacherPage.locator('text="Tương tác (Slide 6)"')).toBeVisible();
     
     await teacherPage.waitForTimeout(1000);
     await teacherPage.locator('button:has-text("Tạo phiên học")').click();
@@ -38,10 +39,13 @@ test.describe('Lock / Unlock Realtime Sync', () => {
     await studentPage.goto('/join');
     await studentPage.locator('input').nth(0).fill(sessionCode);
     await studentPage.locator('input').nth(1).fill('HS001');
-    await studentPage.locator('button:has-text("Vào lớp")').click();
+    await Promise.all([
+      studentPage.waitForURL(/\/student\/.+/),
+      studentPage.locator('button:has-text("Vào lớp")').click()
+    ]);
     
     // Teacher receives student online realtime
-    await expect(teacherPage.locator('text="1 học sinh online"')).toBeVisible();
+    await expect(teacherPage.locator('text=/1 h.c sinh online/i')).toBeVisible();
     
     // 3. Teacher starts activity
     await teacherPage.locator('button:has-text("Bắt đầu hoạt động")').click();
@@ -87,5 +91,7 @@ test.describe('Lock / Unlock Realtime Sync', () => {
     await teacherPage.locator('button:has-text("Kết thúc phiên")').click();
     await teacherPage.locator('button:has-text("BỎ DỮ LIỆU")').click();
     await teacherPage.waitForTimeout(500);
+    await teacherContext.close().catch(() => {});
+    await studentContext.close().catch(() => {});
   });
 });

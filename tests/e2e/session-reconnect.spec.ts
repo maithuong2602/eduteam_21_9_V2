@@ -21,13 +21,14 @@ test.describe('Session Reconnect Realtime Sync', () => {
     await presResPromise;
     await expect(teacherPage.locator('[data-testid="teacher-page"]')).toBeVisible();
     
-    // Choose Slide 7 (Reconnect Test)
-    await teacherPage.locator('text="Slide 7"').click();
-    await expect(teacherPage.locator('text="Tương tác (Slide 7)"')).toBeVisible();
-
+    // Select class CLS001
     const classResPromise = teacherPage.waitForResponse(res => res.url().includes('/api/classes/') && res.status() === 200);
     await teacherPage.locator('select').first().selectOption('CLS001');
     await classResPromise;
+
+    // Choose Slide 7 (Reconnect Test)
+    await teacherPage.locator('text="Slide 7"').click();
+    await expect(teacherPage.locator('text="Tương tác (Slide 7)"')).toBeVisible();
     
     await teacherPage.waitForTimeout(1000);
     await teacherPage.locator('button:has-text("Tạo phiên học")').click();
@@ -67,12 +68,14 @@ test.describe('Session Reconnect Realtime Sync', () => {
     
     // 6. Disconnect Student using browser context offline
     await studentContext.setOffline(true);
+    await studentPage.evaluate(() => window.dispatchEvent(new Event('offline')));
     
     // Verify Teacher sees student go offline
     await expect(teacherPage.locator('text=/0 h.c sinh online/i')).toBeVisible({ timeout: 80000 });
     
     // Reconnect Student
     await studentContext.setOffline(false);
+    await studentPage.evaluate(() => window.dispatchEvent(new Event('online')));
     
     // Assert 1 - ONLINE STATE
     await expect(teacherPage.locator('text=/1 h.c sinh online/i')).toBeVisible({ timeout: 60000 });
@@ -97,5 +100,7 @@ test.describe('Session Reconnect Realtime Sync', () => {
     await teacherPage.locator('button:has-text("Kết thúc phiên")').click();
     await teacherPage.locator('button:has-text("BỎ DỮ LIỆU")').click();
     await teacherPage.waitForTimeout(500);
+    await teacherContext.close().catch(() => {});
+    await studentContext.close().catch(() => {});
   });
 });

@@ -16,12 +16,14 @@ test.describe('Classification Realtime Sync', () => {
     await teacherPage.goto('/teacher/presentations/test-pres-1');
     await expect(teacherPage.locator('[data-testid="teacher-page"]')).toBeVisible();
     
-    // Chon Slide 3
-    await teacherPage.locator('div.aspect-video').nth(2).click(); 
-
+    // Select class CLS001
     const classResPromise = teacherPage.waitForResponse(res => res.url().includes('/api/classes/') && res.status() === 200);
     await teacherPage.locator('select').first().selectOption('CLS001');
     await classResPromise;
+
+    // Chon Slide 3
+    await teacherPage.locator('div.aspect-video').nth(2).click(); 
+    await expect(teacherPage.locator('text="Tương tác (Slide 3)"')).toBeVisible();
     
     await teacherPage.waitForTimeout(1000);
     await teacherPage.locator('button:has-text("Tạo phiên học")').click();
@@ -35,7 +37,13 @@ test.describe('Classification Realtime Sync', () => {
     await studentPage.goto('/join');
     await studentPage.locator('input').nth(0).fill(sessionCode);
     await studentPage.locator('input').nth(1).fill('HS001');
-    await studentPage.locator('button:has-text("Vào lớp")').click();
+    await Promise.all([
+      studentPage.waitForURL(/\/student\/.+/),
+      studentPage.locator('button:has-text("Vào lớp")').click()
+    ]);
+    
+    // Teacher receives student online realtime
+    await expect(teacherPage.locator('text=/1 h.c sinh online/i')).toBeVisible();
     
     // 3. Teacher starts activity
     await teacherPage.locator('button:has-text("Bắt đầu hoạt động")').click();
@@ -69,5 +77,7 @@ test.describe('Classification Realtime Sync', () => {
     await teacherPage.locator('button:has-text("Kết thúc phiên")').click();
     await teacherPage.locator('button:has-text("BỎ DỮ LIỆU")').click();
     await teacherPage.waitForTimeout(500);
+    await teacherContext.close().catch(() => {});
+    await studentContext.close().catch(() => {});
   });
 });

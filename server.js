@@ -29,6 +29,7 @@ nextApp.prepare().then(() => {
       origin: "*",
       methods: ["GET", "POST"]
     },
+    transports: ['websocket', 'polling'],
     pingInterval: 10000,
     pingTimeout: 5000
   });
@@ -62,7 +63,9 @@ try {
 // Persist active sessions to disk periodically to survive server restarts
 let lastSessionsStr = JSON.stringify(sessions);
 let lastLedgersStr = JSON.stringify(studentBonusLedgers);
+let isAutoSaving = false;
 setInterval(() => {
+  if (isAutoSaving) return;
   try {
      const currentSessionsStr = JSON.stringify(sessions);
      const currentLedgersStr = JSON.stringify(studentBonusLedgers);
@@ -79,7 +82,9 @@ setInterval(() => {
            fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
         }
         const tmpFile = `${DB_FILE}.tmp.${Date.now()}`;
+        isAutoSaving = true;
         fs.writeFile(tmpFile, JSON.stringify(db, null, 2), 'utf8', (err) => {
+           isAutoSaving = false;
            if (err) return console.error('Auto-save error:', err);
            try {
               fs.renameSync(tmpFile, DB_FILE);
@@ -89,7 +94,9 @@ setInterval(() => {
            }
         });
      }
-  } catch(e) {}
+  } catch(e) {
+     isAutoSaving = false;
+  }
 }, 3000);
 
 io.on('connection', (socket) => {
@@ -134,8 +141,20 @@ io.on('connection', (socket) => {
       responses: {}
     };
     socket.join(code);
+    socket.join(`teacher_${code}`);
     socket.emit('session_created', { code });
     console.log(`Session ${code} created by ${socket.id} with ${data.validStudents?.length || 0} valid students`);
+  });
+
+  socket.on('join_teacher_room', (data) => {
+    if (!data || !data.code) return;
+    const session = sessions[data.code];
+    if (session) {
+      session.teacherSocketId = socket.id;
+      socket.join(data.code);
+      socket.join(`teacher_${data.code}`);
+      socket.emit('student_joined', session.students);
+    }
   });
 
   socket.on('change_slide', (data) => {
@@ -186,6 +205,7 @@ io.on('connection', (socket) => {
       
       // Notify teacher
       io.to(session.teacherSocketId).emit('student_joined', session.students);
+      io.to(`teacher_${data.code}`).emit('student_joined', session.students);
       
       // Confirm to student
       socket.emit('join_success', { code: data.code, realName });
@@ -270,12 +290,14 @@ io.on('connection', (socket) => {
       session.responses[data.slideNumber][primaryId] = data.answer;
       
       // Notify teacher
-      io.to(session.teacherSocketId).emit('student_answered', {
+      const answerPayload = {
         studentId: primaryId,
         name: student.name,
         answer: data.answer,
         slideNumber: data.slideNumber
-      });
+      };
+      io.to(session.teacherSocketId).emit('student_answered', answerPayload);
+      io.to(`teacher_${data.code}`).emit('student_answered', answerPayload);
     }
   });
 
@@ -1042,6 +1064,7 @@ io.on('connection', (socket) => {
       if (student) {
         student.status = 'OFFLINE';
         io.to(session.teacherSocketId).emit('student_joined', session.students);
+        io.to(`teacher_${code}`).emit('student_joined', session.students);
       }
     }
   });
@@ -1051,8 +1074,24 @@ io.on('connection', (socket) => {
     if (process.env.USE_TEST_DB === 'true') {
       const fs = require('fs');
       const dbPath = DB_FILE; // Use the globally resolved test DB path
+      if (io && io.disconnectSockets) {
+        try { io.disconnectSockets(true); } catch(e) {}
+      }
       for (let prop in sessions) delete sessions[prop];
       studentBonusLedgers.length = 0;
+      lastSessionsStr = JSON.stringify(sessions);
+      lastLedgersStr = JSON.stringify(studentBonusLedgers);
+      try {
+        const dir = path.dirname(dbPath);
+        const base = path.basename(dbPath);
+        if (fs.existsSync(dir)) {
+          fs.readdirSync(dir).forEach(f => {
+            if (f.startsWith(base + '.tmp.')) {
+              try { fs.unlinkSync(path.join(dir, f)); } catch(_) {}
+            }
+          });
+        }
+      } catch(_) {}
       const initialDb = {
         presentations: [{
           id: "test-pres-1", teacherId: "teacher_1", title: "E2E Test Presentation", originalFileName: "test.pdf", fileUrl: "", totalSlides: 7, createdAt: Date.now(), updatedAt: Date.now()

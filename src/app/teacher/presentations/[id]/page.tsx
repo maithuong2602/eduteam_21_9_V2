@@ -278,11 +278,18 @@ export default function PresentationDetail() {
     }
     
     // Setup socket
-    const newSocket = io(undefined);
+    const newSocket = io(undefined, { transports: ['websocket', 'polling'] });
     setSocket(newSocket);
     
+    newSocket.on("connect", () => {
+      if (sessionCode) {
+        newSocket.emit("join_teacher_room", { code: sessionCode });
+      }
+    });
+
     newSocket.on("session_created", (data) => {
       setSessionCode(data.code);
+      newSocket.emit("join_teacher_room", { code: data.code });
       if (selectedClass && groups.length > 0) {
         const currentClassName = classList.find((c: any) => c.id === selectedClass)?.name;
         if (currentClassName) {

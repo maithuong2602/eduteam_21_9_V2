@@ -7,6 +7,9 @@ test.describe('Cumulative Score (S2-C)', () => {
     await request.get('/api/test/reset');
   });
 
+  let teacherContext: any;
+  let studentContext1: any;
+  let studentContext2: any;
   let teacherPage: any;
   let studentPage1: any;
   let studentPage2: any;
@@ -15,12 +18,18 @@ test.describe('Cumulative Score (S2-C)', () => {
   let student2Id = '4824891635';
 
   test.beforeEach(async ({ browser }) => {
-    const teacherContext = await browser.newContext();
-    const studentContext1 = await browser.newContext();
-    const studentContext2 = await browser.newContext();
+    teacherContext = await browser.newContext();
+    studentContext1 = await browser.newContext();
+    studentContext2 = await browser.newContext();
     teacherPage = await teacherContext.newPage();
     studentPage1 = await studentContext1.newPage();
     studentPage2 = await studentContext2.newPage();
+  });
+
+  test.afterEach(async () => {
+    if (teacherContext) await teacherContext.close().catch(() => {});
+    if (studentContext1) await studentContext1.close().catch(() => {});
+    if (studentContext2) await studentContext2.close().catch(() => {});
   });
 
   test('Calculate Cumulative Score Flow (Tests A-H)', async ({ request }) => {

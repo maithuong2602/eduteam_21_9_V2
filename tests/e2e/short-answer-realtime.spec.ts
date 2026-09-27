@@ -18,13 +18,14 @@ test.describe('Short Answer Realtime Sync', () => {
     await presResPromise;
     await expect(teacherPage.locator('[data-testid="teacher-page"]')).toBeVisible();
     
-    // Choose Slide 4 and wait for Short Answer activity configuration to be active
-    await teacherPage.locator('text="Slide 4"').click();
-    await expect(teacherPage.locator('text="Cấu hình cho câu hỏi Trả lời ngắn."')).toBeVisible();
-
+    // Select class CLS001
     const classResPromise = teacherPage.waitForResponse(res => res.url().includes('/api/classes/') && res.status() === 200);
     await teacherPage.locator('select').first().selectOption('CLS001');
     await classResPromise;
+
+    // Choose Slide 4 and wait for Short Answer activity configuration to be active
+    await teacherPage.locator('text="Slide 4"').click();
+    await expect(teacherPage.locator('text="Cấu hình cho câu hỏi Trả lời ngắn."')).toBeVisible();
     
     await teacherPage.waitForTimeout(1000); // Wait for socket to fully connect
     await teacherPage.locator('button:has-text("Tạo phiên học")').click();
@@ -89,5 +90,7 @@ test.describe('Short Answer Realtime Sync', () => {
     await teacherPage.locator('button:has-text("Kết thúc phiên")').click();
     await teacherPage.locator('button:has-text("BỎ DỮ LIỆU")').click();
     await teacherPage.waitForTimeout(500);
+    await teacherContext.close().catch(() => {});
+    await studentContext.close().catch(() => {});
   });
 });
