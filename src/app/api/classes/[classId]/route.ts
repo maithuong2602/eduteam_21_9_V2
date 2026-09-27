@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+export const dynamic = 'force-dynamic';
 import { getExcelData } from '@/lib/excelDb';
 import { jsonDb } from '@/lib/jsonDb';
 
