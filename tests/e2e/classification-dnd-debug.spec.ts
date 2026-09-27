@@ -1,11 +1,11 @@
-﻿import { test, expect } from '@playwright/test';
+import { test, expect } from '@playwright/test';
 
 test.describe('Classification DnD Debug', () => {
   test.beforeEach(async ({ request }) => {
     await request.get('/api/test/reset');
   });
 
-  test.fixme('Playwright interaction debug (Fails due to React synthetic event limitations with Playwright DnD)', async ({ browser }) => {
+  test('Playwright interaction: drag and drop item into target group', async ({ browser }) => {
     const teacherContext = await browser.newContext();
     const teacherPage = await teacherContext.newPage();
     
@@ -51,7 +51,7 @@ test.describe('Classification DnD Debug', () => {
     
     let isCategorized = false;
     try {
-        await expect(studentPage.locator('text="Đã phân loại hết"')).toBeVisible({ timeout: 2000 });
+        await expect(groupTarget.locator('text="Mục 1"')).toBeVisible({ timeout: 2000 });
         isCategorized = true;
     } catch(e) {
         // Failed
@@ -68,7 +68,7 @@ test.describe('Classification DnD Debug', () => {
         await studentPage.mouse.up();
         
         try {
-            await expect(studentPage.locator('text="Đã phân loại hết"')).toBeVisible({ timeout: 2000 });
+            await expect(groupTarget.locator('text="Mục 1"')).toBeVisible({ timeout: 2000 });
             isCategorized = true;
         } catch(e) {
             // Failed
@@ -91,7 +91,7 @@ test.describe('Classification DnD Debug', () => {
         });
         
         try {
-            await expect(studentPage.locator('text="Đã phân loại hết"')).toBeVisible({ timeout: 2000 });
+            await expect(groupTarget.locator('text="Mục 1"')).toBeVisible({ timeout: 2000 });
             isCategorized = true;
         } catch(e) {}
     }
