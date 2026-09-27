@@ -203,3 +203,25 @@
 [2026-09-27T09:09:36.671Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
 [2026-09-27T09:09:44.658Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
 [2026-09-27T09:09:51.336Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:27:48.753Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
+[2026-09-27T09:27:48.754Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
+[2026-09-27T09:27:53.933Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4869456649 student=true validSt=true systemId=4869456649 ans=Test 2
+[2026-09-27T09:28:17.980Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
+[2026-09-27T09:28:17.980Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
+[2026-09-27T09:28:20.913Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4869456649 student=true validSt=true systemId=4869456649 ans=Test 1
+[2026-09-27T09:28:46.481Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:28:56.026Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:29:05.261Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:29:14.014Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:29:21.073Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:34:28.077Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
+[2026-09-27T09:34:28.078Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
+[2026-09-27T09:34:32.903Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4869456649 student=true validSt=true systemId=4869456649 ans=Test 2
+[2026-09-27T09:34:58.769Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
+[2026-09-27T09:34:58.771Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
+[2026-09-27T09:35:01.937Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4869456649 student=true validSt=true systemId=4869456649 ans=Test 1
+[2026-09-27T09:35:30.881Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:35:38.279Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:35:59.365Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:36:14.634Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-27T09:36:23.563Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
