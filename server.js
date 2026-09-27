@@ -31,8 +31,18 @@ nextApp.prepare().then(() => {
     },
     transports: ['websocket', 'polling'],
     pingInterval: 10000,
-    pingTimeout: 5000
+    pingTimeout: 5000,
+    destroyUpgrade: false
   });
+
+  const upgradeHandler = typeof nextApp.getUpgradeHandler === 'function' ? nextApp.getUpgradeHandler() : null;
+  if (upgradeHandler) {
+    server.on('upgrade', (req, socket, head) => {
+      if (req.url && req.url.startsWith('/_next')) {
+        upgradeHandler(req, socket, head);
+      }
+    });
+  }
 
 // In-memory state
 // sessions = { [sessionCode]: { teacherId, presentationId, currentSlide, activity, students: [{ id, name, status, answer }] } }
