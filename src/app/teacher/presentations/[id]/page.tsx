@@ -141,6 +141,14 @@ export default function PresentationDetail() {
     };
     const newGroups = [...groups, newGroup];
     setGroups(newGroups);
+    
+    // Save to backend
+    fetch('/api/groups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'SYNC_ALL', groups: newGroups })
+    }).catch(console.error);
+
     if (socket && sessionCode) {
       const cName = selectedClassForModal || classList.find((c: any) => c.id === selectedClass)?.name;
       const classGroups = !cName ? [] : newGroups.filter((g: any) => g.className === cName || (g.members && g.members.some((m: any) => allStudentsFromExcel.find((s: any) => s.id === m.studentId)?.className === cName)));
@@ -151,6 +159,14 @@ export default function PresentationDetail() {
   const updateGroupName = (groupId: string, name: string) => {
     const newGroups = groups.map((g: any) => g.id === groupId ? { ...g, name } : g);
     setGroups(newGroups);
+    
+    // Save to backend
+    fetch('/api/groups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'SYNC_ALL', groups: newGroups })
+    }).catch(console.error);
+
     if (socket && sessionCode) {
       const cName = selectedClassForModal || classList.find((c: any) => c.id === selectedClass)?.name;
       const classGroups = !cName ? [] : newGroups.filter((g: any) => g.className === cName || (g.members && g.members.some((m: any) => allStudentsFromExcel.find((s: any) => s.id === m.studentId)?.className === cName)));
@@ -167,6 +183,14 @@ export default function PresentationDetail() {
       return { ...g, members };
     });
     setGroups(newGroups);
+    
+    // Save to backend
+    fetch('/api/groups', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'SYNC_ALL', groups: newGroups })
+    }).catch(console.error);
+
     if (socket && sessionCode) {
       const cName = selectedClassForModal || classList.find((c: any) => c.id === selectedClass)?.name;
       const classGroups = !cName ? [] : newGroups.filter((g: any) => g.className === cName || (g.members && g.members.some((m: any) => allStudentsFromExcel.find((s: any) => s.id === m.studentId)?.className === cName)));

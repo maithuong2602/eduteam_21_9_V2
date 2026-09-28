@@ -109,6 +109,9 @@ export async function POST(request: Request) {
         ...g,
         members: g.members.filter(m => m.studentId !== studentId)
       }));
+    } else if (action === 'SYNC_ALL' && body.groups) {
+      // Overwrite jsonDb with the provided groups array
+      dbGroups = body.groups;
     }
     
     jsonDb.saveGroups(dbGroups);
