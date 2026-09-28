@@ -257,7 +257,7 @@ export default function ClassesPage() {
             <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
               <div className="fixed inset-0 bg-gray-900/60 transition-opacity backdrop-blur-sm" onClick={() => setShowAssignModal(false)}></div>
               <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-              <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="relative z-10 inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <h3 className="text-lg leading-6 font-bold text-gray-900 mb-4">Chọn nhóm cho {studentToAssign.name}</h3>
                   <div className="space-y-4">
@@ -303,7 +303,7 @@ export default function ClassesPage() {
             <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
               <div className="fixed inset-0 bg-gray-900/60 transition-opacity backdrop-blur-sm" onClick={() => setShowConfirmReset(false)}></div>
               <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-              <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="relative z-10 inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
                 <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                   <div className="sm:flex sm:items-start">
                     <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
