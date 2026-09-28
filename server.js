@@ -87,7 +87,16 @@ setInterval(() => {
            db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
         }
         db.activeSessions = sessions;
-        db.bonusLedgers = studentBonusLedgers;
+        
+        if (!db.bonusLedgers) db.bonusLedgers = [];
+        const mergedLedgersMap = new Map();
+        db.bonusLedgers.forEach(l => mergedLedgersMap.set(l.ledgerId, l));
+        studentBonusLedgers.forEach(l => mergedLedgersMap.set(l.ledgerId, l));
+        
+        const newLedgers = Array.from(mergedLedgersMap.values());
+        db.bonusLedgers = newLedgers;
+        studentBonusLedgers = newLedgers;
+        lastLedgersStr = JSON.stringify(studentBonusLedgers);
         if (!fs.existsSync(path.dirname(DB_FILE))) {
            fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
         }
