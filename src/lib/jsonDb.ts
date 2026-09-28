@@ -111,8 +111,15 @@ export interface DbSchema {
   bonusLedgers: BonusLedger[];
   sessionHistories: SessionHistory[];
   activeSessions?: Record<string, any>;
+  groups?: Group[];
 }
 
+export interface Group {
+  id: string;
+  className?: string; // class name or class ID depending on current logic
+  name: string;
+  members: { studentId: string, joinedAt?: number }[];
+}
 
 function getDb(): DbSchema {
   if (!fs.existsSync(DB_FILE)) {
@@ -122,7 +129,8 @@ function getDb(): DbSchema {
       classCodes: [],
       bonusLedgers: [],
       sessionHistories: [],
-      activeSessions: {}
+      activeSessions: {},
+      groups: []
     };
     if (!fs.existsSync(path.dirname(DB_FILE))) {
       fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
@@ -135,7 +143,7 @@ function getDb(): DbSchema {
     return JSON.parse(data) as DbSchema;
   } catch (e) {
     console.error('Error parsing db.json', e);
-    return { presentations: [], activities: [], classCodes: [], bonusLedgers: [], sessionHistories: [] };
+    return { presentations: [], activities: [], classCodes: [], bonusLedgers: [], sessionHistories: [], groups: [] };
   }
 }
 
@@ -247,6 +255,14 @@ export const jsonDb = {
     const idx = db.sessionHistories.findIndex(h => h.id === history.id);
     if (idx >= 0) db.sessionHistories[idx] = history;
     else db.sessionHistories.push(history);
+    saveDb(db);
+  },
+  
+  // Groups
+  getGroups: () => getDb().groups || [],
+  saveGroups: (groups: Group[]) => {
+    const db = getDb();
+    db.groups = groups;
     saveDb(db);
   }
 };

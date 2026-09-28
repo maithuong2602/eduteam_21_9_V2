@@ -11,9 +11,24 @@ export default function ClassesPage() {
   const [loadingStudents, setLoadingStudents] = useState(false);
   const [showConfirmReset, setShowConfirmReset] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [groups, setGroups] = useState<any[]>([]);
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [studentToAssign, setStudentToAssign] = useState<any>(null);
+  const [selectedGroupId, setSelectedGroupId] = useState("");
+  const [newGroupName, setNewGroupName] = useState("");
+
+  const fetchGroups = () => {
+    fetch('/api/groups')
+      .then(res => res.json())
+      .then(data => {
+        if (data.groups) setGroups(data.groups);
+      })
+      .catch(console.error);
+  };
 
   useEffect(() => {
     fetchClasses();
+    fetchGroups();
   }, []);
 
   const fetchClasses = () => {
@@ -52,6 +67,61 @@ export default function ClassesPage() {
         setShowConfirmReset(false);
         openClass(selectedClass);
         fetchClasses(); // Refresh class list to update total bonus
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleAssignGroup = async () => {
+    if (!studentToAssign || !selectedClass) return;
+    let groupId = selectedGroupId;
+    let groupName = "";
+    if (groupId === "NEW") {
+      groupId = `GRP_${Date.now()}`;
+      groupName = newGroupName || "Nhóm mới";
+    } else {
+      const existing = groups.find(g => g.id === groupId);
+      if (existing) groupName = existing.name;
+    }
+    
+    try {
+      const res = await fetch('/api/groups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'ASSIGN',
+          studentId: studentToAssign.id,
+          groupId,
+          groupName,
+          classId: selectedClass.id,
+          className: selectedClass.name
+        })
+      });
+      if (res.ok) {
+        setShowAssignModal(false);
+        setStudentToAssign(null);
+        setSelectedGroupId("");
+        setNewGroupName("");
+        fetchGroups();
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleRemoveFromGroup = async (studentId: string) => {
+    try {
+      const res = await fetch('/api/groups', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'REMOVE',
+          studentId
+        })
+      });
+      if (res.ok) {
+        fetchGroups();
       }
     } catch (e) {
       console.error(e);
@@ -115,12 +185,18 @@ export default function ClassesPage() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Học sinh</th>
-                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Mã HS</th>
+                    <th className="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Nhóm</th>
                     <th className="px-6 py-4 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Điểm cộng tích lũy</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">
-                  {students.map((s) => (
+                  {students.map((s) => {
+                    const studentGroup = groups.find(g => 
+                      (g.className === selectedClass.name || g.className === selectedClass.id) && 
+                      g.members.some((m: any) => m.studentId === s.id)
+                    );
+
+                    return (
                     <tr key={s.id} className="hover:bg-blue-50/50 transition-colors">
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
@@ -129,11 +205,36 @@ export default function ClassesPage() {
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-semibold text-gray-900">{s.name}</div>
+                            <div className="text-xs text-gray-500">{s.systemId || s.id}</div>
                           </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 font-medium">
-                        {s.systemId || s.id}
+                        {studentGroup ? (
+                          <div className="inline-flex items-center bg-indigo-50 border border-indigo-200 text-indigo-700 rounded-full px-3 py-1 text-xs font-bold">
+                            {studentGroup.name}
+                            <button 
+                              onClick={() => handleRemoveFromGroup(s.id)}
+                              className="ml-2 text-indigo-400 hover:text-red-600 focus:outline-none rounded-full"
+                              title="Rời nhóm"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <span className="inline-flex items-center bg-gray-100 text-gray-600 rounded-full px-3 py-1 text-xs font-medium">
+                              Ungrouped
+                            </span>
+                            <button 
+                              onClick={() => { setStudentToAssign(s); setShowAssignModal(true); }}
+                              className="text-gray-400 hover:text-indigo-600 focus:outline-none"
+                              title="Thêm vào nhóm"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </button>
+                          </div>
+                        )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
                         <span className="inline-flex items-center px-3.5 py-1.5 rounded-full text-sm font-bold bg-amber-100 text-amber-800">
@@ -142,12 +243,59 @@ export default function ClassesPage() {
                         </span>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             )}
           </div>
         </div>
+
+        {/* Assign Group Modal */}
+        {showAssignModal && studentToAssign && (
+          <div className="fixed inset-0 z-50 overflow-y-auto">
+            <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+              <div className="fixed inset-0 bg-gray-900/60 transition-opacity backdrop-blur-sm" onClick={() => setShowAssignModal(false)}></div>
+              <span className="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+              <div className="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                  <h3 className="text-lg leading-6 font-bold text-gray-900 mb-4">Chọn nhóm cho {studentToAssign.name}</h3>
+                  <div className="space-y-4">
+                    <select 
+                      value={selectedGroupId}
+                      onChange={(e) => setSelectedGroupId(e.target.value)}
+                      className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                    >
+                      <option value="">-- Chọn nhóm --</option>
+                      {groups.filter(g => g.className === selectedClass.name || g.className === selectedClass.id).map(g => (
+                        <option key={g.id} value={g.id}>{g.name}</option>
+                      ))}
+                      <option value="NEW">+ Tạo nhóm mới</option>
+                    </select>
+                    
+                    {selectedGroupId === "NEW" && (
+                      <input 
+                        type="text" 
+                        placeholder="Nhập tên nhóm mới" 
+                        value={newGroupName}
+                        onChange={(e) => setNewGroupName(e.target.value)}
+                        className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                      />
+                    )}
+                  </div>
+                </div>
+                <div className="bg-gray-50 px-4 py-4 sm:px-6 sm:flex sm:flex-row-reverse gap-3">
+                  <button type="button" onClick={handleAssignGroup} className="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-5 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:w-auto sm:text-sm transition-colors">
+                    Xác nhận
+                  </button>
+                  <button type="button" onClick={() => setShowAssignModal(false)} className="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-5 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm transition-colors">
+                    Hủy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Reset Confirmation Modal */}
         {showConfirmReset && (
