@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Search, Plus, ArrowLeft, Star, RotateCcw, AlertCircle, X } from "lucide-react";
+import { Users, Search, Plus, ArrowLeft, Star, RotateCcw, AlertCircle, X, Minus } from "lucide-react";
 
 export default function ClassesPage() {
   const [classes, setClasses] = useState<any[]>([]);
@@ -65,6 +65,23 @@ export default function ClassesPage() {
       });
       if (res.ok) {
         setShowConfirmReset(false);
+        openClass(selectedClass);
+        fetchClasses(); // Refresh class list to update total bonus
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const handleUpdateBonus = async (studentId: string, points: number) => {
+    if (!selectedClass) return;
+    try {
+      const res = await fetch(`/api/classes/${encodeURIComponent(selectedClass.id.replace(/\//g, '__slash__'))}/bonus`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ studentId, points })
+      });
+      if (res.ok) {
         openClass(selectedClass);
         fetchClasses(); // Refresh class list to update total bonus
       }
@@ -234,10 +251,26 @@ export default function ClassesPage() {
                         )}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right">
-                        <span className="inline-flex items-center px-3.5 py-1.5 rounded-full text-sm font-bold bg-amber-100 text-amber-800">
-                          {s.bonusPoints || 0}
-                          <Star className="w-3.5 h-3.5 ml-1.5 text-amber-600 fill-current" />
-                        </span>
+                        <div className="flex items-center justify-end gap-3">
+                          <button 
+                            onClick={() => handleUpdateBonus(s.id, -1)}
+                            className="w-8 h-8 flex items-center justify-center bg-[#de3b2c] hover:bg-red-600 text-white rounded-lg shadow-sm transition-transform active:scale-95"
+                          >
+                            <Minus className="w-5 h-5" />
+                          </button>
+                          
+                          <div className="flex items-center justify-center min-w-[50px]">
+                            <Star className="w-5 h-5 mr-1.5 text-amber-400 fill-amber-400" />
+                            <span className="text-lg font-bold text-gray-900">{s.bonusPoints || 0}</span>
+                          </div>
+
+                          <button 
+                            onClick={() => handleUpdateBonus(s.id, 1)}
+                            className="w-8 h-8 flex items-center justify-center bg-[#564df4] hover:bg-indigo-600 text-white rounded-lg shadow-sm transition-transform active:scale-95"
+                          >
+                            <Plus className="w-5 h-5" />
+                          </button>
+                        </div>
                       </td>
                     </tr>
                     );
