@@ -4,13 +4,6 @@ import fs from 'fs';
 import path from 'path';
 
 import { getExcelPath } from '@/lib/dataConfig';
-
-import { NextResponse } from 'next/server';
-import * as xlsx from 'xlsx';
-import fs from 'fs';
-import path from 'path';
-
-import { getExcelPath } from '@/lib/dataConfig';
 import { jsonDb } from '@/lib/jsonDb';
 
 export async function GET() {
