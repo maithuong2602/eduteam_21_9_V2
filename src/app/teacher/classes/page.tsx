@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Search, Plus, ArrowLeft, Star, RotateCcw, AlertCircle } from "lucide-react";
+import { Users, Search, Plus, ArrowLeft, Star, RotateCcw, AlertCircle, X } from "lucide-react";
 
 export default function ClassesPage() {
   const [classes, setClasses] = useState<any[]>([]);
