@@ -624,6 +624,28 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on('group_member_joined', (data) => {
+    const session = sessions[data.code];
+    if (!session || !session.groups) return;
+    
+    // Remove student from other groups
+    session.groups = session.groups.map(g => ({
+      ...g,
+      members: g.members.filter(m => m.studentId !== data.studentId)
+    }));
+    
+    // Add to target group
+    const targetGroup = session.groups.find(g => g.id === data.groupId);
+    if (targetGroup) {
+      targetGroup.members.push({
+        studentId: data.studentId,
+        name: data.studentName,
+        joinedAt: Date.now()
+      });
+      io.to(data.code).emit('groups_updated', session.groups);
+    }
+  });
+
   socket.on('approve_points', (data, callback) => {
     const session = sessions[data.code];
     if (!session) {

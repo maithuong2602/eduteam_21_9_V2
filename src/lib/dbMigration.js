@@ -26,8 +26,8 @@ function runStartupMigration(options = {}) {
     ? path.join(process.cwd(), 'src', 'data', 'db.test.json')
     : (process.env.DB_FILE || defaultSourcePath);
 
-  const sourcePath = path.resolve(options.sourcePath || defaultSourcePath);
-  const targetPath = path.resolve(options.targetPath || defaultTargetPath);
+  const sourcePath = path.resolve(/*turbopackIgnore: true*/ options.sourcePath || defaultSourcePath);
+  const targetPath = path.resolve(/*turbopackIgnore: true*/ options.targetPath || defaultTargetPath);
 
   // If source and target are the exact same file, no migration needed
   if (sourcePath === targetPath) {

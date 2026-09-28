@@ -713,7 +713,7 @@ export default function StudentSessionPage() {
                 {(!groupInfo || groupInfo.id !== selectedViewGroup.id) && (
                   <button 
                     onClick={() => {
-                       socket?.emit('group_member_joined', { code: sessionCode, groupId: selectedViewGroup.id, studentId: name, studentName: name });
+                       socket?.emit('group_member_joined', { code: sessionCode, groupId: selectedViewGroup.id, systemId: name, studentName: name });
                        setGroupInfo(selectedViewGroup);
                     }}
                     className="mt-4 w-full py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
