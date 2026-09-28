@@ -7,7 +7,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ clas
   try {
     const data = getExcelData();
     const resolvedParams = await params;
-    const classId = resolvedParams.classId;
+    const classId = decodeURIComponent(resolvedParams.classId);
 
     let students = data.students.filter((s: any) => s.classId === classId);
     let classInfo = data.classes.find((c: any) => c.id === classId);

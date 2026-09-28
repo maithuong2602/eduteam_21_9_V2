@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 export async function POST(request: Request, { params }: { params: Promise<{ classId: string }> }) {
   try {
     const resolvedParams = await params;
-    const classId = resolvedParams.classId;
+    const classId = decodeURIComponent(resolvedParams.classId);
     if (!classId) return NextResponse.json({ error: 'Missing classId' }, { status: 400 });
 
     jsonDb.resetBonusForClass(classId, 'teacher_1');

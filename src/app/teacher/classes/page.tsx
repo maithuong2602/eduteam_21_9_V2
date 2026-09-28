@@ -30,7 +30,7 @@ export default function ClassesPage() {
   const openClass = (c: any) => {
     setSelectedClass(c);
     setLoadingStudents(true);
-    fetch(`/api/classes/${c.id}`, { cache: 'no-store' })
+    fetch(`/api/classes/${encodeURIComponent(c.id)}`, { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
         if (data.students) setStudents(data.students);
@@ -45,7 +45,7 @@ export default function ClassesPage() {
   const handleResetBonus = async () => {
     if (!selectedClass) return;
     try {
-      const res = await fetch(`/api/classes/${selectedClass.id}/reset-bonus`, {
+      const res = await fetch(`/api/classes/${encodeURIComponent(selectedClass.id)}/reset-bonus`, {
         method: 'POST'
       });
       if (res.ok) {
