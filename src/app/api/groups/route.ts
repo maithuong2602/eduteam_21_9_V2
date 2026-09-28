@@ -75,7 +75,46 @@ export async function POST(request: Request) {
     const body = await request.json();
     const { action, studentId, groupId, classId, className, groupName } = body;
     
+    // To properly remove a student from ALL groups (including Excel ones), we need the fully merged list
     let dbGroups = jsonDb.getGroups();
+    
+    if (action === 'ASSIGN' || action === 'REMOVE') {
+      const filePath = getExcelPath('03_NHOM_HOC_SINH.xlsx');
+      let excelGroups: any[] = [];
+      if (fs.existsSync(filePath)) {
+        try {
+          const buffer = fs.readFileSync(filePath);
+          const workbook = xlsx.read(buffer, { type: 'buffer' });
+          const sheetName = workbook.SheetNames[0];
+          const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+          const groupsMap = new Map();
+          data.forEach((row: any) => {
+            let gid = '';
+            if (row['Session_ID'] && row['Tên nhóm']) gid = row['Session_ID'] + '_' + row['Tên nhóm'];
+            else gid = row['Group_ID'] || row['Tên nhóm'];
+            if (!gid) return;
+            if (!groupsMap.has(gid)) groupsMap.set(gid, { id: String(gid), name: row['Tên nhóm'], members: [] });
+            if (row['Student_ID']) {
+              groupsMap.get(gid).members.push({
+                studentId: String(row['Student_ID']),
+                name: row['Họ và tên'] || row['Tên học sinh'],
+                role: row['Vai trò'] || 'Thành viên'
+              });
+            }
+          });
+          excelGroups = Array.from(groupsMap.values());
+        } catch (error) { console.error('Error parsing groups:', error); }
+      }
+      
+      const allGroups = [...excelGroups];
+      for (const dbG of dbGroups) {
+         const idx = allGroups.findIndex(g => g.id === dbG.id);
+         if (idx >= 0) allGroups[idx] = dbG;
+         else allGroups.push(dbG);
+      }
+      
+      dbGroups = allGroups; // Work on the merged list
+    }
     
     if (action === 'ASSIGN') {
       // Remove student from any existing group
@@ -83,10 +122,6 @@ export async function POST(request: Request) {
         ...g,
         members: g.members.filter(m => m.studentId !== studentId)
       }));
-      
-      // Remove empty groups (unless it's the one we're assigning to, which won't be empty)
-      // Actually, user says: "Nếu logic hiện tại có chức năng xóa group: -> xóa group phải xử lý toàn bộ member thành Ungrouped. Không tự động xóa group nếu hệ thống hiện tại cần giữ group."
-      // So let's NOT auto-delete empty groups.
       
       // Find or create the target group
       let targetGroup = dbGroups.find(g => g.id === groupId);
@@ -120,3 +155,4 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: e.message }, { status: 400 });
   }
 }
+

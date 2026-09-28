@@ -191,10 +191,7 @@ export default function ClassesPage() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100">
                   {students.map((s) => {
-                    const studentGroup = groups.find(g => 
-                      (g.className === selectedClass.name || g.className === selectedClass.id) && 
-                      g.members.some((m: any) => m.studentId === s.id)
-                    );
+                    const studentGroup = groups.find(g => g.members.some((m: any) => m.studentId === s.id));
 
                     return (
                     <tr key={s.id} className="hover:bg-blue-50/50 transition-colors">
@@ -267,7 +264,7 @@ export default function ClassesPage() {
                       className="w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                     >
                       <option value="">-- Chọn nhóm --</option>
-                      {groups.filter(g => g.className === selectedClass.name || g.className === selectedClass.id).map(g => (
+                      {groups.filter(g => g.className === selectedClass.name || g.className === selectedClass.id || g.members.some((m: any) => students.some(st => st.id === m.studentId))).map(g => (
                         <option key={g.id} value={g.id}>{g.name}</option>
                       ))}
                       <option value="NEW">+ Tạo nhóm mới</option>
