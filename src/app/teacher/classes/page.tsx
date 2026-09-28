@@ -18,7 +18,7 @@ export default function ClassesPage() {
 
   const fetchClasses = () => {
     setLoading(true);
-    fetch('/api/classes')
+    fetch('/api/classes', { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
         if (data.classes) setClasses(data.classes);
@@ -30,7 +30,7 @@ export default function ClassesPage() {
   const openClass = (c: any) => {
     setSelectedClass(c);
     setLoadingStudents(true);
-    fetch(`/api/classes/${c.id}`)
+    fetch(`/api/classes/${c.id}`, { cache: 'no-store' })
       .then(res => res.json())
       .then(data => {
         if (data.students) setStudents(data.students);
