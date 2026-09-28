@@ -3,12 +3,11 @@ export const dynamic = 'force-dynamic';
 import { getExcelData } from '@/lib/excelDb';
 import { jsonDb } from '@/lib/jsonDb';
 
-export async function GET(request: Request, { params }: { params: Promise<{ classId: string | string[] }> }) {
+export async function GET(request: Request, { params }: { params: Promise<{ classId: string }> }) {
   try {
     const data = getExcelData();
     const resolvedParams = await params;
-    const rawClassId = Array.isArray(resolvedParams.classId) ? resolvedParams.classId.join('/') : resolvedParams.classId;
-    const classId = decodeURIComponent(rawClassId);
+    const classId = decodeURIComponent(resolvedParams.classId).replace(/__slash__/g, '/');
 
     let students = data.students.filter((s: any) => s.classId === classId);
     let classInfo = data.classes.find((c: any) => c.id === classId);
