@@ -11,7 +11,9 @@ export async function POST(request: Request, { params }: { params: Promise<{ cla
       return NextResponse.json({ error: 'Invalid payload' }, { status: 400 });
     }
 
-    jsonDb.addBonusLedger({
+    jsonDb.addLedger({
+      ledgerId: 'LED_' + Date.now() + '_' + studentId,
+      createdAt: Date.now(),
       classId,
       studentId,
       sessionCode: 'MANUAL',

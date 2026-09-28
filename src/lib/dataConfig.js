@@ -30,8 +30,8 @@ function getDbFilePath() {
 
 function getExcelPath(filename) {
   const customDataDir = getDataDir();
-  const customPath = path.join(customDataDir, filename);
-  if (fs.existsSync(customPath)) {
+  const customPath = path.join(/*turbopackIgnore: true*/ customDataDir, filename);
+  if (fs.existsSync(/*turbopackIgnore: true*/ customPath)) {
     return customPath;
   }
   // Fallback to default source data directory if file does not exist in custom directory

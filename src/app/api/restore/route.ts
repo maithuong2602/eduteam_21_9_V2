@@ -191,9 +191,9 @@ export async function POST(req: NextRequest) {
       }
 
       // Path Traversal Sanity Check
-      const resolvedDest = path.resolve(destPath);
-      const resolvedTargetDir = path.resolve(targetDataDir);
-      const resolvedDbPath = path.resolve(targetDbPath);
+      const resolvedDest = path.resolve(/*turbopackIgnore: true*/ destPath);
+      const resolvedTargetDir = path.resolve(/*turbopackIgnore: true*/ targetDataDir);
+      const resolvedDbPath = path.resolve(/*turbopackIgnore: true*/ targetDbPath);
       if (!resolvedDest.startsWith(resolvedTargetDir) && resolvedDest !== resolvedDbPath) {
         cleanup();
         return NextResponse.json({ error: 'Path traversal validation failed' }, { status: 400 });

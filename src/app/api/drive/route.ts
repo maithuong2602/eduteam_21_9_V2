@@ -27,8 +27,8 @@ export async function GET(request: Request) {
           ? '/var/lib/eduteam/secrets/drive_credentials.b64' 
           : path.join(process.cwd(), 'drive_credentials.b64'));
 
-      if (fs.existsSync(credsPath)) {
-        const fileContent = fs.readFileSync(credsPath, 'utf8').trim();
+      if (fs.existsSync(/*turbopackIgnore: true*/ credsPath)) {
+        const fileContent = fs.readFileSync(/*turbopackIgnore: true*/ credsPath, 'utf8').trim();
         // Determine if file is JSON or Base64
         if (fileContent.startsWith('{')) {
           creds = JSON.parse(fileContent);
