@@ -16,6 +16,7 @@ export default function ClassesPage() {
   const [studentToAssign, setStudentToAssign] = useState<any>(null);
   const [selectedGroupId, setSelectedGroupId] = useState("");
   const [newGroupName, setNewGroupName] = useState("");
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const fetchGroups = () => {
     fetch('/api/groups')
@@ -102,47 +103,45 @@ export default function ClassesPage() {
       if (existing) groupName = existing.name;
     }
     
-    try {
-      const res = await fetch('/api/groups', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'ASSIGN',
-          studentId: studentToAssign.id,
-          groupId,
-          groupName,
-          classId: selectedClass.id,
-          className: selectedClass.name
-        })
-      });
-      if (res.ok) {
-        setShowAssignModal(false);
-        setStudentToAssign(null);
-        setSelectedGroupId("");
-        setNewGroupName("");
-        fetchGroups();
+    setGroups(prev => {
+      let newGroups = prev.map(g => ({
+        ...g,
+        members: g.members.filter((m: any) => String(m.studentId) !== String(studentToAssign.id))
+      }));
+      
+      let targetGroup = newGroups.find(g => g.id === groupId);
+      if (!targetGroup) {
+        targetGroup = {
+          id: groupId,
+          name: groupName,
+          className: selectedClass.name,
+          members: []
+        };
+        newGroups.push(targetGroup);
       }
-    } catch (e) {
-      console.error(e);
-    }
+      
+      targetGroup.members.push({
+        studentId: String(studentToAssign.id),
+        name: studentToAssign.name,
+        joinedAt: Date.now()
+      });
+      
+      return newGroups;
+    });
+    
+    setHasUnsavedChanges(true);
+    setShowAssignModal(false);
+    setStudentToAssign(null);
+    setSelectedGroupId("");
+    setNewGroupName("");
   };
 
   const handleRemoveFromGroup = async (studentId: string) => {
-    try {
-      const res = await fetch('/api/groups', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          action: 'REMOVE',
-          studentId
-        })
-      });
-      if (res.ok) {
-        fetchGroups();
-      }
-    } catch (e) {
-      console.error(e);
-    }
+    setGroups(prev => prev.map(g => ({
+      ...g,
+      members: g.members.filter((m: any) => String(m.studentId) !== String(studentId))
+    })));
+    setHasUnsavedChanges(true);
   };
 
   const filteredClasses = classes.filter(c => 
@@ -183,17 +182,33 @@ export default function ClassesPage() {
             <div className="mt-4 sm:mt-0 flex gap-3">
               <button 
                 onClick={() => {
-                  fetch('/api/internal/force_sync_groups', { method: 'POST' })
-                    .then(res => res.json())
-                    .then(data => {
-                      if(data.success) alert("Đã đồng bộ nhóm lên tất cả các phiên trình chiếu đang chạy!");
-                    })
-                    .catch(console.error);
+                  fetch('/api/groups', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'SYNC_ALL', groups: groups })
+                  })
+                  .then(res => res.json())
+                  .then(data => {
+                     if (data.success) {
+                        return fetch('/api/internal/force_sync_groups', { method: 'POST' });
+                     } else throw new Error('Sync DB failed');
+                  })
+                  .then(res => res.json())
+                  .then(data => {
+                    if(data.success) {
+                       setHasUnsavedChanges(false);
+                       alert("Đã đồng bộ nhóm lên tất cả các phiên trình chiếu đang chạy!");
+                    } else throw new Error('Force sync failed');
+                  })
+                  .catch(e => {
+                    console.error(e);
+                    alert("Đồng bộ thất bại");
+                  });
                 }}
-                className="flex items-center px-4 py-2.5 bg-indigo-600 border border-indigo-700 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-medium"
+                className={`flex items-center px-4 py-2.5 rounded-lg transition-colors shadow-sm font-medium ${hasUnsavedChanges ? 'bg-orange-500 hover:bg-orange-600 text-white border border-orange-600' : 'bg-indigo-600 border border-indigo-700 text-white hover:bg-indigo-700'}`}
               >
                 <Save className="w-4 h-4 mr-2" />
-                Lưu đồng bộ
+                {hasUnsavedChanges ? 'Lưu đồng bộ *' : 'Lưu đồng bộ'}
               </button>
               <button 
                 onClick={() => setShowConfirmReset(true)}

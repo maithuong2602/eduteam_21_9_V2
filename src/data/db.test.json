@@ -1,170 +1,30 @@
 {
-  "presentations": [],
-  "activities": [],
-  "classCodes": [
+  "groups": [
     {
-      "classId": "CLS001",
-      "code": "UQZYWI"
+      "id": "GRP_TEST_1",
+      "name": "Group 1",
+      "className": "Class A",
+      "members": [
+        {
+          "studentId": "HS001",
+          "name": "Student 1"
+        },
+        {
+          "studentId": "HS002",
+          "name": "Student 2"
+        }
+      ]
     },
     {
-      "classId": "CLS002",
-      "code": "Z0GO55"
-    },
-    {
-      "classId": "CLS003",
-      "code": "VI5JDK"
-    },
-    {
-      "classId": "CLS004",
-      "code": "H4Q5K9"
-    },
-    {
-      "classId": "CLS005",
-      "code": "48M66T"
-    },
-    {
-      "classId": "CLS006",
-      "code": "LVBRUS"
-    },
-    {
-      "classId": "CLS021",
-      "code": "LII14S"
-    },
-    {
-      "classId": "CLS022",
-      "code": "VK0UJ9"
-    },
-    {
-      "classId": "CLS023",
-      "code": "EVQNBI"
-    },
-    {
-      "classId": "CLS024",
-      "code": "OBUA2J"
-    },
-    {
-      "classId": "CLS025",
-      "code": "NC6TLR"
-    },
-    {
-      "classId": "CLS026",
-      "code": "KU5N7V"
-    },
-    {
-      "classId": "CLS041",
-      "code": "OFFJJQ"
-    },
-    {
-      "classId": "CLS042",
-      "code": "FBK2HS"
-    },
-    {
-      "classId": "CLS043",
-      "code": "M1L1OF"
-    },
-    {
-      "classId": "CLS044",
-      "code": "M2Z9J2"
-    },
-    {
-      "classId": "CLS045",
-      "code": "9KIU95"
-    },
-    {
-      "classId": "CLS046",
-      "code": "QPJQ78"
-    },
-    {
-      "classId": "CLS061",
-      "code": "9GQK0F"
-    },
-    {
-      "classId": "CLS062",
-      "code": "UW7JDK"
-    },
-    {
-      "classId": "CLS063",
-      "code": "Z2GV28"
-    },
-    {
-      "classId": "CLS064",
-      "code": "K2DNUV"
-    },
-    {
-      "classId": "CLS065",
-      "code": "OP6E3S"
-    },
-    {
-      "classId": "CLS066",
-      "code": "LQ3HCX"
-    },
-    {
-      "classId": "CLS007",
-      "code": "FAVBW4"
-    },
-    {
-      "classId": "CLS008",
-      "code": "X1GYWM"
-    },
-    {
-      "classId": "CLS009",
-      "code": "4JSJ5E"
-    },
-    {
-      "classId": "CLS010",
-      "code": "TLH5UU"
-    },
-    {
-      "classId": "CLS027",
-      "code": "M7K889"
-    },
-    {
-      "classId": "CLS028",
-      "code": "EZQZLG"
-    },
-    {
-      "classId": "CLS029",
-      "code": "OM9LJT"
-    },
-    {
-      "classId": "CLS030",
-      "code": "69O6UP"
-    },
-    {
-      "classId": "CLS047",
-      "code": "VWNJHV"
-    },
-    {
-      "classId": "CLS048",
-      "code": "8WWOO2"
-    },
-    {
-      "classId": "CLS049",
-      "code": "BOBB3G"
-    },
-    {
-      "classId": "CLS050",
-      "code": "TQP3F1"
-    },
-    {
-      "classId": "CLS067",
-      "code": "3G147V"
-    },
-    {
-      "classId": "CLS068",
-      "code": "KEHGAC"
-    },
-    {
-      "classId": "CLS069",
-      "code": "3KM643"
-    },
-    {
-      "classId": "CLS070",
-      "code": "SJ87ZB"
-    },
-    {
-      "classId": "CLS071",
-      "code": "ZDS0QZ"
+      "id": "GRP_TEST_2",
+      "name": "Group 2",
+      "className": "Class A",
+      "members": [
+        {
+          "studentId": "HS003",
+          "name": "Student 3"
+        }
+      ]
     }
   ]
 }
