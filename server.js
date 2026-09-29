@@ -617,6 +617,16 @@ io.on('connection', (socket) => {
         
         io.to(data.code).emit('group_bonus_awarded', { groupId, activityId, bonusPoints });
       }
+      
+      // Delete the workspace so it no longer shows up in the UI
+      if (session.workspaces && session.workspaces[activityId] && session.workspaces[activityId][groupId]) {
+         delete session.workspaces[activityId][groupId];
+         // Notify the teacher to remove it from their local state
+         if (session.teacherSocketId) {
+             io.to(session.teacherSocketId).emit('workspace_sync', { groupId, state: null, status: 'REMOVED' });
+         }
+         io.to(`teacher_${data.code}`).emit('workspace_sync', { groupId, state: null, status: 'REMOVED' });
+      }
     }
 
     if (Object.keys(pointsAwarded).length > 0) {

@@ -433,7 +433,14 @@ export default function PresentationDetail() {
     });
 
     newSocket.on("workspace_sync", (ws) => {
-      setWorkspaces(prev => ({ ...prev, [ws.groupId]: ws }));
+      setWorkspaces(prev => {
+        if (ws.status === 'REMOVED' || ws.status === 'APPROVED') {
+          const next = { ...prev };
+          delete next[ws.groupId];
+          return next;
+        }
+        return { ...prev, [ws.groupId]: ws };
+      });
     });
     
     return () => {
@@ -1738,6 +1745,11 @@ export default function PresentationDetail() {
                         bonusPoints: currentActivity?.bonusPoints || 0,
                         workspaces
                       }
+                    });
+                    setWorkspaces(prev => {
+                      const next = { ...prev };
+                      delete next[groupApprovalModal.groupId];
+                      return next;
                     });
                     setGroupApprovalModal(null);
                   }
