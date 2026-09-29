@@ -695,9 +695,8 @@ export default function StudentSessionPage() {
                   submitted ? "bg-green-500" : isLocked ? "bg-red-500 cursor-not-allowed" : selectedAnswers[0] ? "bg-blue-600 hover:bg-blue-700 shadow-md transform hover:-translate-y-1" : "bg-gray-300 cursor-not-allowed"
                 }`}
               >
-                {submitted ? "Đã Gửi" : isLocked ? "Đã Khóa" : "Gửi Từ Khóa"}
+                {submitted ? "Đã Gửi" : isLocked ? "Đã Khóa" : activity?.mode === "GROUP" ? "Gửi Từ Khóa Nhóm" : "Gửi Từ Khóa"}
               </button>
-            )}
           </div>
         )}
         
