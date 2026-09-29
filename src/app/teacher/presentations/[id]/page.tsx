@@ -97,17 +97,7 @@ export default function PresentationDetail() {
   }, []);
 
   const [workspaces, setWorkspaces] = useState<Record<string, any>>({});
-  useEffect(() => {
-    if (socket && sessionCode && groups.length > 0) {
-      const cName = classList.find((c: any) => c.id === selectedClass)?.name;
-      if (cName) {
-        const classGroups = !cName ? [] : groups.filter((g: any) => g.className === cName || (g.members && g.members.some((m: any) => allStudentsFromExcel.find((s: any) => s.id === m.studentId)?.className === cName)));
-        socket.emit('sync_groups', { code: sessionCode, groups: classGroups });
-      } else {
-        socket.emit('sync_groups', { code: sessionCode, groups: [] });
-      }
-    }
-  }, [socket, sessionCode, groups, selectedClass, classList, allStudentsFromExcel]);
+
   useEffect(() => {
     fetch('/api/groups')
       .then(res => res.json())
@@ -344,6 +334,16 @@ export default function PresentationDetail() {
 
     newSocket.on("history_updated", (data) => {
       setSessionHistory(data);
+    });
+
+    newSocket.on("groups_updated", (newGroups) => {
+      setGroups(newGroups);
+    });
+    newSocket.on("group_member_joined", (newGroups) => {
+      setGroups(newGroups);
+    });
+    newSocket.on("group_member_left", (newGroups) => {
+      setGroups(newGroups);
     });
     
     
