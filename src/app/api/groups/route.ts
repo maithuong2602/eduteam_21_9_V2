@@ -5,6 +5,7 @@ import path from 'path';
 
 import { getExcelPath } from '@/lib/dataConfig';
 import { jsonDb } from '@/lib/jsonDb';
+import { getExcelData } from '@/lib/excelDb';
 
 export async function GET() {
   const filePath = getExcelPath('03_NHOM_HOC_SINH.xlsx');
@@ -66,6 +67,22 @@ export async function GET() {
        allGroups.push(dbG);
      }
   }
+  // Hydrate missing names
+  const allStudents = getExcelData().students || [];
+  allGroups.forEach(g => {
+    if (g.members) {
+      g.members.forEach((m: any) => {
+        if (!m.name && m.studentId) {
+          const st = allStudents.find((s: any) => String(s.id) === String(m.studentId));
+          if (st) {
+            m.name = st.name || st.id;
+          } else {
+            m.name = m.studentId;
+          }
+        }
+      });
+    }
+  });
   
   return NextResponse.json({ groups: allGroups });
 }
@@ -135,8 +152,13 @@ export async function POST(request: Request) {
         dbGroups.push(targetGroup);
       }
       
+      // Look up student name
+      const allStudents = getExcelData().students || [];
+      const st = allStudents.find((s: any) => String(s.id) === String(studentId));
+      const studentName = st ? (st.name || st.id) : studentId;
+      
       // Add student
-      targetGroup.members.push({ studentId, joinedAt: Date.now() });
+      targetGroup.members.push({ studentId, name: studentName, joinedAt: Date.now() });
       
     } else if (action === 'REMOVE') {
       // Remove student from all groups
