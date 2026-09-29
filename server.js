@@ -182,7 +182,7 @@ io.on('connection', (socket) => {
       }
       if (session.studentPoints && Object.keys(session.studentPoints).length > 0) {
         const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-          const st = session.validStudents?.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
+          const st = session.validStudents?.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
           return { systemId: sysId, name: st ? st.name : sysId, total };
         }).sort((a, b) => (b.total - a.total));
         socket.emit('leaderboard_updated', leaderboard);
@@ -758,7 +758,7 @@ io.on('connection', (socket) => {
 
     // Calculate leaderboard
     const leaderboard = Object.entries(session.studentPoints).map(([systemId, total]) => {
-      const studentInfo = session.validStudents.find(s => String(s.systemId).trim() === String(systemId).trim());
+      const studentInfo = session.validStudents.find(s => String(s.systemId).trim() === String(systemId).trim() || String(s.id).trim() === String(systemId).trim());
       return {
         systemId,
         name: studentInfo ? studentInfo.name : 'Unknown',
@@ -819,7 +819,7 @@ io.on('connection', (socket) => {
     io.to(data.code).emit('points_awarded', pointsAwarded, {});
 
     const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-       const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
+       const st = session.validStudents.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
        return { systemId: sysId, name: st ? st.name : sysId, total };
     }).sort((a, b) => (b.total - a.total));
     io.to(data.code).emit('leaderboard_updated', leaderboard);
@@ -1077,7 +1077,7 @@ io.on('connection', (socket) => {
       io.to(data.code).emit('points_awarded', pointsAwarded, typesMap);
       
       const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-         const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
+         const st = session.validStudents.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
          return { systemId: sysId, name: st ? st.name : sysId, total };
       }).sort((a, b) => (b.total - a.total));
       io.to(data.code).emit('leaderboard_updated', leaderboard);
@@ -1118,7 +1118,7 @@ io.on('connection', (socket) => {
       io.to(data.code).emit('points_awarded', pointsAwarded, typesMap);
       
       const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-         const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
+         const st = session.validStudents.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
          return { systemId: sysId, name: st ? st.name : sysId, total };
       }).sort((a, b) => (b.total - a.total));
       io.to(data.code).emit('leaderboard_updated', leaderboard);
@@ -1164,7 +1164,7 @@ io.on('connection', (socket) => {
     io.to(data.code).emit('points_awarded', pointsAwarded);
     
     const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-       const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
+       const st = session.validStudents.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
        return { systemId: sysId, name: st ? st.name : sysId, total };
     }).sort((a, b) => (b.total - a.total));
     io.to(data.code).emit('leaderboard_updated', leaderboard);
@@ -1258,4 +1258,5 @@ io.on('connection', (socket) => {
   console.error(ex.stack);
   process.exit(1);
 });
+
 
