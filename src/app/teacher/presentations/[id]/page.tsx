@@ -119,7 +119,8 @@ export default function PresentationDetail() {
       alert("Vui lòng chọn lớp học ở cột bên trái trước khi tạo nhóm!");
       return;
     }
-    const classGroups = groups.filter(g => g.className === selectedClassForModal || (g.members && g.members.some((m: any) => allStudentsFromExcel.find(s => s.id === m.studentId)?.className === selectedClassForModal)));
+    const currentClassStudents = allStudentsFromExcel.filter((s: any) => s.className === selectedClassForModal || s.classId === classList.find((c: any) => c.name === selectedClassForModal)?.id);
+    const classGroups = groups.filter(g => g.className === selectedClassForModal || (g.members && g.members.some((m: any) => currentClassStudents.some((s: any) => String(s.id) === String(m.studentId)))));
     
     const newGroup = {
       id: 'GRP_' + Date.now(),
@@ -451,7 +452,7 @@ export default function PresentationDetail() {
     }
     if (socket && presentation) {
       const currentClassName = classList.find((c: any) => c.id === selectedClass)?.name || "N/A";
-      const classGroups = groups.filter((g: any) => g.className === currentClassName || (g.members && g.members.some((m: any) => allStudentsFromExcel.find((s: any) => s.id === m.studentId)?.className === currentClassName)));
+      const classGroups = groups.filter((g: any) => g.className === currentClassName || (g.members && g.members.some((m: any) => classStudents.some((s: any) => String(s.id) === String(m.studentId)))));
 
       socket.emit("create_session", { 
         classId: selectedClass,
