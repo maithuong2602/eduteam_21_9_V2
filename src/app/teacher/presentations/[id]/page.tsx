@@ -1743,7 +1743,7 @@ export default function PresentationDetail() {
                         totalCategoryActivities: Object.values(activities).filter(a => a.category === 'HOAT_DONG').length || 1,
                         bonusType: currentActivity?.bonusType || 'NONE',
                         bonusPoints: currentActivity?.bonusPoints || 0,
-                        workspaces
+                        workspaces: workspaces[groupApprovalModal.groupId] ? { [groupApprovalModal.groupId]: workspaces[groupApprovalModal.groupId] } : {}
                       }
                     });
                     setWorkspaces(prev => {
