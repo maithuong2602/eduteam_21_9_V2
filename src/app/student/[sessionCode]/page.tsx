@@ -239,9 +239,32 @@ export default function StudentSessionPage() {
 
   const toggleAnswer = (id: number) => {
     if (submitted) return;
-    setSelectedAnswers(prev => 
-      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
-    );
+    setSelectedAnswers(prev => {
+      const newAnswers = prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id];
+      if (activity?.mode === 'GROUP' && groupInfo) {
+        socket?.emit('group_workspace_update', {
+          code: sessionCode,
+          activityId: activity.activityId,
+          groupId: groupInfo.id,
+          state: newAnswers,
+          studentId: studentName
+        });
+      }
+      return newAnswers;
+    });
+  };
+
+  const handleTextAnswerChange = (text: string) => {
+    setSelectedAnswers([text]);
+    if (activity?.mode === 'GROUP' && groupInfo) {
+      socket?.emit('group_workspace_update', {
+        code: sessionCode,
+        activityId: activity.activityId,
+        groupId: groupInfo.id,
+        state: [text],
+        studentId: studentName
+      });
+    }
   };
 
   const handleSubmit = () => {
@@ -642,7 +665,7 @@ export default function StudentSessionPage() {
                 placeholder="Nhập câu trả lời vào đây..."
                 disabled={submitted || isLocked}
                 value={selectedAnswers[0] || ''}
-                onChange={(e) => setSelectedAnswers([e.target.value])}
+                onChange={(e) => handleTextAnswerChange(e.target.value)}
                 rows={4}
                 className="w-full p-4 rounded-xl border-2 text-lg font-medium text-black bg-white transition-all border-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none disabled:opacity-50 disabled:bg-gray-100"
               />
@@ -668,7 +691,7 @@ export default function StudentSessionPage() {
                 placeholder="Ví dụ: công nghệ, AI..."
                 disabled={submitted || isLocked}
                 value={selectedAnswers[0] || ''}
-                onChange={(e) => setSelectedAnswers([e.target.value])}
+                onChange={(e) => handleTextAnswerChange(e.target.value)}
                 className="w-full p-4 rounded-xl border-2 text-lg transition-all border-gray-500 focus:border-blue-500 outline-none disabled:opacity-50"
               />
               {activity?.mode !== "GROUP" && (
@@ -748,7 +771,11 @@ export default function StudentSessionPage() {
                   return;
                 }
                 if (confirm("Bạn có chắc muốn gửi đáp án của nhóm?")) {
-                  socket?.emit("group_submit", { code: sessionCode, activityId: activity.activityId, groupId: groupInfo.id, answer: selectedAnswers });
+                  let finalGroupAnswer = selectedAnswers;
+                  if (activity.type === 'CLASSIFICATION') {
+                     finalGroupAnswer = workspaceState;
+                  }
+                  socket?.emit("group_submit", { code: sessionCode, activityId: activity.activityId, groupId: groupInfo.id, answer: finalGroupAnswer });
                 }
               }}
               disabled={isLocked || workspaceStatus === "SUBMITTED" || !groupInfo}

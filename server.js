@@ -522,7 +522,7 @@ io.on('connection', (socket) => {
         ws.groupScore = scoreObj; // Save GroupScore
       }
 
-      const group = session.groups?.find(g => g.id === groupId);
+      const group = ws?.submittedGroupSnapshot || session.groups?.find(g => g.id === groupId);
       if (!group || !group.members || group.members.length === 0) continue;
 
       const validMembers = data.approvedMembers && data.approvedMembers[groupId] ? group.members.filter(m => data.approvedMembers[groupId].includes(m.studentId)) : group.members;
@@ -955,6 +955,7 @@ io.on('connection', (socket) => {
       };
       session.workspaces[data.activityId][data.groupId] = ws;
     } else if (data.answer) {
+      if (ws.status === 'SUBMITTED') return;
       ws.state = data.answer; // for MC/WordCloud overriding
       ws.version++;
       ws.lastUpdatedAt = Date.now();
@@ -963,6 +964,14 @@ io.on('connection', (socket) => {
     if (ws.status !== 'SUBMITTED') {
       ws.status = 'SUBMITTED';
       ws.submittedAt = Date.now();
+      const currentGroup = session.groups?.find(g => g.id === data.groupId);
+      if (currentGroup) {
+        ws.submittedGroupSnapshot = {
+          id: currentGroup.id,
+          name: currentGroup.name,
+          members: JSON.parse(JSON.stringify(currentGroup.members || []))
+        };
+      }
       io.to(data.code).emit('workspace_sync', ws);
       io.to(data.code).emit('group_submitted', { groupId: data.groupId, status: 'SUBMITTED' });
     }

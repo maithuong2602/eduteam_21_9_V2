@@ -253,3 +253,5 @@
 [2026-09-27T14:44:06.415Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
 [2026-09-27T14:44:19.167Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
 [2026-09-27T14:44:32.339Z] approve_points: session=TEST61 activityType=SHORT_ANSWER socketId=4866077784 student=true validSt=true systemId=4866077784 ans=My Test Answer
+[2026-09-29T11:27:48.078Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4869456649 student=true validSt=true systemId=4869456649 ans=OPT1
+[2026-09-29T11:27:48.081Z] approve_points: session=TEST61 activityType=MULTIPLE_CHOICE socketId=4824891635 student=true validSt=true systemId=4824891635 ans=OPT2
