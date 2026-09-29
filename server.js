@@ -526,6 +526,12 @@ io.on('connection', (socket) => {
       if (!group || !group.members || group.members.length === 0) continue;
 
       const validMembers = data.approvedMembers && data.approvedMembers[groupId] ? group.members.filter(m => data.approvedMembers[groupId].includes(m.studentId)) : group.members;
+      
+      try {
+        const fs = require('fs');
+        const logContent = `\n--- DEBUG APPROVE [${new Date().toISOString()}] ---\ngroupId: ${groupId}\ndata.approvedMembers: ${JSON.stringify(data.approvedMembers)}\ngroup.members: ${JSON.stringify(group.members)}\nvalidMembers: ${JSON.stringify(validMembers)}\n`;
+        fs.appendFileSync('debug_approve.txt', logContent);
+      } catch (e) {}
 
       // 1. Award regular ACTIVITY_SCORE
       validMembers.forEach(m => {
