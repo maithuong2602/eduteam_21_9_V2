@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Search, Plus, ArrowLeft, Star, RotateCcw, AlertCircle, X, Minus, Save } from "lucide-react";
+import { Users, Search, Plus, ArrowLeft, Star, RotateCcw, AlertCircle, X, Minus, Save, Download } from "lucide-react";
 
 export default function ClassesPage() {
   const [classes, setClasses] = useState<any[]>([]);
@@ -210,6 +210,14 @@ export default function ClassesPage() {
                 <Save className="w-4 h-4 mr-2" />
                 {hasUnsavedChanges ? 'Lưu đồng bộ *' : 'Lưu đồng bộ'}
               </button>
+              <a
+                href={`/api/classes/${encodeURIComponent(selectedClass.id.replace(/\//g, '__slash__'))}/export`}
+                className="flex items-center px-4 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm font-medium"
+                download
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Xuất Excel
+              </a>
               <button 
                 onClick={() => setShowConfirmReset(true)}
                 className="flex items-center px-4 py-2.5 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors shadow-sm font-medium"
