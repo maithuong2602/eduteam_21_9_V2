@@ -431,7 +431,14 @@ export default function StudentSessionPage() {
       )}
 
       <div className="bg-white border-b border-gray-200 p-4 shadow-sm sticky top-0 z-10 flex justify-between items-center">
-        <div className="font-bold text-blue-600">EduTeam</div>
+        <div className="flex items-center space-x-3">
+          <div className="font-bold text-blue-600">EduTeam</div>
+          {timeLeft !== null && (
+            <div className={`px-3 py-1 rounded-full font-bold text-sm shadow-sm transition-colors ${timeLeft <= 7 && !submitted ? "bg-red-500 text-white animate-pulse border-red-600 scale-110" : "bg-gray-100 text-gray-700 border-gray-200"}`}>
+              ⏱ {timeLeft}s
+            </div>
+          )}
+        </div>
         <div className="flex items-center space-x-4">
           {bonusRequests.includes(studentName) ? (
             <button 
@@ -758,5 +765,8 @@ export default function StudentSessionPage() {
     </div>
   );
 }
+
+
+
 
 
