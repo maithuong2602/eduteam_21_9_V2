@@ -181,7 +181,11 @@ io.on('connection', (socket) => {
         socket.emit('groups_updated', session.groups);
       }
       if (session.studentPoints && Object.keys(session.studentPoints).length > 0) {
-        updateLeaderboard(session, data.code || session.code || code, io);
+        const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
+          const st = session.validStudents?.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
+          return { systemId: sysId, name: st ? st.name : sysId, total };
+        }).sort((a, b) => (b.total - a.total));
+        socket.emit('leaderboard_updated', leaderboard);
       }
       if (session.activityConfig && session.responses && session.responses[session.activityConfig.slideNumber]) {
         for (const [sId, ans] of Object.entries(session.responses[session.activityConfig.slideNumber])) {
@@ -633,7 +637,11 @@ io.on('connection', (socket) => {
 
     if (Object.keys(pointsAwarded).length > 0) {
       io.to(data.code).emit('points_awarded', pointsAwarded);
-      updateLeaderboard(session, data.code || session.code || code, io);
+      const leaderboard = Object.entries(session.studentPoints).map(([systemId, total]) => {
+         const st = session.validStudents.find(vs => String(vs.systemId) === String(systemId) || String(vs.id) === String(systemId));
+         return { systemId, name: st ? st.name : systemId, total };
+      }).sort((a, b) => (b.total - a.total));
+      io.to(data.code).emit('leaderboard_updated', leaderboard);
     }
   });
 
@@ -749,7 +757,16 @@ io.on('connection', (socket) => {
     io.to(data.code).emit('points_awarded', pointsMap, typesMap || {});
 
     // Calculate leaderboard
-    updateLeaderboard(session, data.code || session.code || code, io);
+    const leaderboard = Object.entries(session.studentPoints).map(([systemId, total]) => {
+      const studentInfo = session.validStudents.find(s => String(s.systemId).trim() === String(systemId).trim() || String(s.id).trim() === String(systemId).trim());
+      return {
+        systemId,
+        name: studentInfo ? studentInfo.name : 'Unknown',
+        total
+      };
+    }).sort((a, b) => b.total - a.total);
+
+    io.to(data.code).emit('leaderboard_updated', leaderboard);
     io.to(session.teacherSocketId).emit('history_updated', session.activityHistory);
 
     if (session.bonusRequests) {
@@ -801,7 +818,11 @@ io.on('connection', (socket) => {
     // Send one big points_awarded payload!
     io.to(data.code).emit('points_awarded', pointsAwarded, {});
 
-    updateLeaderboard(session, data.code || session.code || code, io);
+    const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
+       const st = session.validStudents.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
+       return { systemId: sysId, name: st ? st.name : sysId, total };
+    }).sort((a, b) => (b.total - a.total));
+    io.to(data.code).emit('leaderboard_updated', leaderboard);
 
     session.bonusRequests = [];
     io.to(data.code).emit('bonus_requests_updated', session.bonusRequests);
@@ -1055,7 +1076,11 @@ io.on('connection', (socket) => {
       
       io.to(data.code).emit('points_awarded', pointsAwarded, typesMap);
       
-      updateLeaderboard(session, data.code || session.code || code, io);
+      const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
+         const st = session.validStudents.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
+         return { systemId: sysId, name: st ? st.name : sysId, total };
+      }).sort((a, b) => (b.total - a.total));
+      io.to(data.code).emit('leaderboard_updated', leaderboard);
     }
   });
 
@@ -1092,7 +1117,11 @@ io.on('connection', (socket) => {
       
       io.to(data.code).emit('points_awarded', pointsAwarded, typesMap);
       
-      updateLeaderboard(session, data.code || session.code || code, io);
+      const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
+         const st = session.validStudents.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
+         return { systemId: sysId, name: st ? st.name : sysId, total };
+      }).sort((a, b) => (b.total - a.total));
+      io.to(data.code).emit('leaderboard_updated', leaderboard);
     }
   });
 
@@ -1134,7 +1163,11 @@ io.on('connection', (socket) => {
 
     io.to(data.code).emit('points_awarded', pointsAwarded);
     
-    updateLeaderboard(session, data.code || session.code || code, io);
+    const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
+       const st = session.validStudents.find(vs => String(vs.systemId).trim() === String(sysId).trim() || String(vs.id).trim() === String(sysId).trim());
+       return { systemId: sysId, name: st ? st.name : sysId, total };
+    }).sort((a, b) => (b.total - a.total));
+    io.to(data.code).emit('leaderboard_updated', leaderboard);
   });
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
@@ -1225,8 +1258,5 @@ io.on('connection', (socket) => {
   console.error(ex.stack);
   process.exit(1);
 });
-
-
-
 
 

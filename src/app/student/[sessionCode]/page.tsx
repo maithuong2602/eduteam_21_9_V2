@@ -23,7 +23,7 @@ export default function StudentSessionPage() {
   const [submitted, setSubmitted] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
   const [trophy, setTrophy] = useState<{show: boolean, points: number, label?: string, type?: string}>({show: false, points: 0, label: "", type: "FULL"});
-  const [scoreboardInfo, setScoreboardInfo] = useState<{myScore: number, myRank: number, totalStudents: number} | null>(null);
+  const [leaderboard, setLeaderboard] = useState<{systemId: string, name: string, total: number}[]>([]);
   const [groupInfo, setGroupInfo] = useState<any>(null);
   const [availableGroups, setAvailableGroups] = useState<any[]>([]);
   const [selectedViewGroup, setSelectedViewGroup] = useState<any>(null);
@@ -234,8 +234,8 @@ export default function StudentSessionPage() {
       if (myGroup) setGroupInfo(myGroup);
       else setGroupInfo(null);
     });
-    newSocket.on("scoreboard_update", (data) => {
-      setScoreboardInfo(data);
+    newSocket.on("leaderboard_updated", (data) => {
+      setLeaderboard(data);
     });
     newSocket.on("session_ended", () => {
       setStatus("ended");
@@ -465,12 +465,19 @@ export default function StudentSessionPage() {
               <span className="text-sm font-bold text-green-700 hidden sm:inline">Phát biểu</span>
             </button>
           )}
-          {scoreboardInfo && (
-            <div className="flex items-center space-x-2 bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200">
-              <Trophy className="w-4 h-4 text-yellow-500" />
-              <span className="text-sm font-bold text-yellow-700">Hạng {scoreboardInfo.myRank} ({scoreboardInfo.myScore}đ)</span>
-            </div>
-          )}
+          {(() => {
+             const myRankIndex = leaderboard.findIndex(s => String(s.systemId).trim() === String(studentName).trim());
+             const myPoints = myRankIndex >= 0 ? leaderboard[myRankIndex].total : 0;
+             if (myRankIndex >= 0) {
+               return (
+                 <div className="flex items-center space-x-2 bg-yellow-50 px-3 py-1 rounded-full border border-yellow-200">
+                   <Trophy className="w-4 h-4 text-yellow-500" />
+                   <span className="text-sm font-bold text-yellow-700">Hạng {myRankIndex + 1} ({myPoints}đ)</span>
+                 </div>
+               )
+             }
+             return null;
+          })()}
           <div className="text-sm font-medium text-gray-500">{studentName}</div>
         </div>
       </div>
@@ -760,8 +767,6 @@ export default function StudentSessionPage() {
     </div>
   );
 }
-
-
 
 
 
