@@ -304,17 +304,6 @@ export default function PresentationDetail() {
     newSocket.on("session_created", (data) => {
       setSessionCode(data.code);
       newSocket.emit("join_teacher_room", { code: data.code });
-      if (selectedClass && groups.length > 0) {
-        const currentClassName = classList.find((c: any) => c.id === selectedClass)?.name;
-        if (currentClassName) {
-          const classGroups = groups.filter((g: any) => g.className === currentClassName || (g.members && g.members.some((m: any) => allStudentsFromExcel.find((s: any) => s.id === m.studentId)?.className === currentClassName)));
-          newSocket.emit("sync_groups", { code: data.code, groups: classGroups });
-        } else {
-          newSocket.emit("sync_groups", { code: data.code, groups: [] });
-        }
-      } else {
-        newSocket.emit("sync_groups", { code: data.code, groups: [] });
-      }
     });
     
     newSocket.on("student_joined", (studentsList) => {
@@ -461,14 +450,18 @@ export default function PresentationDetail() {
       return;
     }
     if (socket && presentation) {
+      const currentClassName = classList.find((c: any) => c.id === selectedClass)?.name || "N/A";
+      const classGroups = groups.filter((g: any) => g.className === currentClassName || (g.members && g.members.some((m: any) => allStudentsFromExcel.find((s: any) => s.id === m.studentId)?.className === currentClassName)));
+
       socket.emit("create_session", { 
         classId: selectedClass,
         presentationId: presentation.id, 
         title: presentation.title,
         validStudents: classStudents,
-        className: classList.find((c: any) => c.id === selectedClass)?.name || "N/A",
+        className: currentClassName,
         presentationType: presentation.type,
-        fileUrl: presentation.fileUrl
+        fileUrl: presentation.fileUrl,
+        groups: classGroups
       });
       setIsPresenting(true);
     }

@@ -155,6 +155,7 @@ io.on('connection', (socket) => {
       presentationType: data.presentationType,
       fileUrl: data.fileUrl,
       students: [],
+      groups: data.groups || [],
       currentSlide: 1,
       activityConfig: null,
       responses: {}
@@ -175,6 +176,9 @@ io.on('connection', (socket) => {
       socket.emit('student_joined', session.students);
       if (session.activityHistory && session.activityHistory.length > 0) {
         socket.emit('history_updated', session.activityHistory);
+      }
+      if (session.groups) {
+        socket.emit('groups_updated', session.groups);
       }
       if (session.studentPoints && Object.keys(session.studentPoints).length > 0) {
         const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
