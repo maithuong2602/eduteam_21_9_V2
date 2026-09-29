@@ -537,7 +537,7 @@ io.on('connection', (socket) => {
       validMembers.forEach(m => {
         const studentId = m.studentId;
         const validSt = session.validStudents.find(vs => String(vs.id) === String(studentId));
-        const primaryId = validSt ? validSt.systemId : studentId;
+        const primaryId = validSt ? validSt.id : studentId;
 
          // Prevent double counting if teacher clicks Duyệt multiple times for the same group
           if (historyRecord.pointsRecord[primaryId] === undefined) {
@@ -596,7 +596,7 @@ io.on('connection', (socket) => {
         validMembers.forEach(m => {
           const studentId = m.studentId;
           const validSt = session.validStudents.find(vs => String(vs.id) === String(studentId));
-          const primaryId = validSt ? validSt.systemId : studentId;
+          const primaryId = validSt ? validSt.id : studentId;
 
           saveLedger({
             ledgerId: 'LED_' + Date.now() + '_' + studentId,
@@ -676,7 +676,7 @@ io.on('connection', (socket) => {
       let systemId = student ? student.systemId : String(socketId);
       
       const validSt = session.validStudents?.find(vs => String(vs.systemId) === String(systemId) || String(vs.id) === String(systemId));
-      if (validSt) systemId = validSt.systemId; // Always fallback to systemId for mapping
+      if (validSt) systemId = validSt.id; // Always fallback to Student_ID for mapping
       
       const actualStudentId = validSt ? validSt.id : systemId;
 
@@ -790,7 +790,7 @@ io.on('connection', (socket) => {
     
     session.bonusRequests.forEach(studentId => {
       const validSt = session.validStudents?.find(vs => String(vs.id) === String(studentId) || String(vs.systemId) === String(studentId));
-      const primaryId = validSt ? validSt.systemId : studentId;
+      const primaryId = validSt ? validSt.id : studentId;
       const actualStudentId = validSt ? validSt.id : studentId;
 
       session.studentPoints[primaryId] = (session.studentPoints[primaryId] || 0) + bonusPoints;
@@ -1059,7 +1059,7 @@ io.on('connection', (socket) => {
     
     if (session.cancelHandRaiseCount[data.studentId] % 2 === 0) {
       const validSt = session.validStudents?.find(vs => String(vs.id) === String(data.studentId) || String(vs.systemId) === String(data.studentId));
-      const primaryId = validSt ? validSt.systemId : data.studentId;
+      const primaryId = validSt ? validSt.id : data.studentId;
       const actualStudentId = validSt ? validSt.id : data.studentId;
       
       if (!session.studentPoints) session.studentPoints = {};
@@ -1100,7 +1100,7 @@ io.on('connection', (socket) => {
     
     if (session.teacherRejectCount[data.studentId] > 0 && session.teacherRejectCount[data.studentId] % 2 === 0) {
       const validSt = session.validStudents?.find(vs => String(vs.id) === String(data.studentId) || String(vs.systemId) === String(data.studentId));
-      const primaryId = validSt ? validSt.systemId : data.studentId;
+      const primaryId = validSt ? validSt.id : data.studentId;
       const actualStudentId = validSt ? validSt.id : data.studentId;
       
       if (!session.studentPoints) session.studentPoints = {};
@@ -1135,7 +1135,7 @@ io.on('connection', (socket) => {
     const bonusPoints = Math.min(Math.max(Number(data.points) || 1, 1), 3);
     
     const validSt = session.validStudents?.find(vs => String(vs.id) === String(studentId) || String(vs.systemId) === String(studentId));
-    const primaryId = validSt ? validSt.systemId : studentId;
+    const primaryId = validSt ? validSt.id : studentId;
     const actualStudentId = validSt ? validSt.id : studentId;
 
     if (!session.studentPoints) session.studentPoints = {};
