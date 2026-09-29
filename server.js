@@ -292,6 +292,7 @@ io.on('connection', (socket) => {
         endTime: data.endTime || null,
         options: data.options,
         items: data.items,
+        embedHtml: data.embedHtml,
         categories: data.categories,
         groups: data.groups,
         settings: data.settings,
@@ -1189,6 +1190,23 @@ io.on('connection', (socket) => {
       return res.json({ success: true });
     }
     return res.status(403).json({ error: 'Not in test mode' });
+    return res.status(403).json({ error: 'Not in test mode' });
+  });
+
+  app.post('/api/internal/force_sync_groups', require('express').json(), (req, res) => {
+    try {
+      const db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+      const latestGroups = db.groups || [];
+      Object.keys(sessions).forEach(code => {
+        const session = sessions[code];
+        const classGroups = latestGroups.filter((g) => g.className === session.className || (g.members && g.members.some((m) => session.validStudents?.some((vs) => String(vs.id) === String(m.studentId)))));
+        session.groups = classGroups;
+        io.to(code).emit('groups_updated', session.groups);
+      });
+      return res.json({ success: true });
+    } catch(e) {
+      return res.status(500).json({ error: e.message });
+    }
   });
 
   app.use((req, res) => {

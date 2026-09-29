@@ -622,6 +622,19 @@ export default function StudentSessionPage() {
           </div>
         )}
 
+        {activity.type === "EXPLORE" && (
+          <div className="space-y-4">
+            <h3 className="font-semibold text-black text-lg mb-2">Tương tác khám phá:</h3>
+            <div className="w-full h-[60vh] bg-white border-2 border-gray-300 rounded-xl overflow-hidden shadow-inner relative">
+              <iframe 
+                srcDoc={activity.embedHtml || '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;color:#888;">Không có nội dung nhúng</div>'} 
+                className="w-full h-full border-none"
+                sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              ></iframe>
+            </div>
+          </div>
+        )}
+
         {activity.type === "SHORT_ANSWER" && (
             <div className="space-y-4">
               <h3 className="font-semibold text-black text-lg mb-2">Nhập câu trả lời của bạn:</h3>

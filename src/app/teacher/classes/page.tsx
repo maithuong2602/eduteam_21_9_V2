@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Users, Search, Plus, ArrowLeft, Star, RotateCcw, AlertCircle, X, Minus } from "lucide-react";
+import { Users, Search, Plus, ArrowLeft, Star, RotateCcw, AlertCircle, X, Minus, Save } from "lucide-react";
 
 export default function ClassesPage() {
   const [classes, setClasses] = useState<any[]>([]);
@@ -180,7 +180,21 @@ export default function ClassesPage() {
                 </span>
               </div>
             </div>
-            <div className="mt-4 sm:mt-0">
+            <div className="mt-4 sm:mt-0 flex gap-3">
+              <button 
+                onClick={() => {
+                  fetch('/api/internal/force_sync_groups', { method: 'POST' })
+                    .then(res => res.json())
+                    .then(data => {
+                      if(data.success) alert("Đã đồng bộ nhóm lên tất cả các phiên trình chiếu đang chạy!");
+                    })
+                    .catch(console.error);
+                }}
+                className="flex items-center px-4 py-2.5 bg-indigo-600 border border-indigo-700 text-white rounded-lg hover:bg-indigo-700 transition-colors shadow-sm font-medium"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Lưu đồng bộ
+              </button>
               <button 
                 onClick={() => setShowConfirmReset(true)}
                 className="flex items-center px-4 py-2.5 bg-white border border-red-200 text-red-600 rounded-lg hover:bg-red-50 hover:border-red-300 transition-colors shadow-sm font-medium"

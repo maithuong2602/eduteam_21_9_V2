@@ -6,7 +6,7 @@ import Link from "next/link";
 import ClassificationBuilder from "@/components/ClassificationBuilder";
 import { useParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
-import { ArrowLeft, Play, Settings, Type, Plus, X, AlignLeft, CheckSquare, List, GripHorizontal, Users, ChevronLeft, ChevronRight, Lock, Unlock, Clock, Cloud, Trophy } from "lucide-react";
+import { ArrowLeft, Play, Settings, Type, Plus, X, AlignLeft, CheckSquare, List, GripHorizontal, Users, ChevronLeft, ChevronRight, Lock, Unlock, Clock, Cloud, Trophy, Compass } from "lucide-react";
 import dynamic from 'next/dynamic';
 
 const PdfViewer = dynamic(() => import("@/components/PdfViewer"), { ssr: false });
@@ -631,6 +631,7 @@ export default function PresentationDetail() {
         bonusPoints: currentActivity.bonusPoints || 0,
         endTime: Date.now() + timerDuration * 1000,
         items: currentActivity.items,
+          embedHtml: currentActivity.embedHtml,
           categories: currentActivity.categories,
           groups: currentActivity.groups,
           settings: currentActivity.settings,
@@ -661,6 +662,7 @@ export default function PresentationDetail() {
       case "SHORT_ANSWER": return "Trả lời ngắn";
       case "CLASSIFICATION": return "Phân loại";
       case "WORD_CLOUD": return "Đám mây từ";
+      case "EXPLORE": return "Khám phá";
       default: return "Hoạt động";
     }
   };
@@ -671,6 +673,7 @@ export default function PresentationDetail() {
       case "SHORT_ANSWER": return <Type className="h-4 w-4" />;
       case "CLASSIFICATION": return <GripHorizontal className="h-4 w-4" />;
       case "WORD_CLOUD": return <Cloud className="h-4 w-4" />;
+      case "EXPLORE": return <Compass className="h-4 w-4" />;
       default: return null;
     }
   };
@@ -1106,6 +1109,24 @@ export default function PresentationDetail() {
                     <p className="text-sm text-gray-500">Cấu hình cho câu hỏi Trả lời ngắn.</p>
                   </div>
                 )}
+                
+                {currentActivity.type === "EXPLORE" && (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Mã nhúng HTML / Iframe</label>
+                      <textarea 
+                        className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 p-2 border font-mono text-xs"
+                        rows={6}
+                        placeholder="<iframe src='...' width='100%' height='500'></iframe>"
+                        value={currentActivity.embedHtml || ''}
+                        onChange={(e) => setActivities(prev => ({
+                          ...prev,
+                          [currentActivityId as string]: { ...prev[currentActivityId as string], embedHtml: e.target.value }
+                        }))}
+                      />
+                    </div>
+                  </div>
+                )}
 
                 <div className="pt-4 border-t border-gray-200 mt-6 space-y-3">
                   <button className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100">
@@ -1113,25 +1134,27 @@ export default function PresentationDetail() {
                   </button>
                   {sessionCode && (
                     <>
-                      <div className="flex gap-2">
-                        <button onClick={() => toggleLock(!isLocked)} className={`flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white ${isLocked ? 'bg-red-600 hover:bg-red-700' : 'bg-yellow-500 hover:bg-yellow-600'}`}>
-                          {isLocked ? <Lock className="mr-2 h-4 w-4" /> : <Unlock className="mr-2 h-4 w-4" />}
-                          {isLocked ? "Đã khóa" : "Khóa trả lời"}
-                        </button>
-                        <button onClick={() => {
-                          const t = window.prompt("Nhập thời gian (giây):", timerDuration.toString());
-                          if (t && !isNaN(parseInt(t))) setTimerDuration(parseInt(t));
-                        }} className="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700">
-                          <Clock className="mr-2 h-4 w-4" />
-                          {timeLeft !== null ? `${timeLeft}s` : `${timerDuration}s`}
-                        </button>
-                      </div>
+                      {currentActivity?.type !== "EXPLORE" && (
+                        <div className="flex gap-2 mb-2">
+                          <button onClick={() => toggleLock(!isLocked)} className={`flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white ${isLocked ? 'bg-red-600 hover:bg-red-700' : 'bg-yellow-500 hover:bg-yellow-600'}`}>
+                            {isLocked ? <Lock className="mr-2 h-4 w-4" /> : <Unlock className="mr-2 h-4 w-4" />}
+                            {isLocked ? "Đã khóa" : "Khóa trả lời"}
+                          </button>
+                          <button onClick={() => {
+                            const t = window.prompt("Nhập thời gian (giây):", timerDuration.toString());
+                            if (t && !isNaN(parseInt(t))) setTimerDuration(parseInt(t));
+                          }} className="flex-1 flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-blue-600 hover:bg-blue-700">
+                            <Clock className="mr-2 h-4 w-4" />
+                            {timeLeft !== null ? `${timeLeft}s` : `${timerDuration}s`}
+                          </button>
+                        </div>
+                      )}
                       <button onClick={startActivityForCurrentSlide} className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         <Play className="mr-2 h-4 w-4" /> Bắt đầu hoạt động
                       </button>
                     </>
                   )}
-                  {sessionCode && currentActivity && (
+                  {sessionCode && currentActivity && currentActivity.type !== "EXPLORE" && (
                     <div className="mt-4 bg-gray-50 p-4 rounded-lg text-sm border border-gray-200">
                       <div className="font-bold text-gray-700 mb-2 flex justify-between items-center">
                         <span>Kết quả Realtime</span>
@@ -1190,6 +1213,10 @@ export default function PresentationDetail() {
                     <button onClick={() => addActivity("WORD_CLOUD")} className="flex flex-col items-center justify-center p-3 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors group">
                       <Cloud className="h-6 w-6 text-gray-400 group-hover:text-blue-600 mb-2" />
                       <span className="text-xs font-medium text-gray-700 group-hover:text-blue-700">Word Cloud</span>
+                    </button>
+                    <button onClick={() => addActivity("EXPLORE")} className="flex flex-col items-center justify-center p-3 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors group">
+                      <Compass className="h-6 w-6 text-gray-400 group-hover:text-blue-600 mb-2" />
+                      <span className="text-xs font-medium text-gray-700 group-hover:text-blue-700">Khám phá</span>
                     </button>
                   </div>
                 </div>
