@@ -31,6 +31,8 @@ export default function StudentSessionPage() {
   const [workspaceVersion, setWorkspaceVersion] = useState(0);
   const [workspaceStatus, setWorkspaceStatus] = useState("WORKING");
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
+
 
   useEffect(() => {
     if (activity?.mode === 'GROUP' && groupInfo) {
