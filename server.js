@@ -999,7 +999,7 @@ io.on('connection', (socket) => {
         };
       }
       io.to(data.code).emit('workspace_sync', ws);
-      io.to(data.code).emit('group_submitted', { groupId: data.groupId, status: 'SUBMITTED' });
+      io.to(data.code).emit('group_submitted', { groupId: data.groupId, status: 'SUBMITTED', answer: data.answer });
     }
   });
 
@@ -1258,3 +1258,4 @@ io.on('connection', (socket) => {
   console.error(ex.stack);
   process.exit(1);
 });
+

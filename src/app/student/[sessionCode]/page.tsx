@@ -46,16 +46,25 @@ export default function StudentSessionPage() {
     if (!socket) return;
     const handleSync = (ws: any) => {
       if (ws.activityId === activity?.activityId && ws.groupId === groupInfo?.id) {
-        if (ws.version >= workspaceVersion) {
+        if (ws.version >= workspaceVersion || ws.status === 'SUBMITTED') {
           setWorkspaceState(ws.state || {});
           setWorkspaceVersion(ws.version);
           setWorkspaceStatus(ws.status || "WORKING");
+          
+          if (ws.status === 'SUBMITTED') {
+            setSubmitted(true);
+            if (ws.state) setSelectedAnswers(Array.isArray(ws.state) ? ws.state : [ws.state]);
+          }
         }
       }
     };
     socket.on('workspace_sync', handleSync);
     const handleSubmitGroup = (data: any) => {
-      if (data.groupId === groupInfo?.id) setWorkspaceStatus('SUBMITTED');
+      if (data.groupId === groupInfo?.id) {
+        setWorkspaceStatus('SUBMITTED');
+        setSubmitted(true);
+        if (data.answer) setSelectedAnswers(Array.isArray(data.answer) ? data.answer : [data.answer]);
+      }
     };
     socket.on('group_submitted', handleSubmitGroup);
     return () => {
@@ -705,28 +714,14 @@ export default function StudentSessionPage() {
           <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-5 mb-6 shadow-sm">
             <h3 className="font-bold text-indigo-900 mb-3 text-lg flex items-center">
               <Users className="w-5 h-5 mr-2" />
-              Tra cứu danh sách nhóm
+              Thông tin nhóm
             </h3>
-            <select 
-              className="w-full p-3 border-2 border-indigo-100 rounded-lg bg-white mb-3 text-indigo-900 font-medium focus:ring-2 focus:ring-indigo-300 outline-none transition-all"
-              onChange={(e) => {
-                const selectedGrp = availableGroups.find(g => g.id === e.target.value);
-                setSelectedViewGroup(selectedGrp || null);
-              }}
-              value={selectedViewGroup?.id || ""}
-            >
-              <option style={{ color: "#000", fontWeight: "bold" }} className="text-black bg-white font-bold" value="" disabled>-- Bấm để chọn nhóm --</option>
-              {availableGroups.map(g => (
-                <option style={{ color: "#000", fontWeight: "bold" }} className="text-black bg-white font-bold" key={g.id} value={g.id}>{g.name}</option>
-              ))}
-            </select>
-            
-            {selectedViewGroup && (
-              <div className="bg-white rounded-lg p-4 border border-indigo-100 mt-2 animate-fade-in">
-                <h4 className="font-bold text-gray-700 border-b pb-2 mb-2">Thành viên của {selectedViewGroup.name}</h4>
-                {selectedViewGroup.members && selectedViewGroup.members.length > 0 ? (
+            {groupInfo ? (
+              <div className="bg-white rounded-lg p-4 border border-indigo-100 mt-2">
+                <h4 className="font-bold text-gray-700 border-b pb-2 mb-2">Thành viên của {groupInfo.name}</h4>
+                {groupInfo.members && groupInfo.members.length > 0 ? (
                   <ul className="space-y-1">
-                    {selectedViewGroup.members.map((m: any, idx: number) => (
+                    {groupInfo.members.map((m: any, idx: number) => (
                       <li key={idx} className="flex items-center text-gray-600">
                         <span className="w-2 h-2 bg-indigo-400 rounded-full mr-2"></span>
                         <span className="font-medium mr-2">{m.name}</span> 
@@ -737,19 +732,9 @@ export default function StudentSessionPage() {
                 ) : (
                   <p className="text-gray-500 italic text-sm">Chưa có thành viên nào.</p>
                 )}
-                
-                {(!groupInfo || groupInfo.id !== selectedViewGroup.id) && (
-                  <button 
-                    onClick={() => {
-                       socket?.emit('group_member_joined', { code: sessionCode, groupId: selectedViewGroup.id, systemId: studentName, studentName: studentName });
-                       setGroupInfo(selectedViewGroup);
-                    }}
-                    className="mt-4 w-full py-2 bg-indigo-600 text-white rounded-lg font-semibold hover:bg-indigo-700 transition-colors"
-                  >
-                    Tham gia {selectedViewGroup.name}
-                  </button>
-                )}
               </div>
+            ) : (
+              <p className="text-gray-500 italic">Bạn chưa được phân vào nhóm nào. Vui lòng liên hệ giáo viên.</p>
             )}
           </div>
         )}
