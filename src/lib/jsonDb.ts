@@ -118,7 +118,7 @@ export interface Group {
   id: string;
   className?: string; // class name or class ID depending on current logic
   name: string;
-  members: { studentId: string, joinedAt?: number }[];
+  members: { studentId: string, name?: string, joinedAt?: number }[];
 }
 
 function getDb(): DbSchema {
