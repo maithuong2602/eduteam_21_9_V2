@@ -287,11 +287,24 @@ export default function StudentSessionPage() {
        if (selectedAnswers.length === 0) return;
     }
 
-    socket.emit("submit_answer", {
-      code: sessionCode,
-      slideNumber: activity.slideNumber,
-      answer: finalAnswer
-    });
+    if (activity?.mode === 'GROUP') {
+      if (!groupInfo) {
+        alert("Bạn chưa được phân vào nhóm nào nên không thể nộp bài nhóm! Vui lòng liên hệ giáo viên.");
+        return;
+      }
+      socket.emit("group_submit", {
+        code: sessionCode,
+        activityId: activity.activityId,
+        groupId: groupInfo.id,
+        answer: finalAnswer
+      });
+    } else {
+      socket.emit("submit_answer", {
+        code: sessionCode,
+        slideNumber: activity.slideNumber,
+        answer: finalAnswer
+      });
+    }
     setSubmitted(true);
   };
 
@@ -739,51 +752,7 @@ export default function StudentSessionPage() {
           </div>
         )}
 
-        {activity?.mode === "GROUP" && (
-          <div className="mt-6">
-            <button
-              onClick={() => {
-                if (!groupInfo) {
-                  alert("Vui lòng chọn nhóm ở phần 'Tra cứu danh sách nhóm' trước khi nộp bài!");
-                  return;
-                }
-                if (confirm("Bạn có chắc muốn gửi đáp án của nhóm?")) {
-                  let finalGroupAnswer = selectedAnswers;
-                  if (activity.type === 'CLASSIFICATION') {
-                     finalGroupAnswer = workspaceState;
-                  }
-                  socket?.emit("group_submit", { code: sessionCode, activityId: activity.activityId, groupId: groupInfo.id, answer: finalGroupAnswer });
-                }
-              }}
-              disabled={isLocked || workspaceStatus === "SUBMITTED" || !groupInfo}
-              className={`w-full py-4 rounded-xl font-bold text-lg text-white flex items-center justify-center transition-all ${
-                workspaceStatus === "SUBMITTED" 
-                  ? "bg-green-500" 
-                  : (isLocked || !groupInfo)
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700 shadow-md transform hover:-translate-y-1"
-              }`}
-            >
-              {workspaceStatus === "SUBMITTED" ? (
-                <>
-                  <CheckCircle className="mr-2 h-6 w-6" /> Nhóm đã gửi
-                </>
-              ) : isLocked ? (
-                <>
-                  <CheckCircle className="mr-2 h-6 w-6" /> Đã khóa
-                </>
-              ) : !groupInfo ? (
-                <>
-                  <Users className="mr-2 h-6 w-6" /> Chọn nhóm để nộp bài
-                </>
-              ) : (
-                <>
-                  <Send className="mr-2 h-6 w-6" /> Gửi đáp án nhóm
-                </>
-              )}
-            </button>
-          </div>
-        )}
+
 
       </div>
     </div>
