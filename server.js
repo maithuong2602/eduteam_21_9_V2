@@ -182,7 +182,7 @@ io.on('connection', (socket) => {
       }
       if (session.studentPoints && Object.keys(session.studentPoints).length > 0) {
         const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-          const st = session.validStudents?.find(vs => String(vs.systemId) === String(sysId));
+          const st = session.validStudents?.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
           return { systemId: sysId, name: st ? st.name : sysId, total };
         }).sort((a, b) => (b.total - a.total));
         socket.emit('leaderboard_updated', leaderboard);
@@ -638,7 +638,7 @@ io.on('connection', (socket) => {
     if (Object.keys(pointsAwarded).length > 0) {
       io.to(data.code).emit('points_awarded', pointsAwarded);
       const leaderboard = Object.entries(session.studentPoints).map(([systemId, total]) => {
-         const st = session.validStudents.find(vs => String(vs.systemId) === String(systemId));
+         const st = session.validStudents.find(vs => String(vs.systemId) === String(systemId) || String(vs.id) === String(systemId));
          return { systemId, name: st ? st.name : systemId, total };
       }).sort((a, b) => (b.total - a.total));
       io.to(data.code).emit('leaderboard_updated', leaderboard);
@@ -675,7 +675,7 @@ io.on('connection', (socket) => {
       let student = session.students.find(s => String(s.systemId) === String(socketId) || String(s.id) === String(socketId));
       let systemId = student ? student.systemId : String(socketId);
       
-      const validSt = session.validStudents?.find(vs => String(vs.systemId) === String(systemId) || String(vs.id) === String(systemId));
+      const validSt = session.validStudents?.find(vs => String(vs.systemId) === String(systemId) || String(vs.id) === String(systemId) || String(vs.id) === String(systemId));
       if (validSt) systemId = validSt.id; // Always fallback to Student_ID for mapping
       
       const actualStudentId = validSt ? validSt.id : systemId;
@@ -819,7 +819,7 @@ io.on('connection', (socket) => {
     io.to(data.code).emit('points_awarded', pointsAwarded, {});
 
     const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-       const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId));
+       const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
        return { systemId: sysId, name: st ? st.name : sysId, total };
     }).sort((a, b) => (b.total - a.total));
     io.to(data.code).emit('leaderboard_updated', leaderboard);
@@ -869,7 +869,7 @@ io.on('connection', (socket) => {
         // Push their custom ID if available, otherwise system ID, so they match Excel
         group.members.push({ 
           studentId: studentIdAlias, 
-          name: data.studentName || (validSt ? validSt.name : data.systemId),
+          name: validSt ? validSt.name : (data.studentName || data.systemId),
           joinedAt: data.joinedAt || Date.now() 
         });
       }
@@ -1077,7 +1077,7 @@ io.on('connection', (socket) => {
       io.to(data.code).emit('points_awarded', pointsAwarded, typesMap);
       
       const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-         const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId));
+         const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
          return { systemId: sysId, name: st ? st.name : sysId, total };
       }).sort((a, b) => (b.total - a.total));
       io.to(data.code).emit('leaderboard_updated', leaderboard);
@@ -1118,7 +1118,7 @@ io.on('connection', (socket) => {
       io.to(data.code).emit('points_awarded', pointsAwarded, typesMap);
       
       const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-         const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId));
+         const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
          return { systemId: sysId, name: st ? st.name : sysId, total };
       }).sort((a, b) => (b.total - a.total));
       io.to(data.code).emit('leaderboard_updated', leaderboard);
@@ -1164,7 +1164,7 @@ io.on('connection', (socket) => {
     io.to(data.code).emit('points_awarded', pointsAwarded);
     
     const leaderboard = Object.entries(session.studentPoints).map(([sysId, total]) => {
-       const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId));
+       const st = session.validStudents.find(vs => String(vs.systemId) === String(sysId) || String(vs.id) === String(sysId));
        return { systemId: sysId, name: st ? st.name : sysId, total };
     }).sort((a, b) => (b.total - a.total));
     io.to(data.code).emit('leaderboard_updated', leaderboard);

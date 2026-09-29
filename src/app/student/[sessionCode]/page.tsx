@@ -577,7 +577,6 @@ export default function StudentSessionPage() {
                   })}
                 </div>
 
-                {activity?.mode !== "GROUP" && (
                   <button
                     data-testid="submit-answer" onClick={handleSubmit}
                     disabled={uncategorizedItems.length > 0 || submitted || isLocked}
@@ -585,9 +584,8 @@ export default function StudentSessionPage() {
                       submitted ? "bg-green-500" : isLocked ? "bg-red-500 cursor-not-allowed" : uncategorizedItems.length === 0 ? "bg-blue-600 hover:bg-blue-700 shadow-md transform hover:-translate-y-1" : "bg-gray-300 cursor-not-allowed"
                     }`}
                   >
-                    {submitted ? "Đã Nộp" : isLocked ? "Đã Khóa" : uncategorizedItems.length > 0 ? `Còn ${uncategorizedItems.length} mục chưa phân loại` : "Nộp bài"}
+                    {submitted ? "Đã Nộp" : isLocked ? "Đã Khóa" : uncategorizedItems.length > 0 ? `Còn ${uncategorizedItems.length} mục chưa phân loại` : activity?.mode === "GROUP" ? "Nộp bài nhóm" : "Nộp bài"}
                   </button>
-                )}
               </div>
             );
           })()}
@@ -615,7 +613,6 @@ export default function StudentSessionPage() {
               })}
             </div>
 
-            {activity?.mode !== "GROUP" && (
             <button
               onClick={handleSubmit}
               disabled={selectedAnswers.length === 0 || submitted || isLocked}
@@ -637,11 +634,10 @@ export default function StudentSessionPage() {
                 </>
               ) : (
                 <>
-                  <Send className="mr-2 h-5 w-5" /> Gửi đáp án
+                  <Send className="mr-2 h-5 w-5" /> {activity?.mode === "GROUP" ? "Gửi đáp án nhóm" : "Gửi đáp án"}
                 </>
               )}
             </button>
-            )}
           </div>
         )}
 
@@ -669,7 +665,6 @@ export default function StudentSessionPage() {
                 rows={4}
                 className="w-full p-4 rounded-xl border-2 text-lg font-medium text-black bg-white transition-all border-gray-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none disabled:opacity-50 disabled:bg-gray-100"
               />
-              {activity?.mode !== "GROUP" && (
                 <button
                   onClick={handleSubmit}
                   disabled={!selectedAnswers[0] || submitted || isLocked}
@@ -677,9 +672,8 @@ export default function StudentSessionPage() {
                     submitted ? "bg-green-500" : isLocked ? "bg-red-500 cursor-not-allowed" : selectedAnswers[0] ? "bg-blue-600 hover:bg-blue-700 shadow-md transform hover:-translate-y-1" : "bg-gray-300 cursor-not-allowed"
                   }`}
                 >
-                  {submitted ? "Đã Gửi" : isLocked ? "Đã Khóa" : "Gửi Câu Trả Lời"}
+                  {submitted ? "Đã Gửi" : isLocked ? "Đã Khóa" : activity?.mode === "GROUP" ? "Gửi Câu Trả Lời Nhóm" : "Gửi Câu Trả Lời"}
                 </button>
-              )}
             </div>
           )}
 
@@ -694,7 +688,6 @@ export default function StudentSessionPage() {
                 onChange={(e) => handleTextAnswerChange(e.target.value)}
                 className="w-full p-4 rounded-xl border-2 text-lg transition-all border-gray-500 focus:border-blue-500 outline-none disabled:opacity-50"
               />
-              {activity?.mode !== "GROUP" && (
               <button
                 onClick={handleSubmit}
                 disabled={!selectedAnswers[0] || submitted || isLocked}
@@ -812,3 +805,4 @@ export default function StudentSessionPage() {
     </div>
   );
 }
+
