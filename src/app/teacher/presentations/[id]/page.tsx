@@ -1731,8 +1731,12 @@ export default function PresentationDetail() {
                         type: currentActivity?.type,
                         name: currentActivity?.name || `HD${selectedSlide}`,
                         mode: currentActivity?.mode || 'GROUP',
+                        category: currentActivity?.category || 'UNSET',
+                        config: currentActivity || {},
+                        totalCategoryActivities: Object.values(activities).filter(a => a.category === 'HOAT_DONG').length || 1,
                         bonusType: currentActivity?.bonusType || 'NONE',
-                        bonusPoints: currentActivity?.bonusPoints || 0
+                        bonusPoints: currentActivity?.bonusPoints || 0,
+                        workspaces
                       }
                     });
                     setGroupApprovalModal(null);
