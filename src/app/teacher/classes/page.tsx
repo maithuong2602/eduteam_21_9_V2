@@ -248,7 +248,7 @@ export default function ClassesPage() {
                           </div>
                           <div className="ml-4">
                             <div className="text-sm font-semibold text-gray-900">{s.name}</div>
-                            <div className="text-xs text-gray-500">{s.systemId || s.id}</div>
+                            <div className="text-xs text-gray-500">{s.id}</div>
                           </div>
                         </div>
                       </td>

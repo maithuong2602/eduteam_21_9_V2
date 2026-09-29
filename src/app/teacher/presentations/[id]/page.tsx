@@ -369,7 +369,7 @@ export default function PresentationDetail() {
            };
            
            const row: any = {
-             "Mã HS": st.systemId || st.id,
+             "Mã HS": st.id,
              "Tên HS": st.name,
              "Lớp": data.className || "N/A",
              "Nhóm": (data.groups || groups).find((g: any) => g.members && g.members.some((m: any) => m.studentId === st.id))?.name || "Chưa có nhóm",
@@ -405,7 +405,7 @@ export default function PresentationDetail() {
         
         const activityRows = (data.validStudents || presentation?.validStudents || classStudents)?.map((st: any) => {
            const row: any = {
-             "Mã HS": st.systemId || st.id,
+             "Mã HS": st.id,
              "Tên HS": st.name,
              "Lớp": data.className || "N/A",
              "Nhóm": (data.groups || groups).find((g: any) => g.members && g.members.some((m: any) => m.studentId === st.id))?.name || "Chưa có nhóm"
