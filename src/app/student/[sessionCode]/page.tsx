@@ -234,8 +234,8 @@ export default function StudentSessionPage() {
       if (myGroup) setGroupInfo(myGroup);
       else setGroupInfo(null);
     });
-    newSocket.on("leaderboard_updated", (data) => {
-      setLeaderboard(data);
+    newSocket.on("scoreboard_update", (data) => {
+      setScoreboardInfo(data);
     });
     newSocket.on("session_ended", () => {
       setStatus("ended");
