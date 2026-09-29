@@ -850,16 +850,26 @@ io.on('connection', (socket) => {
             session.teacherSocketId = socket.id;
         }
       if (!session.groups) session.groups = [];
-      // Remove from old groups first
+      
+      // Find all aliases for this student
+      const validSt = session.validStudents?.find(vs => String(vs.systemId) === String(data.systemId) || String(vs.id) === String(data.systemId));
+      const studentIdAlias = validSt ? validSt.id : data.systemId;
+      const systemIdAlias = validSt ? validSt.systemId : data.systemId;
+
+      // Remove from ALL groups first (using any known alias)
       session.groups.forEach(g => {
-        if (g.members) g.members = g.members.filter(m => m.studentId !== data.systemId);
+        if (g.members) {
+          g.members = g.members.filter(m => String(m.studentId) !== String(systemIdAlias) && String(m.studentId) !== String(studentIdAlias));
+        }
       });
+
       const group = session.groups.find(g => g.id === data.groupId);
       if (group) {
         if (!group.members) group.members = [];
+        // Push their custom ID if available, otherwise system ID, so they match Excel
         group.members.push({ 
-          studentId: data.systemId, 
-          name: data.studentName,
+          studentId: studentIdAlias, 
+          name: data.studentName || (validSt ? validSt.name : data.systemId),
           joinedAt: data.joinedAt || Date.now() 
         });
       }
