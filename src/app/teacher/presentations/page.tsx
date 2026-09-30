@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { PlusCircle, FileText, Upload, Loader2 } from "lucide-react";
+import { PlusCircle, FileText, Upload, Loader2, Pencil, Trash2 } from "lucide-react";
 
 export default function PresentationsPage() {
   const router = useRouter();
@@ -26,6 +26,38 @@ export default function PresentationsPage() {
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('Bạn có chắc chắn muốn xóa bài giảng này không?')) return;
+    try {
+      const res = await fetch(`/api/presentations/${id}`, { method: 'DELETE' });
+      if (res.ok) setPresentations(prev => prev.filter(p => p.id !== id));
+      else alert('Xóa thất bại');
+    } catch (e) {
+      console.error(e);
+      alert('Xóa thất bại');
+    }
+  };
+
+  const handleEdit = async (id: string, currentTitle: string) => {
+    const newTitle = prompt('Nhập tên mới cho bài giảng:', currentTitle);
+    if (!newTitle || newTitle === currentTitle) return;
+    try {
+      const res = await fetch(`/api/presentations/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: newTitle })
+      });
+      if (res.ok) {
+        setPresentations(prev => prev.map(p => p.id === id ? { ...p, title: newTitle } : p));
+      } else {
+        alert('Cập nhật thất bại');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('Cập nhật thất bại');
+    }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -99,7 +131,7 @@ export default function PresentationsPage() {
               </div>
             </div>
             <div className="p-5">
-              <h3 className="font-bold text-lg text-gray-900 mb-1 truncate" title={p.title}>{p.title}</h3>
+              <div className="flex justify-between items-start mb-1"><h3 className="font-bold text-lg text-gray-900 truncate pr-2" title={p.title}>{p.title}</h3><div className="flex space-x-1 shrink-0"><button onClick={() => handleEdit(p.id, p.title)} className="p-1.5 text-gray-400 hover:text-blue-600 rounded-md hover:bg-blue-50 transition-colors" title="Đổi tên"><Pencil className="w-4 h-4" /></button><button onClick={() => handleDelete(p.id)} className="p-1.5 text-gray-400 hover:text-red-600 rounded-md hover:bg-red-50 transition-colors" title="Xóa bài giảng"><Trash2 className="w-4 h-4" /></button></div></div>
               <p className="text-sm text-gray-500 mb-4">Cập nhật: {p.updatedAt}</p>
               
               <div className="flex justify-between items-center mt-4 pt-4 border-t border-gray-100">

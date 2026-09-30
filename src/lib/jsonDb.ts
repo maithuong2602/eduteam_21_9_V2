@@ -181,6 +181,16 @@ export const jsonDb = {
     }
     return p;
   },
+  deletePresentation: (id: string) => {
+    const db = getDb();
+    if (db.presentations) {
+      db.presentations = db.presentations.filter(p => p.id !== id);
+      if (db.activities) {
+        db.activities = db.activities.filter(a => a.presentationId !== id);
+      }
+      saveDb(db);
+    }
+  },
   savePresentation: (p: Presentation) => {
     const db = getDb();
     if (!db.presentations) db.presentations = [];
