@@ -498,13 +498,15 @@ export default function StudentSessionPage() {
             <span className="text-gray-500">{isSlideCollapsed ? "▼" : "▲"}</span>
           </div>
           
-          {!isSlideCollapsed && (
+                    {!isSlideCollapsed && (
             <div className="p-2 md:p-6 flex-1 min-h-[200px] flex flex-col">
-          {activity.fileUrl ? (
-            <PdfViewer key={activity.slideNumber} url={activity.fileUrl} pageNumber={activity.slideNumber} />
-          ) : (
-            <div className="text-xl md:text-2xl font-medium text-black whitespace-pre-wrap font-bold leading-relaxed">
-              {activity.text || "Nội dung slide..."}
+              {activity.fileUrl ? (
+                <PdfViewer key={activity.slideNumber} url={activity.fileUrl} pageNumber={activity.slideNumber} />
+              ) : (
+                <div className="text-xl md:text-2xl font-medium text-black whitespace-pre-wrap font-bold leading-relaxed">
+                  {activity.text || "Nội dung slide..."}
+                </div>
+              )}
             </div>
           )}
         </div>
