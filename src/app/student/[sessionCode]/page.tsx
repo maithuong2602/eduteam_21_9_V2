@@ -485,7 +485,7 @@ export default function StudentSessionPage() {
         </div>
       </div>
 
-      <div className={`flex-1 p-4 md:p-8 ${activity.type === "EMBED_HTML" ? "max-w-5xl" : "max-w-2xl"} mx-auto w-full flex flex-col`}>
+      <div className={`flex-1 p-4 md:p-8 ${activity.type === "EMBED_HTML" ? "max-w-full" : "max-w-2xl"} mx-auto w-full flex flex-col`}>
         {/* Slide Text Display */}
         <div className={`bg-white rounded-2xl shadow-sm border border-gray-200 mb-6 flex flex-col overflow-hidden transition-all duration-300 ${isSlideCollapsed ? '' : 'flex-1 min-h-[200px]'}`}>
           <div 
