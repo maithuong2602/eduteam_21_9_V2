@@ -169,20 +169,23 @@ io.on('connection', (socket) => {
         }
       } catch(e) { console.error('Error with db.json', e) }
     }
+    const existing = sessions[code] || {};
     sessions[code] = {
       teacherSocketId: socket.id,
       classId: data.classId,
       presentationId: data.presentationId,
       title: data.title,
-      validStudents: data.validStudents || [],
-      className: data.className || "N/A",
+      validStudents: data.validStudents || existing.validStudents || [],
+      className: data.className || existing.className || "N/A",
       presentationType: data.presentationType,
       fileUrl: data.fileUrl,
-      students: [],
-      groups: data.groups || [],
-      currentSlide: 1,
+      students: existing.students || [],
+      groups: data.groups || existing.groups || [],
+      studentPoints: existing.studentPoints || {},
+      activityHistory: existing.activityHistory || [],
+      currentSlide: existing.currentSlide || 1,
       activityConfig: null,
-      responses: {}
+      responses: existing.responses || {}
     };
     socket.join(code);
     socket.join(`teacher_${code}`);
@@ -1284,6 +1287,7 @@ io.on('connection', (socket) => {
   console.error(ex.stack);
   process.exit(1);
 });
+
 
 
 
