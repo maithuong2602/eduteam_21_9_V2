@@ -78,17 +78,17 @@ export default function ClassesPage() {
     if (!selectedClass) return;
 
     // Optimistic UI updates
-    setStudents(prev => prev.map(s => {
+    setStudents((prev: any[]) => prev.map((s: any) => {
       if (s.id === studentId) {
         return { ...s, bonusPoints: (s.bonusPoints || 0) + points };
       }
       return s;
     }));
-    setSelectedClass(prev => {
+    setSelectedClass((prev: any) => {
       if (!prev) return prev;
       return { ...prev, totalBonus: (prev.totalBonus || 0) + points };
     });
-    setClasses(prev => prev.map(c => {
+    setClasses((prev: any[]) => prev.map((c: any) => {
       if (c.id === selectedClass.id) {
         return { ...c, totalBonus: (c.totalBonus || 0) + points };
       }
