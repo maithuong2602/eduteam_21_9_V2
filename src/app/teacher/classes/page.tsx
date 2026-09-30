@@ -76,18 +76,39 @@ export default function ClassesPage() {
 
   const handleUpdateBonus = async (studentId: string, points: number) => {
     if (!selectedClass) return;
+
+    // Optimistic UI updates
+    setStudents(prev => prev.map(s => {
+      if (s.id === studentId) {
+        return { ...s, bonusPoints: (s.bonusPoints || 0) + points };
+      }
+      return s;
+    }));
+    setSelectedClass(prev => {
+      if (!prev) return prev;
+      return { ...prev, totalBonus: (prev.totalBonus || 0) + points };
+    });
+    setClasses(prev => prev.map(c => {
+      if (c.id === selectedClass.id) {
+        return { ...c, totalBonus: (c.totalBonus || 0) + points };
+      }
+      return c;
+    }));
+
     try {
       const res = await fetch(`/api/classes/${encodeURIComponent(selectedClass.id.replace(/\//g, '__slash__'))}/bonus`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentId, points })
       });
-      if (res.ok) {
-        openClass(selectedClass);
-        fetchClasses(); // Refresh class list to update total bonus
+      if (!res.ok) {
+        openClass(selectedClass); // revert on error
+        fetchClasses();
       }
     } catch (e) {
       console.error(e);
+      openClass(selectedClass); // revert on error
+      fetchClasses();
     }
   };
 
@@ -490,5 +511,6 @@ export default function ClassesPage() {
     </div>
   );
 }
+
 
 
