@@ -30,6 +30,7 @@ export default function StudentSessionPage() {
   const [workspaceState, setWorkspaceState] = useState<any>({});
   const [workspaceVersion, setWorkspaceVersion] = useState(0);
   const [workspaceStatus, setWorkspaceStatus] = useState("WORKING");
+  const [isSlideCollapsed, setIsSlideCollapsed] = useState(false);
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
@@ -151,6 +152,11 @@ export default function StudentSessionPage() {
     newSocket.on("activity_started", (config) => {
       setActivity(config);
       setStatus("active");
+      if (config.type === "EMBED_HTML") {
+        setIsSlideCollapsed(true);
+      } else {
+        setIsSlideCollapsed(false);
+      }
       if (config.hasSubmitted) {
         setSubmitted(true);
         if (config.submittedAnswer) {
@@ -479,9 +485,21 @@ export default function StudentSessionPage() {
         </div>
       </div>
 
-      <div className="flex-1 p-4 md:p-8 max-w-2xl mx-auto w-full flex flex-col">
+      <div className={`flex-1 p-4 md:p-8 ${activity.type === "EMBED_HTML" ? "max-w-5xl" : "max-w-2xl"} mx-auto w-full flex flex-col`}>
         {/* Slide Text Display */}
-        <div className="bg-white p-2 md:p-6 rounded-2xl shadow-sm border border-gray-200 mb-6 flex-1 min-h-[200px] overflow-hidden">
+        <div className={`bg-white rounded-2xl shadow-sm border border-gray-200 mb-6 flex flex-col overflow-hidden transition-all duration-300 ${isSlideCollapsed ? '' : 'flex-1 min-h-[200px]'}`}>
+          <div 
+            className="flex justify-between items-center bg-gray-50 px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100"
+            onClick={() => setIsSlideCollapsed(!isSlideCollapsed)}
+          >
+            <span className="font-semibold text-gray-700 text-sm">
+              {isSlideCollapsed ? "Xem lại slide bài giảng" : "Thu gọn slide"}
+            </span>
+            <span className="text-gray-500">{isSlideCollapsed ? "▼" : "▲"}</span>
+          </div>
+          
+          {!isSlideCollapsed && (
+            <div className="p-2 md:p-6 flex-1 min-h-[200px] flex flex-col">
           {activity.fileUrl ? (
             <PdfViewer key={activity.slideNumber} url={activity.fileUrl} pageNumber={activity.slideNumber} />
           ) : (
@@ -672,7 +690,7 @@ export default function StudentSessionPage() {
         {activity.type === "EXPLORE" && (
           <div className="space-y-4">
             <h3 className="font-semibold text-black text-lg mb-2">Tương tác khám phá:</h3>
-            <div className="w-full h-[60vh] bg-white border-2 border-gray-300 rounded-xl overflow-hidden shadow-inner relative">
+            <div className="w-full h-[75vh] md:min-h-[600px] flex-1 bg-white border-2 border-gray-300 rounded-xl overflow-hidden shadow-inner relative">
               <iframe 
                 srcDoc={activity.embedHtml || '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-family:sans-serif;color:#888;">Không có nội dung nhúng</div>'} 
                 className="w-full h-full border-none"
