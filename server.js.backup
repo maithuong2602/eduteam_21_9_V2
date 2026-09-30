@@ -9,23 +9,7 @@ const dev = process.env.NODE_ENV !== 'production';
 const nextApp = next({ dev });
 const handle = nextApp.getRequestHandler();
 
-nextApp.prepare().then(async () => {
-    // FIREBASE INITIALIZATION
-    try {
-        const { firestore, doc, getDoc, setDoc } = require("./firebase.js");
-        const snap = await getDoc(doc(firestore, "system", "db"));
-        if (snap.exists()) {
-            const fs = require("fs");
-            const path = require("path");
-            const DB_FILE = require("./src/lib/dataConfig").getDbFilePath();
-            if (!fs.existsSync(path.dirname(DB_FILE))) {
-                fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
-            }
-            fs.writeFileSync(DB_FILE, JSON.stringify(snap.data(), null, 2), "utf8");
-            console.log("Firebase DB downloaded and cached locally.");
-        }
-    } catch(e) { console.error("Firebase init error:", e); }
-
+nextApp.prepare().then(() => {
   const app = express();
   app.use(cors());
 
@@ -118,11 +102,7 @@ setInterval(() => {
         }
         const tmpFile = `${DB_FILE}.tmp.${Date.now()}`;
         isAutoSaving = true;
-        fs.writeFile(tmpFile, JSON.stringify(db, null, 2), "utf8", (err) => {
-             try {
-                const { firestore, doc, setDoc } = require("./firebase.js");
-                setDoc(doc(firestore, "system", "db"), db).catch(e => console.error("Firebase sync error:", e));
-             } catch(e) {}
+        fs.writeFile(tmpFile, JSON.stringify(db, null, 2), 'utf8', (err) => {
            isAutoSaving = false;
            if (err) return console.error('Auto-save error:', err);
            try {
@@ -161,11 +141,7 @@ io.on('connection', (socket) => {
           if (!fs.existsSync(path.dirname(DB_FILE))) {
             fs.mkdirSync(path.dirname(DB_FILE), { recursive: true });
           }
-          fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), "utf8");
-            try {
-                const { firestore, doc, setDoc } = require("./firebase.js");
-                setDoc(doc(firestore, "system", "db"), db).catch(e => console.error("Firebase sync error:", e));
-            } catch(e) {}
+          fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
         }
       } catch(e) { console.error('Error with db.json', e) }
     }
@@ -1284,7 +1260,6 @@ io.on('connection', (socket) => {
   console.error(ex.stack);
   process.exit(1);
 });
-
 
 
 
