@@ -971,36 +971,7 @@ export default function PresentationDetail() {
                       />
                     </div>
                   </div>
-                  <div className="flex gap-4 mt-4">
-                    <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Loại Bonus</label>
-                      <select 
-                        className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 p-2 border"
-                        value={currentActivity.bonusType || 'NONE'}
-                        onChange={(e) => setActivities(prev => ({
-                          ...prev,
-                          [currentActivityId as string]: { ...prev[currentActivityId as string], bonusType: e.target.value }
-                        }))}
-                      >
-                        <option className="text-black bg-white font-bold" value="NONE">Không có</option>
-                        <option className="text-black bg-white font-bold" value="INDIVIDUAL">Cá nhân</option>
-                        <option className="text-black bg-white font-bold" value="GROUP">Nhóm</option>
-                      </select>
-                    </div>
-                    <div className="flex-1">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Điểm Bonus</label>
-                      <input 
-                        type="number"
-                        min="0"
-                        className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 p-2 border"
-                        value={currentActivity.bonusPoints || 0}
-                        onChange={(e) => setActivities(prev => ({
-                          ...prev,
-                          [currentActivityId as string]: { ...prev[currentActivityId as string], bonusPoints: Number(e.target.value) }
-                        }))}
-                      />
-                    </div>
-                  </div>
+
                 </div>
 
                 {currentActivity.type === "CLASSIFICATION" && (
@@ -1130,8 +1101,41 @@ export default function PresentationDetail() {
                 )}
                 
                 {currentActivity.type === "SHORT_ANSWER" && (
-                  <div className="space-y-4">
-                    <p className="text-sm text-gray-500">Cấu hình cho câu hỏi Trả lời ngắn.</p>
+                  <div className="space-y-4 mt-4">
+                    <div>
+                      <label className="block text-sm font-bold text-gray-700 mb-1">Đáp án đúng (Chấm tự động)</label>
+                      <p className="text-xs text-gray-500 mb-2">Nhập các đáp án được chấp nhận, cách nhau bởi dấu phẩy (,). Bỏ trống nếu muốn tự chấm bằng tay.</p>
+                      <input 
+                        type="text"
+                        className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 p-2 border"
+                        placeholder="VD: CPU, Vi xử lý, Bộ vi xử lý..."
+                        value={currentActivity.config?.correctAnswers || ''}
+                        onChange={(e) => setActivities(prev => ({
+                          ...prev,
+                          [currentActivityId as string]: { 
+                             ...prev[currentActivityId as string], 
+                             config: { ...(prev[currentActivityId as string].config || {}), correctAnswers: e.target.value } 
+                          }
+                        }))}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Kiểu khớp đáp án</label>
+                      <select
+                        className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-blue-500 focus:border-blue-500 p-2 border"
+                        value={currentActivity.config?.matchMode || 'EXACT'}
+                        onChange={(e) => setActivities(prev => ({
+                          ...prev,
+                          [currentActivityId as string]: { 
+                             ...prev[currentActivityId as string], 
+                             config: { ...(prev[currentActivityId as string].config || {}), matchMode: e.target.value } 
+                          }
+                        }))}
+                      >
+                        <option value="EXACT">Khớp hoàn toàn (Tuyệt đối)</option>
+                        <option value="CONTAINS">Chỉ cần chứa từ khóa (Tương đối)</option>
+                      </select>
+                    </div>
                   </div>
                 )}
                 

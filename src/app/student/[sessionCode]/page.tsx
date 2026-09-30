@@ -26,6 +26,7 @@ export default function StudentSessionPage() {
   const [leaderboard, setLeaderboard] = useState<{systemId: string, name: string, total: number}[]>([]);
   const [groupInfo, setGroupInfo] = useState<any>(null);
   const [availableGroups, setAvailableGroups] = useState<any[]>([]);
+    const [systemId, setSystemId] = useState<string>("");
   const [selectedViewGroup, setSelectedViewGroup] = useState<any>(null);
   const [workspaceState, setWorkspaceState] = useState<any>({});
   const [workspaceVersion, setWorkspaceVersion] = useState(0);
@@ -136,6 +137,8 @@ export default function StudentSessionPage() {
     newSocket.on("join_success", (data) => {
       setStatus("waiting");
         if (data.realName) setRealStudentName(data.realName);
+          if (data.systemId) setSystemId(data.systemId);
+          if (data.groups) setAvailableGroups(data.groups);
         if (data.activityConfig) {
         setActivity(data.activityConfig);
         setStatus("active");
