@@ -90,12 +90,21 @@ try {
 let lastSessionsStr = JSON.stringify(sessions);
 let lastLedgersStr = JSON.stringify(studentBonusLedgers);
 let isAutoSaving = false;
+let lastDbMtime = 0;
 setInterval(() => {
   if (isAutoSaving) return;
   try {
      const currentSessionsStr = JSON.stringify(sessions);
      const currentLedgersStr = JSON.stringify(studentBonusLedgers);
-     if (currentSessionsStr !== lastSessionsStr || currentLedgersStr !== lastLedgersStr) {
+     let fileChanged = false;
+     if (fs.existsSync(DB_FILE)) {
+        const stat = fs.statSync(DB_FILE);
+        if (stat.mtimeMs > lastDbMtime) {
+           fileChanged = true;
+           lastDbMtime = stat.mtimeMs;
+        }
+     }
+     if (fileChanged || currentSessionsStr !== lastSessionsStr || currentLedgersStr !== lastLedgersStr) {
         lastSessionsStr = currentSessionsStr;
         lastLedgersStr = currentLedgersStr;
         let db = { classCodes: [], bonusLedgers: [], activeSessions: {} };
@@ -1287,6 +1296,7 @@ io.on('connection', (socket) => {
   console.error(ex.stack);
   process.exit(1);
 });
+
 
 
 
