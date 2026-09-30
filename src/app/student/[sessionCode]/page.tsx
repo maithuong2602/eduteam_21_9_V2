@@ -208,32 +208,15 @@ export default function StudentSessionPage() {
 
     newSocket.on("groups_updated", (groups: any[]) => {
       setAvailableGroups(groups);
-      const myId = name;
-      const myGroup = groups.find((g: any) => g.members.some((m: any) => String(m.studentId).trim().toUpperCase() === String(myId).trim().toUpperCase()));
-      if (myGroup) setGroupInfo(myGroup);
-      else setGroupInfo(null);
     });
-    
     newSocket.on("group_member_joined", (groups: any[]) => {
       setAvailableGroups(groups);
-      const myId = name;
-      const myGroup = groups.find((g: any) => g.members.some((m: any) => String(m.studentId).trim().toUpperCase() === String(myId).trim().toUpperCase()));
-      if (myGroup) setGroupInfo(myGroup);
-      else setGroupInfo(null);
     });
     newSocket.on("group_member_left", (groups: any[]) => {
       setAvailableGroups(groups);
-      const myId = name;
-      const myGroup = groups.find((g: any) => g.members.some((m: any) => String(m.studentId).trim().toUpperCase() === String(myId).trim().toUpperCase()));
-      if (myGroup) setGroupInfo(myGroup);
-      else setGroupInfo(null);
     });
     newSocket.on("group_created", (groups: any[]) => {
       setAvailableGroups(groups);
-      const myId = name;
-      const myGroup = groups.find((g: any) => g.members.some((m: any) => String(m.studentId).trim().toUpperCase() === String(myId).trim().toUpperCase()));
-      if (myGroup) setGroupInfo(myGroup);
-      else setGroupInfo(null);
     });
     newSocket.on("leaderboard_updated", (data) => {
       setLeaderboard(data);

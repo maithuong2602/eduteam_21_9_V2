@@ -282,7 +282,7 @@ io.on('connection', (socket) => {
       io.to(`teacher_${data.code}`).emit('student_joined', session.students);
       
       // Confirm to student
-      socket.emit('join_success', { code: data.code, realName });
+      socket.emit('join_success', { code: data.code, realName, systemId });
       if (session.groups) socket.emit('groups_updated', session.groups);
       // Send current activity to student if active
       if (session.activityConfig) {

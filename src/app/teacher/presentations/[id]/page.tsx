@@ -6,7 +6,7 @@ import Link from "next/link";
 import ClassificationBuilder from "@/components/ClassificationBuilder";
 import { useParams } from "next/navigation";
 import { io, Socket } from "socket.io-client";
-import { ArrowLeft, Play, Settings, Type, Plus, X, AlignLeft, CheckSquare, List, GripHorizontal, Users, ChevronLeft, ChevronRight, Lock, Unlock, Clock, Cloud, Trophy, Compass } from "lucide-react";
+import { ArrowLeft, Play, Settings, Type, Plus, X, AlignLeft, CheckSquare, List, GripHorizontal, Users, ChevronLeft, ChevronRight, Lock, Unlock, Clock, Cloud, Trophy, Compass, Eye, EyeOff } from "lucide-react";
 import dynamic from 'next/dynamic';
 
 const PdfViewer = dynamic(() => import("@/components/PdfViewer"), { ssr: false });
@@ -24,6 +24,7 @@ export default function PresentationDetail() {
   const [activities, setActivities] = useState<Record<string, any>>({});
   const [slideActivities, setSlideActivities] = useState<Record<number, string[]>>({});
   const [currentActivityId, setCurrentActivityId] = useState<string | null>(null);
+  const [hideCorrectAnswersInConfig, setHideCorrectAnswersInConfig] = useState(true);
 
   
   useEffect(() => {
@@ -1022,7 +1023,18 @@ export default function PresentationDetail() {
                     
                     <div>
                       <div className="flex justify-between items-center mb-2">
-                        <label className="block text-sm font-medium text-gray-700">Cài đặt đáp án</label>
+                        <div className="flex items-center gap-3">
+                          <label className="block text-sm font-medium text-gray-700">Cài đặt đáp án</label>
+                          <button
+                            type="button"
+                            onClick={() => setHideCorrectAnswersInConfig(!hideCorrectAnswersInConfig)}
+                            className={`text-xs flex items-center px-2 py-1 rounded transition-colors ${hideCorrectAnswersInConfig ? 'bg-red-50 text-red-600 hover:bg-red-100' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                            title="Ẩn/hiện đáp án đúng để học sinh không nhìn thấy trên màn hình máy chiếu"
+                          >
+                            {hideCorrectAnswersInConfig ? <EyeOff className="h-3 w-3 mr-1" /> : <Eye className="h-3 w-3 mr-1" />}
+                            {hideCorrectAnswersInConfig ? "Đang ẩn đáp án" : "Đang hiện đáp án"}
+                          </button>
+                        </div>
                         <button 
                           type="button"
                           onClick={() => {
@@ -1060,23 +1072,29 @@ export default function PresentationDetail() {
                           { id: 4, text: "Đáp án D", isCorrect: false },
                         ]).map((opt: any, index: number) => (
                           <div key={opt.id} className="flex items-center group">
-                            <input 
-                              type="checkbox" 
-                              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" 
-                              checked={opt.isCorrect} 
-                              onChange={(e) => {
-                                const newOpts = (currentActivity.options || [
-                                  { id: 1, text: "Đáp án A", isCorrect: true },
-                                  { id: 2, text: "Đáp án B", isCorrect: false },
-                                  { id: 3, text: "Đáp án C", isCorrect: false },
-                                  { id: 4, text: "Đáp án D", isCorrect: false },
-                                ]).map((o: any) => o.id === opt.id ? { ...o, isCorrect: e.target.checked } : o);
-                                setActivities(prev => ({
-                                  ...prev,
-                                  [currentActivityId as string]: { ...prev[currentActivityId as string], options: newOpts }
-                                }));
-                              }}
-                            />
+                            {!hideCorrectAnswersInConfig ? (
+                              <input 
+                                type="checkbox" 
+                                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" 
+                                checked={opt.isCorrect} 
+                                onChange={(e) => {
+                                  const newOpts = (currentActivity.options || [
+                                    { id: 1, text: "Đáp án A", isCorrect: true },
+                                    { id: 2, text: "Đáp án B", isCorrect: false },
+                                    { id: 3, text: "Đáp án C", isCorrect: false },
+                                    { id: 4, text: "Đáp án D", isCorrect: false },
+                                  ]).map((o: any) => o.id === opt.id ? { ...o, isCorrect: e.target.checked } : o);
+                                  setActivities(prev => ({
+                                    ...prev,
+                                    [currentActivityId as string]: { ...prev[currentActivityId as string], options: newOpts }
+                                  }));
+                                }}
+                              />
+                            ) : (
+                              <div className="w-4 h-4 rounded border border-gray-300 bg-gray-100 flex items-center justify-center" title="Đã ẩn đáp án">
+                                <Lock className="w-2.5 h-2.5 text-gray-400" />
+                              </div>
+                            )}
                             <div className="ml-2 flex-1 flex items-center border border-gray-200 rounded px-2 bg-white">
                               <input 
                                 type="text"
