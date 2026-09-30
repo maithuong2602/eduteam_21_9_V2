@@ -134,7 +134,8 @@ export default function StudentSessionPage() {
     });
     newSocket.on("join_success", (data) => {
       setStatus("waiting");
-      if (data.activityConfig) {
+        if (data.realName) setRealStudentName(data.realName);
+        if (data.activityConfig) {
         setActivity(data.activityConfig);
         setStatus("active");
         setSubmitted(false);
@@ -491,7 +492,7 @@ export default function StudentSessionPage() {
              }
              return null;
           })()}
-          <div className="text-sm font-medium text-gray-500">{studentName}</div>
+          <div className="text-sm font-medium text-gray-500">{realStudentName || studentName}</div>
         </div>
       </div>
 
@@ -780,6 +781,8 @@ export default function StudentSessionPage() {
     </div>
   );
 }
+
+
 
 
 

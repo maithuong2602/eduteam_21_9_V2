@@ -812,6 +812,8 @@ io.on('connection', (socket) => {
         pointsAwarded[onlineStudent.id] = bonusPoints;
       }
       pointsAwarded[actualStudentId] = bonusPoints;
+        if (validSt && validSt.systemId) pointsAwarded[validSt.systemId] = bonusPoints;
+        if (typeof studentId !== 'undefined') pointsAwarded[studentId] = bonusPoints;
       pointsAwarded[primaryId] = bonusPoints;
     });
 
@@ -1159,6 +1161,8 @@ io.on('connection', (socket) => {
       pointsAwarded[onlineStudent.id] = bonusPoints;
     }
     pointsAwarded[actualStudentId] = bonusPoints;
+        if (validSt && validSt.systemId) pointsAwarded[validSt.systemId] = bonusPoints;
+        if (typeof studentId !== 'undefined') pointsAwarded[studentId] = bonusPoints;
     pointsAwarded[primaryId] = bonusPoints;
 
     io.to(data.code).emit('points_awarded', pointsAwarded);
@@ -1258,6 +1262,7 @@ io.on('connection', (socket) => {
   console.error(ex.stack);
   process.exit(1);
 });
+
 
 
 
