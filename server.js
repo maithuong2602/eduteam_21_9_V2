@@ -704,6 +704,7 @@ io.on('connection', (socket) => {
     const bonusRecord = {};
 
     const rawResponses = data.activityDetails?.responses || {};
+    session._awardedGroups = new Set();
     const pointsMap = {};
     const typesMap = {};
 
@@ -746,27 +747,56 @@ io.on('connection', (socket) => {
         pointsMap[socketId] = points;
         typesMap[socketId] = typeStr;
 
-        session.studentPoints[systemId] = scoreEngine.cleanScore((session.studentPoints[systemId] || 0) + points);
-        activityPointsRecord[systemId] = points;
-        isCorrectRecord[systemId] = data.manualOverride ? true : result.isCorrect;
-        calculatedAtRecord[systemId] = Date.now();
-        if (bd) {
-           breakdownRecord[systemId] = bd;
-        }
-        if (bs) {
-           bonusRecord[systemId] = bs;
+        let targetMembers = [{ id: actualStudentId, systemId: systemId }];
+        let groupId = null;
+        
+        if (data.activityDetails?.mode === 'GROUP' && session.groups) {
+           const group = session.groups.find(g => g.members.some(m => String(m.studentId) === String(actualStudentId)));
+           if (group) {
+              groupId = group.id;
+              if (session._awardedGroups && session._awardedGroups.has(groupId)) {
+                  // Skip if this group already got points in this batch
+                  targetMembers = [];
+              } else {
+                  if (!session._awardedGroups) session._awardedGroups = new Set();
+                  session._awardedGroups.add(groupId);
+                  targetMembers = group.members.map(m => {
+                     const vSt = session.validStudents?.find(vs => String(vs.id) === String(m.studentId));
+                     return { id: m.studentId, systemId: vSt ? vSt.id : m.studentId };
+                  });
+              }
+           }
         }
         
-        saveLedger({
-          ledgerId: 'LED_' + Date.now() + '_' + actualStudentId,
-          studentId: actualStudentId,
-          sessionCode: data.code,
-          classId: session.classId,
-          activityId: 'ACTIVITY_SCORE',
-          points: points,
-          reason: 'ACTIVITY_SCORE',
-          groupId: null,
-          createdAt: Date.now()
+        targetMembers.forEach(m => {
+            if (!m.id) return;
+            const memSystemId = m.systemId;
+            const memActualId = m.id;
+            
+            // Also notify them so they see the animation
+            pointsMap[memActualId] = points;
+            pointsMap[memSystemId] = points;
+            typesMap[memActualId] = typeStr;
+            typesMap[memSystemId] = typeStr;
+
+            session.studentPoints[memSystemId] = scoreEngine.cleanScore((session.studentPoints[memSystemId] || 0) + points);
+            activityPointsRecord[memSystemId] = points;
+            isCorrectRecord[memSystemId] = data.manualOverride ? true : result.isCorrect;
+            calculatedAtRecord[memSystemId] = Date.now();
+            if (bd) breakdownRecord[memSystemId] = bd;
+            if (bs) bonusRecord[memSystemId] = bs;
+            
+            saveLedger({
+              ledgerId: 'LED_' + Date.now() + '_' + memActualId + '_' + Math.random().toString(36).substring(7),
+              studentId: memActualId,
+              sessionCode: data.code,
+              classId: session.classId,
+              activityId: data.activityDetails?.id || 'ACTIVITY_SCORE',
+              points: points,
+              reason: groupId ? 'GROUP_ACTIVITY_SCORE' : 'ACTIVITY_SCORE',
+              groupId: groupId,
+              createdAt: Date.now()
+            });
         });
       }
     }
