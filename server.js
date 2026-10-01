@@ -72,6 +72,7 @@ nextApp.prepare().then(async () => {
 
 const groupBonusAwards = [];
 let studentBonusLedgers = [];
+
 const DB_FILE = getDbFilePath();
 
 // Execute startup migration if target DB needs migration from source
