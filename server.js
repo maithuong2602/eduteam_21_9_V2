@@ -1321,7 +1321,7 @@ io.on('connection', (socket) => {
   });
 
   app.post('/api/internal/force_sync_db', require('express').json(), (req, res) => {
-    triggerAutoSave();
+    // no-op, let the 3s interval handle it reliably now
     return res.json({ success: true });
   });
 
