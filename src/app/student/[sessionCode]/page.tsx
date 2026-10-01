@@ -27,7 +27,7 @@ export default function StudentSessionPage() {
   const [groupInfo, setGroupInfo] = useState<any>(null);
   const [availableGroups, setAvailableGroups] = useState<any[]>([]);
     const [systemId, setSystemId] = useState<string>("");
-    const [timeLeft, setTimeLeft] = useState<number | null>(null);
+
   const [selectedViewGroup, setSelectedViewGroup] = useState<any>(null);
   const [workspaceState, setWorkspaceState] = useState<any>({});
   const [workspaceVersion, setWorkspaceVersion] = useState(0);
