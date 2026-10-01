@@ -159,6 +159,8 @@ function saveDb(data: DbSchema) {
     fs.copyFileSync(tmpFile, DB_FILE);
     try { fs.unlinkSync(tmpFile); } catch(_) {}
   }
+  // Trigger real-time Firebase sync
+  fetch('http://127.0.0.1:' + (process.env.PORT || 3000) + '/api/internal/force_sync_db', { method: 'POST' }).catch(() => {});
 }
 
 

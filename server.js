@@ -1319,6 +1319,11 @@ io.on('connection', (socket) => {
     }
   });
 
+  app.post('/api/internal/force_sync_db', require('express').json(), (req, res) => {
+    triggerAutoSave();
+    return res.json({ success: true });
+  });
+
   app.use((req, res) => {
     return handle(req, res);
   });
