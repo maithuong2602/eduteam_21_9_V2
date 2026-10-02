@@ -324,20 +324,20 @@ export default function StudentSessionPage() {
       
       if (!isLocked && !submitted) {
         if (activity?.mode === "GROUP" && groupInfo) {
-            socket.emit("workspace_update", {
+            socket?.emit("workspace_update", {
                 code: sessionCode,
                 activityId: activity.activityId,
                 groupId: groupInfo.id,
                 state: JSON.stringify(submissionMetadata)
             });
-            socket.emit("submit_workspace", {
+            socket?.emit("submit_workspace", {
               code: sessionCode,
               activityId: activity.activityId,
               groupId: groupInfo.id,
               answer: JSON.stringify(submissionMetadata)
             });
         } else {
-            socket.emit("submit_answer", {
+            socket?.emit("submit_answer", {
               code: sessionCode,
               slideNumber: activity?.slideNumber,
               answer: JSON.stringify(submissionMetadata)
