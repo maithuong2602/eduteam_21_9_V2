@@ -1243,9 +1243,13 @@ export default function PresentationDetail() {
                       <Cloud className="h-6 w-6 text-gray-400 group-hover:text-blue-600 mb-2" />
                       <span className="text-xs font-medium text-gray-700 group-hover:text-blue-700">Word Cloud</span>
                     </button>
-                    <button onClick={() => addActivity("EXPLORE")} className="flex flex-col items-center justify-center p-3 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors group">
+                                        <button onClick={() => addActivity("EXPLORE")} className="flex flex-col items-center justify-center p-3 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors group">
                       <Compass className="h-6 w-6 text-gray-400 group-hover:text-blue-600 mb-2" />
                       <span className="text-xs font-medium text-gray-700 group-hover:text-blue-700">Khám phá</span>
+                    </button>
+                    <button onClick={() => addActivity("FILE_UPLOAD")} className="flex flex-col items-center justify-center p-3 border border-gray-200 rounded-lg hover:border-blue-500 hover:bg-blue-50 transition-colors group">
+                      <svg className="h-6 w-6 text-gray-400 group-hover:text-blue-600 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
+                      <span className="text-xs font-medium text-gray-700 group-hover:text-blue-700">Thu Bài (File)</span>
                     </button>
                   </div>
                 </div>
@@ -1552,7 +1556,21 @@ export default function PresentationDetail() {
                 )}
 
                 <div className="w-full">
-                  <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Danh sách chi tiết ({currentActivity?.mode === 'GROUP' ? Object.keys(workspaces).length : Object.keys(responses).length} phản hồi)</h3>
+                  <div className="flex justify-between items-center mb-4 border-b pb-2">
+                      <h3 className="text-xl font-bold text-gray-800">
+                        Danh sách chi tiết ({currentActivity?.mode === 'GROUP' ? Object.keys(workspaces).length : Object.keys(responses).length} phản hồi)
+                      </h3>
+                      {currentActivity?.type === 'FILE_UPLOAD' && (
+                        <a 
+                          href={`/api/download_submissions/${sessionCode}/${currentActivity?.activityId || currentActivity?.slideNumber}`} 
+                          download
+                          className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center space-x-2 text-sm transition-colors shadow-sm"
+                        >
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                          <span>Tải toàn bộ (.zip)</span>
+                        </a>
+                      )}
+                    </div>
                     {['SHORT_ANSWER', 'CLASSIFICATION', 'WORD_CLOUD', 'FILE_UPLOAD'].includes(currentActivity?.type || '') ? (
                       <div style={{ zoom: zoomLevel }} className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 transition-all duration-300 origin-top">
                         {(currentActivity?.mode === 'GROUP' ? Object.values(workspaces).map(ws => [ws.groupId, ws.state]) : Object.entries(responses)).map(([id, ans], index) => {

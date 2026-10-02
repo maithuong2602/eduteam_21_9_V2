@@ -77,7 +77,7 @@ function calculateActivityScore(input) {
     score = isCorrect ? maxScore : 0;
     breakdown = isCorrect ? `Correct (+${score})` : 'Incorrect (0)';
   } 
-  else if (input.activityType === 'SHORT_ANSWER' || input.activityType === 'WORD_CLOUD') {
+  else if (input.activityType === 'SHORT_ANSWER' || input.activityType === 'WORD_CLOUD' || input.activityType === 'FILE_UPLOAD') {
     // Current semantics: Just having an answer counts as a response.
     // NOTE: There is currently NO AI grading for Short Answer and Word Cloud.
     // Therefore, isCorrect is strictly null (cannot judge correctness automatically).
