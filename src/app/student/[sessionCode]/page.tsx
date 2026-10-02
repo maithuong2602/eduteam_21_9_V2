@@ -157,6 +157,16 @@ export default function StudentSessionPage() {
       router.push("/join");
     });
 
+    
+    newSocket.on("submission_rejected", (data) => {
+      if (data.studentId === systemId) {
+        setSubmitted(false);
+        setSelectedAnswers([]);
+        setUploadProgress(0);
+        alert("Giáo viên đã hủy file của bạn. Bạn có thể nộp lại file mới!");
+      }
+    });
+
     newSocket.on("activity_started", (config) => {
       setActivity(config);
       setStatus("active");
