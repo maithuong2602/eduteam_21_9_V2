@@ -1430,7 +1430,7 @@ export default function PresentationDetail() {
           <div className="bg-white w-full max-w-5xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden relative">
             <div className="flex justify-between items-center p-6 border-b border-gray-200 bg-gray-50">
                 <h2 className="text-2xl font-bold text-gray-800">Chi tiết Kết quả (Slide {selectedSlide})</h2>
-                {['SHORT_ANSWER', 'CLASSIFICATION'].includes(currentActivity?.type || '') && (
+                {['SHORT_ANSWER', 'CLASSIFICATION', 'FILE_UPLOAD'].includes(currentActivity?.type || '') && (
                   <div className="flex items-center space-x-2 ml-4 bg-white px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm">
                     <span className="text-sm text-gray-600 font-medium">Thu phóng:</span>
                     <button onClick={() => setZoomLevel(z => Math.max(0.4, z - 0.1))} className="w-7 h-7 flex items-center justify-center rounded bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold transition-colors">-</button>
@@ -1553,7 +1553,7 @@ export default function PresentationDetail() {
 
                 <div className="w-full">
                   <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Danh sách chi tiết ({currentActivity?.mode === 'GROUP' ? Object.keys(workspaces).length : Object.keys(responses).length} phản hồi)</h3>
-                    {['SHORT_ANSWER', 'CLASSIFICATION', 'WORD_CLOUD'].includes(currentActivity?.type || '') ? (
+                    {['SHORT_ANSWER', 'CLASSIFICATION', 'WORD_CLOUD', 'FILE_UPLOAD'].includes(currentActivity?.type || '') ? (
                       <div style={{ zoom: zoomLevel }} className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 xl:columns-5 gap-4 space-y-4 transition-all duration-300 origin-top">
                         {(currentActivity?.mode === 'GROUP' ? Object.values(workspaces).map(ws => [ws.groupId, ws.state]) : Object.entries(responses)).map(([id, ans], index) => {
                           const displayName = currentActivity?.mode === 'GROUP' 
@@ -1631,7 +1631,7 @@ export default function PresentationDetail() {
                               const idx = (currentActivity.options || []).findIndex((o:any) => o.id === optId);
                               return idx >= 0 ? String.fromCharCode(65 + idx) : '';
                             }).join(', ');
-                          } else if (currentActivity?.type === 'WORD_CLOUD' || currentActivity?.type === 'SHORT_ANSWER') {
+                          } else if (currentActivity?.type === 'WORD_CLOUD' || currentActivity?.type === 'SHORT_ANSWER' || currentActivity?.type === 'FILE_UPLOAD') {
                   ansText = Array.isArray(ans) ? ans.join(', ') : String(ans);
                 } else if (currentActivity?.type === 'CLASSIFICATION') {
                   if (typeof ans === 'object' && ans !== null && !Array.isArray(ans)) {
