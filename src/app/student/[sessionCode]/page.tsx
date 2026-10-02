@@ -349,41 +349,6 @@ export default function StudentSessionPage() {
       console.error(error);
       alert("Lỗi upload file! Vui lòng thử lại.");
       setIsUploading(false);
-    }, 
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          setSelectedAnswers([downloadURL]);
-          setIsUploading(false);
-          // Auto submit after upload finishes
-          if (!isLocked && !submitted) {
-            let finalAnswer = downloadURL;
-            if (activity?.mode === "GROUP" && groupInfo) {
-                socket.emit("workspace_update", {
-                    code: sessionCode,
-                    activityId: activity.activityId,
-                    groupId: groupInfo.id,
-                    state: finalAnswer
-                });
-                socket.emit("submit_workspace", {
-                  code: sessionCode,
-                  activityId: activity.activityId,
-                  groupId: groupInfo.id,
-                  answer: finalAnswer
-                });
-            } else {
-                socket.emit("submit_answer", {
-                  code: sessionCode,
-                  slideNumber: activity?.slideNumber,
-                  answer: finalAnswer
-                });
-            }
-            setSubmitted(true);
-          }
-        }
-      );
-    } catch (error) {
-      console.error(error);
-      setIsUploading(false);
     }
   };
 
